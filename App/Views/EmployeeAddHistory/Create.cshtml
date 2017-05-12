@@ -1,0 +1,122 @@
+﻿@model Langben.DAL.EmployeeAddHistory
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+}
+@using Common
+@using Models
+ 
+@section CurentPlace {
+ 
+      创建  
+ 
+ }
+@using (Html.BeginForm("", "api/EmployeeAddHistoryApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="创建" />
+            <input class="a2 f2" type="button" onclick="BackList('EmployeeAddHistory')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                 
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Wage)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Wage)
+                @Html.ValidationMessageFor(model => model.Wage)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyEmployeeRelationId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CompanyEmployeeRelationId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CompanyEmployeeRelationId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PoliceInsuranceId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.PoliceInsuranceId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.PoliceInsuranceId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InsuranceCode)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.InsuranceCode)
+                @Html.ValidationMessageFor(model => model.InsuranceCode)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PoliceOperationId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.PoliceOperationId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.PoliceOperationId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InsuranceMonth)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBox("InsuranceMonth", ((Model != null && Model.InsuranceMonth != null) ? Model.InsuranceMonth.ToString().AsDateTime().ToString("yyyy-MM-dd") : ""), new { style = "width: 244px;", @class="easyui-datebox" })
+                @Html.ValidationMessageFor(model => model.InsuranceMonth)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.StartTime)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBox("StartTime", ((Model != null && Model.StartTime != null) ? Model.StartTime.ToString().AsDateTime().ToString("yyyy-MM-dd") : ""), new { style = "width: 244px;", @class="easyui-datebox" })
+                @Html.ValidationMessageFor(model => model.StartTime)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PoliceAccountNatureId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.PoliceAccountNatureId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.PoliceAccountNatureId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.SuppliersId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.SuppliersId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.SuppliersId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.IsIndependentAccount)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.IsIndependentAccount)
+                @Html.ValidationMessageFor(model => model.IsIndependentAccount)
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>        
+            <div class="editor-label">
+                @Html.LabelFor(model => model.State)：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.State,Models.SysFieldModels.GetSysField("EmployeeAddHistory","State"),"请选择")
+            </div>
+        </div>
+    </fieldset>
+} 
+
+
+    
+    <script type="text/javascript">
+
+        $(function () {
+            
+        });
+              
+
+    </script>
+
+

@@ -1,0 +1,101 @@
+﻿@model Langben.DAL.CRM_CompanyLinkMan
+
+@{
+    Layout = "~/Views/Shared/CRMEdit.cshtml";
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+    修改
+}
+@using (Html.BeginForm("", "../api/CRM_CompanyLinkMan_AuditApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="保存" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.ID)
+            @Html.HiddenFor(model => model.CRM_Company_ID)
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.LinkManName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.LinkManName)
+                @Html.ValidationMessageFor(model => model.LinkManName)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Position)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Position)
+                @Html.ValidationMessageFor(model => model.Position)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Address)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Address)
+                @Html.ValidationMessageFor(model => model.Address)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Mobile)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Mobile)
+                @Html.ValidationMessageFor(model => model.Mobile)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Telephone)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Telephone)
+                @Html.ValidationMessageFor(model => model.Telephone)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Email)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Email)
+                @Html.ValidationMessageFor(model => model.Email)
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark)
+                @Html.ValidationMessageFor(model => model.Remark)
+            </div>
+        </div>
+    </fieldset>
+}
+
+<script type="text/javascript">
+
+    $(function () {
+
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.ContactID';
+        $.ajax({
+            url: "/api/CRM_CompanyLinkManApi/Get/" + id,
+            type: "Get",
+            // async: false,
+            success: function (res) {
+                $("#ID").val(res.ID); $("#CRM_Company_ID").val(res.CRM_Company_ID);
+                $("#LinkManName").val(res.LinkManName);
+                $("#Position").val(res.Position);
+                $("#Address").val(res.Address);
+                $("#Mobile").val(res.Mobile);
+                $("#Telephone").val(res.Telephone);
+                $("#Email").val(res.Email);
+                $("#Remark").val(res.Remark);
+            }
+        })
+    });
+</script>
+
+

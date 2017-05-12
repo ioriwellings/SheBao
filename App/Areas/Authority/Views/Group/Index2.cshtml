@@ -1,0 +1,464 @@
+﻿@{
+    Layout = null;
+}
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+@Scripts.Render("~/bundles/ztree")
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>组织机构</title>
+
+    <script type="text/javascript">
+    var editFlg = false;
+    var setting = {
+        view: {
+
+            addHoverDom: addHoverDom,
+            removeHoverDom: removeHoverDom
+        },
+        check: {
+            enable: false,
+            autoCheckTrigger: false
+        }, data: {
+            key: {
+                name: "xianshiName"
+            },
+            simpleData: {
+                enable: true,
+                idKey: "ID",
+                pIdKey: "ParentID",
+                rootPId: 0,
+                datatype:"json"
+            }
+        },
+        async: {
+            enable: true,
+            url: "../api/GroupApi/Group",
+
+        },
+        callback: {
+            //onClick: zTreeCompanyOnclick
+        }
+    };
+
+
+
+
+    $(document).ready(function () {
+        //加载树
+        $.fn.zTree.init($("#treeGroup"), setting);
+
+
+        var search =  $.trim($("#txtName").val());
+        $('#DepUserGrid').datagrid({
+            title: '用户组列表', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            queryParams: { search: search },
+            url: '../api/GroupApi/PostData', //获取数据的url
+
+
+            pagination: true,
+            rownumbers: true
+
+        });
+
+
+    //    //中间列表设置
+    //    $("#DepUserGrid").datagrid({
+    //        url: "/api/GroupApi/PostData",
+    //        queryParams: { search: "" },
+    //        method: "GET",
+    //        title: '',
+    //        //fit: true,
+    //        fitColumns: false,//是否自适应列宽
+    //        rownumbers: true, //是否加行号
+    //        singleSelect: false, //允许选择多行
+    //        selectOnCheck: false,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+    //        checkOnSelect: false, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+    //        onClickRow: function (rowIndex, rowData) {
+    //            $(this).datagrid('unselectRow', rowIndex);
+    //        },
+    //        onLoadSuccess: function (data) {
+    //            //根据临时选中值勾选相应数据
+    //            var ids = $('#hidUserIds').val().split(',');
+    //            $.each(data.rows, function (index, item) {
+    //                for (var i = 0; i < ids.length; i++) {
+    //                    if (ids[i] == item.ID) {
+    //                        var idx = $('#DepUserGrid').datagrid('getRowIndex', item);
+    //                        $('#DepUserGrid').datagrid('checkRow', idx);
+    //                        break;
+    //                    }
+    //                }
+    //            });
+    //        }
+
+    });
+
+
+
+    //更新节点
+    function Updata_ZTree(UpdataID) {
+
+        if (UpdataID != null) {
+            //得到父节点。 在父节点上添加所有数据
+            $.ajax({
+                type: 'POST',
+                url: "/api/GroupApi/GroupTree?id=" + UpdataID,
+
+                dataType: 'json',
+                async: false, //异步
+                success: function (data) {
+                    var treeObj = $.fn.zTree.getZTreeObj("treeGroup");
+                   
+                    var Node = treeObj.getNodeByParam("ID", parseInt(UpdataID), null);
+                    Node.xianshiName = data[0].xianshiName;
+                    Node.ORG_User_ID = data[0].ORG_User_ID;
+
+                    treeObj.updateNode(Node);
+
+                    $("#diyBtn_" + Node.ID).unbind().remove();
+                    $("#diyBtn_space_" + Node.ID).unbind().remove();
+
+                },
+                error: function () {
+                    window.parent.$.messager.alert("错误", "操作失败", "error");
+
+                }
+            });
+            searchUserGrid();
+        }
+
+
+    }
+    function addHoverDom(treeId, treeNode) {
+        var aObj = $("#" + treeNode.tId + "_a");
+        if ($("#diyBtn_" + treeNode.id).length > 0) return;
+        var editStr = "";
+        
+        if (treeNode.ORG_User_ID == null) {
+
+            if (treeNode.ParentID == 0 || treeNode.ParentID == null) {
+                editStr = " <span id='diyBtn_" + treeNode.id + "'><a onclick='Adduser(" + treeNode.ID + ")'>添加用户</a> ||<a onclick='Addusers(" + treeNode.ID + ")'>新增下级</a></span>"
+            }
+            else {
+                editStr = " <span id='diyBtn_" + treeNode.id + "'><a onclick='Adduser(" + treeNode.ID + ")'>添加用户</a> ||<a onclick='Addusers(" + treeNode.ID + ")'>新增下级</a> ||<a onclick='delGroup(" + treeNode.ID + ")'>撤销该用户组</a> </span>"
+            }
+
+        }
+        else {
+            editStr = " <span id='diyBtn_" + treeNode.id + "'><a onclick='Addusers(" + treeNode.ID + ")'>新增下级</a> ||<a onclick='delGroupUser(" + treeNode.ID + ")'>撤销用户</a> </span>"
+        }
+
+        aObj.append(editStr);
+        //var btn = $("#diyBtn_" + treeNode.id);
+        //if (btn) btn.bind("click", function () { alert("diy Button for " + treeNode.DepartmentName); });
+    };
+    function removeHoverDom(treeId, treeNode) {
+        $("#diyBtn_" + treeNode.id).unbind().remove();
+        $("#diyBtn_space_" + treeNode.id).unbind().remove();
+    };
+
+    //员工配置
+    function Adduser(id) {
+
+        OpenConfig(9, id, 1, 1);
+    }
+
+    //下级及员工配置
+    function Addusers(id) {
+
+        OpenConfigUsers(9, id, 1, 1);
+    }
+
+    //刷新节点
+    function RefreshTree() {
+        $.fn.zTree.init($("#treeGroup"), setting);
+        searchUserGrid();
+    }
+
+    //删除该职位用户
+    function delGroupUser(id) {
+
+        window.parent.$.messager.confirm("提示", "确认处理选中数据？", function (r) {
+            if (r) {
+                $.ajax({
+                    type: 'POST',
+                    url: "/api/GroupApi/EditGroup?id=" + id,
+                    //data: $('#form1').serialize(),
+                    dataType: 'json',
+                    async: false, //同步
+                    success: function (data) {
+                        if (data.Code == "1") {
+                            Updata_ZTree(id);
+
+                        } else {
+                            window.parent.$.messager.alert("错误", data.Message, "error");;
+
+                        }
+                    },
+                    error: function () {
+                        window.parent.$.messager.alert("错误", "操作失败", "error");
+
+                    }
+                });
+            }
+        });
+    }
+//删除用户节点刷新
+    function Del_ZTree(deleteID) {
+        if (deleteID != null) {
+
+            var treeObj = $.fn.zTree.getZTreeObj("treeGroup");
+            var node = treeObj.getNodeByParam("ID", parseInt(deleteID), null);
+            treeObj.removeNode(node);
+            searchUserGrid();
+        }
+    }
+
+
+    //删除该用户组节点
+        function delGroup(id) {
+            window.parent.$.messager.confirm("提示", "确认处理选中数据？", function (r) {
+                if (r) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "/api/GroupApi/DelGroupUser?id=" + id,
+                        //data: $('#form1').serialize(),
+                        dataType: 'json',
+                        async: false, //同步
+                        success: function (data) {
+                            if (data.Code == "1") {
+                                window.parent.$.messager.alert("成功", data.Message, "info");
+                                Del_ZTree(id);
+
+                            } else {
+                                window.parent.$.messager.alert("错误", data.Message, "error");
+
+                            }
+                        },
+                        error: function () {
+                            window.parent.$.messager.alert("错误", "操作失败", "error");
+
+                        }
+                    });
+                }
+            });
+
+        }
+    function OpenConfig(menuid, Id, Type, flag) {
+
+
+        @*CommonSelect("@Url.Action("ConfigAuthority", "Config")?id=" + id + "&type=role", name + ' 人员配置', "1003px", "503px");*@
+        //window.activeWindow.push(window);//注册保存父窗体集合
+        window.$("#dialogFrame1").prop("src", "@Url.Action("Add", "Person")?menuid=" + menuid + "&Id=" + Id + "&Type=" + Type);
+        window.$("#dialogWin1").dialog({
+            title: name,
+            width: '750px',
+            height: '550px',
+            iconCls: 'icon-save',
+            cache: false,
+            modal: true,
+            closed: false,
+            buttons: [{
+                text: '保存', iconCls: 'icon-save',
+                handler: function (evt) {
+
+
+                    //var win = top.dialog.get('dialogWin1').iframeNode.contentWindow;
+                    var aa = window.$("#dialogFrame1").prop('contentWindow');
+                    var cc = aa.GetSetValuen();
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/GroupApi/EditGroupUser?ID=" + Id + "&ids=" + cc,
+                        async: false,
+                        success: function (msg) {
+                            if (msg.Code == 1) {
+                                Updata_ZTree(Id);
+                                $.messager.alert('操作提示', '保存成功！', 'info');
+                                window.$("#dialogWin1").dialog("close");//关闭弹出框
+                                flag = '1';
+                            }
+                            else {
+                                $.messager.alert('操作提示', '保存失败！', 'info');
+                                window.$("#dialogWin1").dialog("close");//关闭弹出框
+                                flag = '-1';
+                            }
+                        }
+                    });
+
+
+                }
+            }, {
+                text: '关闭', iconCls: 'icon-cancel',
+                handler: function () {
+                    window.$("#dialogWin1").dialog("close");//关闭弹出框
+                }
+            }],
+            onResize: function () {
+                window.$(this).dialog('center');//弹出框居中
+            },
+            onClose: function () {
+                window.$("#dialogFrame1").prop("src", "");
+                //window.activeWindow.pop();//关闭窗口，释放已注册的父窗体集合
+            }
+        });
+
+    }
+
+
+        function OpenConfigUsers(menuid, Id, Type, flag) {
+          
+
+          @*CommonSelect("@Url.Action("ConfigAuthority", "Config")?id=" + id + "&type=role", name + ' 人员配置', "1003px", "503px");*@
+            //window.activeWindow.push(window);//注册保存父窗体集合
+          window.$("#dialogFrame1").prop("src", "@Url.Action("AddUsers", "Group")?menuid=" + menuid + "&Id=" + Id + "&Type=" + Type);
+            window.$("#dialogWin1").dialog({
+                title: name,
+                width: '750px',
+                height: '550px',
+                iconCls: 'icon-save',
+                cache: false,
+                modal: true,
+                closed: false,
+                buttons: [{
+                    text: '保存', iconCls: 'icon-save',
+                    handler: function (evt) {
+
+
+                        //var win = top.dialog.get('dialogWin1').iframeNode.contentWindow;
+                      
+                        var aa = window.$("#dialogFrame1").prop('contentWindow');
+                        var cc = aa.GetSetValuen();
+                        var code = aa.$("input[name='Group']").val();
+                      
+                    
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/GroupApi/EditGroupUsers?ID=" + Id + "&ids=" + cc + "&code=" + code,
+                            async: false,
+                            success: function (msg) {
+                              
+                                if (msg.Code == 1) {
+
+                                    var arr=msg.Message.split(',');
+                                    for (var i = 0;i<arr.length;i++)
+                                    {
+                                        Add_ZTree(arr[i]);
+                                    }
+
+                                    $.messager.alert('操作提示', '保存成功！', 'info');
+                                    window.$("#dialogWin1").dialog("close");//关闭弹出框
+                                   // flag = '1';
+                                }
+                                else {
+                                    $.messager.alert('操作提示', '保存失败！', 'info');
+                                    window.$("#dialogWin1").dialog("close");//关闭弹出框
+                                    //flag = '-1';
+                                }
+                            }
+                        });
+
+
+                    }
+                }, {
+                    text: '关闭', iconCls: 'icon-cancel',
+                    handler: function () {
+                        window.$("#dialogWin1").dialog("close");//关闭弹出框
+                    }
+                }],
+                onResize: function () {
+                    window.$(this).dialog('center');//弹出框居中
+                },
+                onClose: function () {
+                    window.$("#dialogFrame1").prop("src", "");
+                    //window.activeWindow.pop();//关闭窗口，释放已注册的父窗体集合
+                }
+            });
+
+        }
+
+
+        function Add_ZTree(AddID) {
+            if (AddID != null) {
+                //得到父节点。 在父节点上添加所有数据
+                $.ajax({
+                    type: 'POST',
+                    url: "/api/GroupApi/GroupTree?id=" + AddID,
+
+                    dataType: 'json',
+                    async: false, //异步
+                    success: function (data) {
+                       
+                       
+                        var treeObj = $.fn.zTree.getZTreeObj("treeGroup");
+                        var FatherNode = treeObj.getNodeByParam("ID", parseInt(data[0].ParentID), null);
+                        treeObj.addNodes(FatherNode, { ID: data[0].ID, xianshiName: data[0].xianshiName, ORG_User_ID: data[0].ORG_User_ID, ParentID: data[0].ParentID });
+
+                    }
+                  
+                });
+                searchUserGrid();
+            }
+        }
+
+
+    function searchUserGrid() {
+        //$("#DataGrid").datagrid("options").pageNumber = 1;
+        //参数名为reload时，刷新的是当前页；为load时，刷新的是第一页
+        $("#DepUserGrid").datagrid("load", {
+            search: $.trim($("#txtName").val())
+        });
+    }
+
+
+
+</script>
+</head>
+<body class="easyui-layout">
+
+    <div data-options="region:'west',collapsible:false,split:true" title="部门" style="width: 400px;height:30px">
+        <ul id="treeGroup" class="ztree"></ul>
+    </div>
+
+
+
+    <div data-options="region:'center',split:true" title="人员" style="width: 300px;">
+        <table>
+            <tr>
+                <td>姓名：</td>
+                <td><input type="text" id="txtName" class="easyui-textbox" style="height:26px" /></td>
+
+                <td>
+                    <a href="javascript:searchUserGrid()" class="easyui-linkbutton" iconcls="icon-search" style=" margin-left :10px; margin-right:10px ">查询</a>
+                </td>
+            </tr>
+        </table>
+        <table id="DepUserGrid" class="easyui-datagrid" title="" style="width:98%; ">
+            <thead>
+                <tr>
+                    <th data-options="field:'ID',checkbox:true"></th>
+                    <th data-options="field:'LoginName',align:'center',width:'20%'">登录名</th>
+                    <th data-options="field:'GroupName',align:'center',width:'20%'">用户组</th>
+                    <th data-options="field:'RName',align:'center',width:'20%'">姓名</th>
+                    <th data-options="field:'P_RName',align:'center',width:'20%'">上级</th>
+                    
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="dialogWin1" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+        <iframe id="dialogFrame1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+    </div>
+
+</body>
+</html>

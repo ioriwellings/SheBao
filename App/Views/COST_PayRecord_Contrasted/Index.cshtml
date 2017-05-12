@@ -1,0 +1,194 @@
+﻿@*<title>对比数据更新</title>*@
+
+@model Langben.DAL.COST_PayRecordStatus
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+
+<div id="divQuery" data-options="region:'north',border:false" style="height:80px">
+    <div class="input_search">
+        <div class="input_search-label">
+            缴纳地：
+        </div>
+        <div class="input_search-field">
+            <select id="City" onchange="getCostType()"></select>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label" style="width:auto">
+            险种：
+        </div>
+        <div class="input_search-field">
+            <select id="CostType"></select>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            年月：
+        </div>
+        <div class="input_search-field">
+            <input id="YearMonth" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" />
+        </div>
+    </div>
+
+    <div class='input_search' style="padding-top:10px;">
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+
+<br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(".yearMonth").simpleCanleder();
+
+    function getCity() {
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/COST_PayRecord_ContrastedApi/GetCity",
+            async: true,
+            success: function (data) {
+                $("#City").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+
+                    $("#City").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+    function getCostType() {
+        $("#CostType").html("");
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/COST_PayRecord_ContrastedApi/GetCostType?cityId=" + $("#City").val(),
+            async: true,
+            success: function (data) {
+                $("#CostType").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+
+                    $("#CostType").append("<option value='" + item["Code"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+
+    $(function () {
+        getCity();
+        getCostType();
+        $('#flexigridData').datagrid({
+            title: '社保收支费用对比更新', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            fit:true,
+            //nowrap: false,
+            //striped: true,
+            //collapsible: true,
+            url: 'api/COST_PayRecord_ContrastedApi/PostData', //获取数据的url
+            //sortName: 'ID',
+            //sortOrder: 'desc',
+            //idField: 'ID',
+
+            columns: [[
+                { field: 'CostTypeName', title: '险种', width: 97, align: 'center' }
+                , { field: 'CityName', title: '缴纳地', width: 98, align: 'center' }
+                , { field: 'CompanyCost', title: '单位金额', width: 97, align: 'right' }
+                , { field: 'PersonCost', title: '个人金额', width: 97, align: 'right' }
+                , { field: 'Sum', title: '合计金额', width: 100, align: 'right' }
+                , { field: 'Count', title: '人数', width: 97, align: 'center' }
+                , { field: 'ID', title: '操作', width: 140, align: 'center', formatter: Operat }
+            ]]
+            //pagination: true
+            //rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+    // 添加“操作”列的链接文字（作废、导出、查看备注）
+    function Operat(val, row) {
+        var html = "";
+        
+        if ("@ViewBag.AddButton" == "True") {
+            if (row.Status == 0) {
+                html += "<a href='#' onclick=\"ContrastedInsurance(" + row.YearMonth + "," + row.CostType + "," + row.CityId + ")\">加入对比</a>&nbsp;&nbsp;&nbsp;";
+            }
+            else {
+                html += "<font color='gray'>加入对比&nbsp;&nbsp;&nbsp;";
+                //html += "<a href='#' disabled='disabled'>加入对比</a>&nbsp;&nbsp;&nbsp;";
+            }
+        }
+
+        return html;
+    }
+
+    // 加入对比
+    function ContrastedInsurance(yearMonth, costType, cityId) {
+        $.messager.confirm('操作提示', "确认要对该项进行收支对比吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "api/COST_PayRecord_ContrastedApi/ContrastedPayRecord?yearMonth=" + yearMonth + "&costType=" + costType + "&cityId=" + cityId,
+                    type: "POST",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //重新加载数据
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        if ($("#YearMonth").val() == "") {
+            $.messager.alert('操作提示', "请选择查询年月", 'info');
+            return false;
+        }
+        else if ($("#City").val() == "0") {
+            $.messager.alert('操作提示', "请选择缴纳地", 'info');
+            return false;
+        }
+        else if ($("#CostType").val() == "0") {
+            $.messager.alert('操作提示', "请选择险种", 'info');
+            return false;
+        }
+        else {
+            //将查询条件按照分隔符拼接成字符串
+            var search = "";
+            search = "yearMonth&" + $("#YearMonth").val().replace('-', '') + "^costType&" + $("#CostType").val() + "^cityId&" + $("#City").val();
+
+            //执行查询
+            $('#flexigridData').datagrid('load', { search: search });
+        }
+    };
+
+</script>
+
+
+
+
+
+

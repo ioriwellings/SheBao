@@ -1,0 +1,224 @@
+﻿@using Langben.DAL;
+@model Langben.DAL.EmployeeAdd
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+    Langben.DAL.Employee Enployee = ViewBag.Employee;
+
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+    政策维护
+}
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        Citylist();
+    });
+    function CitylistChange() {
+        var CityId = $("#Citylist").val();
+        var CityName = $("#Citylist").find("option:selected").text();
+        ///政策联动
+        var table = " <table width=\"611\" border=\"1\" cellpadding=\"1\" cellspacing=\"1\">";
+        table += "<tr><td width=\"142\">城市：</td><td width=\"225\"><label id=\"CityName\"></label></td></tr>";
+        table += " <tr><td rowspan=\"2\">社保联动关系：</td></tr>";
+        $.ajax({
+            type: "POST",
+            url: "/api/PoliceInsuranceApi/POSTPoliceCascadeRelationship?Cityid=" + CityId,
+            async: false,
+            data: {},
+            success: function (msg) {
+                if (msg.Code == 1) {
+                    table += "<tr><td>" + msg.Message + "</td></tr>";
+                }
+            }
+        });
+        table += "</table>";
+        ///险种
+        table += " <table width=\"0\" border=\"1\">";
+        table += "<tr>";
+        table += "<th>所属险种</th><th>政策手续</th><th>社保资料</th>";
+        table += "</tr>";
+        myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + CityId, function (data) {
+            if (data != null) {
+
+                $.each(data, function (i, item1) {
+                    table += "<tr>";
+                    table += "<td>" + item1["Name"] + "</td>";
+                    table += "<td>";
+                    myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item1["ID"], function (data) {
+                        $("#" + item1["Name"] + "_PoliceOperationlist").append("<option value=>请选择</option>");
+                        $.each(data, function (i, item2) {
+                            table += item2["Name"] + ",";
+                        });
+                    });
+                    table += "</td>";
+                    //table += "<td>";
+                    //myAjax("/api/EmployeeAddApi/getPoliceAccountNatureList", 'ID=' + CityId, function (data) {
+                    //    if (data != null) {
+                    //        $.each(data, function (i, item2) {
+                    //            table += item2["Name"] + ",";
+                    //        });
+                    //    }
+                    //});
+                    //table += "</td>";
+                    table += "<td>";
+                    myAjax("/api/PoliceInsuranceApi/getAttachmentList", 'KindId=' + item1["ID"], function (data) {
+                        if (data != null) {
+                            $.each(data, function (i, item2) {
+                                table += item2["Name"] + ",";
+                            });
+                        }
+                    });
+                    table += "</td>";
+                    table += "</tr>";
+                });
+            }
+        });
+        table += "</table>";
+        ///政策
+        table += " <table width=\"0\" border=\"1\">";
+        table += "<tr>";
+        table += "<th>社保种类</th><th>政策手续</th><th>户口性质</th><th>社保政策名称</th><th>开始时间</th><th>结束时间</th><th>允许补缴月数</th><th>报增社保月</th><th>报减社保月</th><th>企业比例</th><th>企业最低基数</th><th>企业最高基数</th><th>企业基数取值</th><th>企业金额取值</th><th>员工比例</th><th>员工最低基数</th><th>员工最高基数</th><th>员工基数取值</th><th>员工金额取值</th><th>状态</th><th>备注</th><th>创建时间</th><th>创建人</th><th>修改时间</th><th>修改人</th>";
+        table += "</tr>";
+        myAjax("/api/PoliceInsuranceApi/getPoliceInsuranceList", 'City=' + CityId, function (data) {
+            if (data != null) {
+
+                var kind = "";
+
+                $.each(data, function (i, item) {
+
+                    table += "<tr>";
+                    //种类
+                    table += "<td>";
+                    myAjax("/api/PoliceInsuranceApi/getInsuranceKindList", 'Id=' + item["Id"], function (data) {
+                        if (data != null) {
+                            $.each(data, function (i, item2) {
+                                table += item2["Name"];
+                            });
+                        }
+                    });
+                    table += "</td>";
+                    //政策手续
+                    table += "<td>";
+                    myAjax("/api/PoliceInsuranceApi/getInsuranceKindList", 'Id=' + item["Id"], function (data) {
+                        if (data != null) {
+                            $.each(data, function (i, item2) {
+                                myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item2["ID"], function (data) {
+                                    $.each(data, function (i, item3) {
+                                        table += item3["Name"] + ",";
+                                    });
+                                });
+                            });
+                        }
+                    });
+                    table += "</td>";
+                    //户口性质
+                    table += "<td>";
+                    myAjax("/api/PoliceInsuranceApi/getPoliceAccountNatureList", 'ID=' + item["Id"], function (data) {
+                        if (data != null) {
+                            $.each(data, function (i, item2) {
+                                table += item2["Name"] + ",";
+                            });
+                        }
+                    });
+                    table += "</td>";
+                    //table += "<td>";
+                    //myAjax("/api/EmployeeAddApi/getPoliceAccountNatureList", 'ID=' + CityId, function (data) {
+                    //    if (data != null) {
+                    //        $.each(data, function (i, item2) {
+                    //            table += item2["Name"] + ",";
+                    //        });
+                    //    }
+                    //});
+                    //table += "</td>";
+                    table += "<td>" + item["Name"] + "</td>";
+                    table += "<td>" + item["StartTime"] + "</td>";
+                    table += "<td>" + item["EndTime"] + "</td>";
+                    table += "<td>" + item["MaxPayMonth"] + "</td>";
+                    table += "<td>" + item["InsuranceAdd"] + "</td>";
+                    table += "<td>" + item["InsuranceReduce"] + "</td>";
+                    table += "<td>" + item["CompanyPercent"] + "%</td>";
+                    table += "<td>" + item["CompanyLowestNumber"] + "</td>";
+                    table += "<td>" + item["CompanyHighestNumber"] + "</td>";
+                    table += "<td>";
+                    myAjax("/api/PoliceInsuranceApi/getPoliceInsurance_Four_FiveBase", 'Id=' + item["Id"] + "&type=1", function (data) {
+                        if (data != null) {
+                            $.each(data, function (i, item2) {
+                                table += item2["Name"];
+                            });
+                        }
+                    });
+                    table += "</td>";
+                    table += "<td>";
+                    myAjax("/api/PoliceInsuranceApi/getPoliceInsurance_Four_FiveBear", 'Id=' + item["Id"] + "&type=1", function (data) {
+                        if (data != null) {
+                            $.each(data, function (i, item2) {
+                                table += item2["Name"];
+                            });
+                        }
+                    });
+                    table += "</td>";
+                    table += "<td>" + item["EmployeePercent"] + "%</td>";
+                    table += "<td>" + item["EmployeeLowestNumber"] + "</td>";
+                    table += "<td>" + item["EmployeeHighestNumber"] + "</td>";
+                    table += "<td>";
+                    myAjax("/api/PoliceInsuranceApi/getPoliceInsurance_Four_FiveBase", 'Id=' + item["Id"] + "&type=2", function (data) {
+                        if (data != null) {
+                            $.each(data, function (i, item2) {
+                                table += item2["Name"];
+                            });
+                        }
+                    });
+                    table += "<td>";
+                    myAjax("/api/PoliceInsuranceApi/getPoliceInsurance_Four_FiveBear", 'Id=' + item["Id"] + "&type=2", function (data) {
+                        if (data != null) {
+                            $.each(data, function (i, item2) {
+                                table += item2["Name"];
+                            });
+                        }
+                    });
+                    table += "</td>";
+
+                    table += "<td>" + item["State"] + "</td>";
+                    table += "<td></td>";
+                    table += "<td>" + item["CreateTime"] + "</td>";
+                    table += "<td>" + item["CreatePerson"] + "</td>";
+                    table += "<td>" + item["UpdateTime"] + "</td>";
+                    table += "<td>" + item["UpdatePerson"] + "</td>";
+                    // table += "<td>" + item["IsDefault"] + "</td>";
+
+                    table += "</tr>";
+                });
+            }
+        });
+        table += "</table>";
+        $("#guanxi").html(table);
+        $("#CityName").text(CityName);
+    }
+    ///缴纳地初始绑定
+    function Citylist() {
+        myAjax("/api/EmployeeAddApi/getCitylist", '', function (data) {
+            $("#Citylist").append("<option value=>请选择</option>");
+            $.each(data, function (i, item1) {
+                $("#Citylist").append("<option value='" + item1["Cityid"] + "'>" + item1["Name"] + "</option>");
+            });
+        });
+    }
+</script>
+<table>
+    <tr>
+        <td>
+            请选择社保城市:
+            <label>
+                <select id="Citylist" onchange="CitylistChange()"></select>
+            </label>
+        </td>
+    </tr>
+</table>
+<div>
+    <div id='guanxi'>
+    </div>
+</div>

@@ -1,0 +1,447 @@
+﻿@model Langben.DAL.EmployeeInfo
+
+@{
+    Layout = null;
+}
+@using Common
+@using Models
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+<script src="~/Scripts/Myl.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        Citylist();
+        CRM_Companylist();
+        $("#CRM_Companylist").combobox({
+            onSelect: function () {
+                var Companyid = $('#CRM_Companylist').combobox('getValue');
+            },
+            onChange: function () {
+                Check();
+            }
+        });
+        $("#certificate").combobox({
+            onSelect: function () {
+                var PoliceAccountNature = $('#certificate').combobox('getValue');
+            },
+            onChange: function () {
+                Check();
+            }
+        });
+
+        $("#selctsex").combobox({
+            onSelect: function () {
+                var Sex = $('#selctsex').combobox('getValue');
+            },
+            onChange: function () {
+                Check();
+            }
+        });
+        $("#atype").combobox({
+            onSelect: function () {
+                var AccountType = $('#atype').combobox('getValue');
+            },
+            onChange: function () {
+                Check();
+            }
+        });
+
+        $("form").submit(function (form) {
+            CheckCertificateNumber($("#BasicInfo_CertificateNumber").val(), 1);
+            debugger;
+            if (Check()) {
+                if (form.result) {
+                    ajaxForm(this, this.action);
+                }
+            }
+            return false;
+        });
+    });
+    ///公司初始绑定
+    function CRM_Companylist() {
+        myAjax("/api/EmployeeAddApi/getCompanyList", '', function (data) {
+            $("#CRM_Companylist").append("<option value=>请选择</option>");
+            $.each(data, function (i, item1) {
+                $("#CRM_Companylist").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+            });
+
+            $("#CRM_Companylist").combobox({});
+        });
+    }
+
+    ///缴纳地初始绑定
+    function Citylist() {
+        myAjax("/api/EmployeeAddApi/getCitylist", '', function (data) {
+            $("#Citylist").append("<option value=>请选择</option>");
+            $.each(data, function (i, item1) {
+                $("#Citylist").append("<option value='" + item1["Cityid"] + "'>" + item1["Name"] + "</option>");
+            });
+            $("#Citylist").combobox({
+                onSelect: function () {
+                    var Companyid = $('#Citylist').combobox('getValue');
+                    getData();
+                },
+                onChange: function () {
+                    Check();
+                }
+            });
+        });
+    }
+
+    //户口性质
+    function getData() {
+        var Cityid = $('#Citylist').combobox('getValue');
+        myAjax("/api/EmployeeAddApi/getPoliceAccountNatureList", 'ID=' + Cityid, function (data) {
+            if (data != null) {
+                $("#PoliceAccountNaturelist").append("<option value=>请选择</option>");
+                $.each(data, function (i, item1) {
+                    $("#PoliceAccountNaturelist").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                });
+                $("#PoliceAccountNaturelist").combobox({
+                    onSelect: function () {
+                        var PoliceAccountNature = $('#PoliceAccountNaturelist').combobox('getValue');
+                    },
+                    onChange: function () {
+                        Check();
+                    }
+            });
+            }
+
+        });
+    }
+
+    // 验证身份证号唯一
+    var check = null;
+    function CheckCertificateNumber(obj, type) {
+        $("#spCertificateNumber").html(' ');
+        var certificateType = $("[name='CertificateType']").val();
+        if (certificateType == '居民身份证') { certificateType = 1; }
+        else { certificateType = 0; }
+        var certificateNumber = "";
+        if (type == 0) {
+            certificateNumber = obj.value;
+        }
+        else if (type == 1) {
+            certificateNumber = obj;
+        }
+        if (certificateNumber != "") {
+            $.ajax({
+                type: 'Post',
+                url: '/api/CRM_EmployeeApi/CheckCertificateNumber?CertificateNumber=' + certificateNumber + '&types=' + certificateType,
+                dataType: 'json',
+                async: false, //同步
+                success: function (data) {
+                    check = data.Code;
+                    if (check == 1) {
+                        var myvalue = '该用户已存在';
+                        $("#spCertificateNumber").html(myvalue);
+                        $("#spCertificateNumber").show();
+                        $("#BasicInfo_CertificateNumber").attr("class", "input-validation-error");
+                        return false;
+                    }
+                    else if (check == 2) {
+                        var myvalue = '证件号不正确请重新输入';
+                        $("#spCertificateNumber").html(myvalue);
+                        $("#spCertificateNumber").show();
+                        $("#BasicInfo_CertificateNumber").attr("class", "input-validation-error");
+                        return false;
+                    }
+                    else {
+                        var myvalue = ' ';
+                        $("#spCertificateNumber").html(myvalue);
+                        $("#spCertificateNumber").hide();
+                        $("#BasicInfo_CertificateNumber").attr("class", "valid");
+                    }
+                },
+                error: function () {
+                    $.messager.alert('提示', "系统异常，请稍后再试！", 'info');
+                    return false;
+                }
+            });
+        }
+    }
+
+    //验证所属公司，证件类型，性别，户口类型，社保缴纳地，户口性质
+    function Check() {
+        var i = 0;
+        var companyId = $("[name='CompanyId']").val();//所属公司
+        if (companyId == '') {
+            $("#spCompany").show();
+            $("#CRM_Companylist").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spCompany").hide();
+            $("#CRM_Companylist").attr("class", "valid");
+        }
+        var certificateType = $("[name='CertificateType']").val();//证件类型
+        if (certificateType == '') {
+            $("#spCertificateType").show();
+            $("#certificate").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spCertificateType").hide();
+            $("#certificate").attr("class", "valid");
+        }
+        var sex = $("[name='Sex']").val();//性别
+        if (sex == '') {
+            $("#spSex").show();
+            $("#selctsex").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spSex").hide();
+            $("#selctsex").attr("class", "valid");
+        }
+        var accountType = $("[name='AccountType']").val();//户口类型
+        if (accountType == '') {
+            $("#spAccountType").show();
+            $("#atype").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spAccountType").hide();
+            $("#atype").attr("class", "valid");
+        }
+
+        var citys = $("[name='Citys']").val();//缴纳地
+        if (citys == '') {
+            $("#spCitys").show();
+            $("#Citylist").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spCitys").hide();
+            $("#Citylist").attr("class", "valid");
+        }
+        var policeAccountNatureId = $("[name='PoliceAccountNatureId']").val();
+        if (policeAccountNatureId == '') {
+            $("#spPoliceAccountNatureId").show();
+            $("#PoliceAccountNaturelist").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spPoliceAccountNatureId").hide();
+            $("#PoliceAccountNaturelist").attr("class", "valid");
+        }
+        if (i > 0) { return false; } else {
+            return true;
+        }
+    }
+
+    //提交
+    function ajaxForm(form, url) {
+        $("#btnSubmit").attr({ "disabled": "disabled" });
+        
+        $.ajax({
+            url: url,
+            type: "Post",
+            data: $(form).serialize(),
+            dataType: "json",
+            success: function (data) {
+                $("#btnSubmit").removeAttr("disabled");
+                if (data.Code == 0) {//失败
+                    $.messager.alert('操作提示', data.Message, 'info');
+                    return false;
+                }
+                else {
+                    if ($.messager) {
+                        $.messager.defaults.ok = '确定';
+
+                        $.messager.alert('', data.Message, 'info', function (r) {
+                            $("#BasicInfo_Name").val('');
+                            $("#Station").val('');
+                            $("#BasicInfo_CertificateNumber").val('');
+                            $("#empContacts_Telephone").val('');
+                            $("#empContacts_MobilePhone").val('');
+                            $("#empContacts_Address").val('');
+                            $("#empContacts_Email").val('');
+                            $("#empBank_AccountName").val('');
+                            $("#empBank_Bank").val('');
+                            $("#empBank_BranchBank").val('');
+                            $("#empBank_Account").val('');
+                        });
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+@section CurentPlace {
+    创建
+}
+@using (Html.BeginForm("", "../api/CRM_EmployeeApi/Create"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="创建" />
+        </legend>
+        <div class="bigdiv">
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BasicInfo.Name)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BasicInfo.Name)
+                @Html.ValidationMessageFor(model => model.BasicInfo.Name)
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                所属公司：
+            </div>
+            <div class="editor-field">
+                <select id="CRM_Companylist" name="CompanyId" class="easyui-combobox" style="width:200px"></select>
+                <span id="spCompany" style="display:none;color:red" class="">请选择所属公司</span>
+            </div>
+
+            <div class="editor-label">
+                所属岗位：
+            </div>
+            <div class="editor-field">
+                <input type="text" id="Station" name="Station" />
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BasicInfo.CertificateType):
+            </div>
+            <div class="editor-field">
+                <select name="CertificateType" id="certificate" class="easyui-combobox">
+                    <option value="">请选择</option>
+                    <option value="居民身份证">居民身份证</option>
+                    <option value="护照">护照</option>
+                </select>
+                <span id="spCertificateType" style="display:none;color:red" class="">请选择证件类型</span>
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.BasicInfo.CertificateNumber)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BasicInfo.CertificateNumber, new { @onblur = "CheckCertificateNumber(this,0)" })
+                @Html.ValidationMessageFor(model => model.BasicInfo.CertificateNumber)
+                <span id="spCertificateNumber" style="display:none;color:red" class=""></span>
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BasicInfo.Sex)：
+            </div>
+            <div class="editor-field">
+                <select name="Sex" id="selctsex" class="easyui-combobox">
+                    <option value="">请选择</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+                <span id="spSex" style="display:none;color:red" class="">该选择性别</span>
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.BasicInfo.Birthday):
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BasicInfo.Birthday, new { style = "width: 150px;", @class = "easyui-datebox", @Editable = "false", @id = "Birthday" })
+                @Html.ValidationMessageFor(model => model.BasicInfo.Birthday)
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BasicInfo.AccountType)
+            </div>
+            <div class="editor-field">
+                <select name="AccountType" id="atype" class="easyui-combobox">
+                    <option value="">请选择</option>
+                    <option value="农业">农业</option>
+                    <option value="城镇">城镇</option>
+                </select>
+                <span id="spAccountType" style="display:none;color:red" class="">该选择户口类型</span>
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                社保缴纳地
+            </div>
+            <div class="editor-field">
+                <select id="Citylist" name="Citys" class="easyui-combobox" style="width:100px"></select>
+                <span id="spCitys" style="display:none;color:red" class="">该选择社保缴纳地</span>
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>户口性质
+            </div>
+            <div class="editor-field">
+                <select id="PoliceAccountNaturelist" name="PoliceAccountNatureId" class="easyui-combobox" style="width:100px"></select>
+                <span id="spPoliceAccountNatureId" style="display:none;color:red" class="">该选择户口性质</span>
+            </div>
+            @*<div class="editor-label">
+                联系方式</div>*@
+            <div class="editor-label">
+                @Html.LabelFor(model => model.empContacts.Telephone):
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.empContacts.Telephone)
+                @Html.ValidationMessageFor(model => model.empContacts.Telephone)
+
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.empContacts.MobilePhone):
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.empContacts.MobilePhone)
+                @Html.ValidationMessageFor(model => model.empContacts.MobilePhone)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.empContacts.Address):
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.empContacts.Address)
+                @Html.ValidationMessageFor(model => model.empContacts.Address)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.empContacts.Email):
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.empContacts.Email)
+                @Html.ValidationMessageFor(model => model.empContacts.Email)
+            </div>
+            @*银行信息*@
+            <div class="editor-label">
+                开户名称:
+            </div>
+            <div class="editor-field">
+                <input id="empBank_AccountName" type="text" name="empBank.AccountName" >
+            </div>
+
+            <div class="editor-label">
+                开户银行:
+            </div>
+            <div class="editor-field">
+                <input id="empBank_Bank" type="text" name="empBank.Bank" >
+            </div>
+
+            <div class="editor-label">
+                支行名称:
+            </div>
+            <div class="editor-field">
+                <input id="empBank_BranchBank" type="text" name="empBank.BranchBank" >
+            </div>
+
+            <div class="editor-label">
+                帐号:
+            </div>
+            <div class="editor-field">
+                <input id="empBank_Account" type="text" name="empBank.Account">
+            </div>
+        </div>
+    </fieldset>
+}
+

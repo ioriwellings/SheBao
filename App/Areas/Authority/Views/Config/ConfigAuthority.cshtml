@@ -1,0 +1,489 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>权限配置</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+    @Scripts.Render("~/bundles/ztree")
+    @*<link href="/res/ztree/ztreestyle/ztreestyle.css" rel="stylesheet" />
+        <script src="/res/ztree/js/jquery.ztree.core-3.5.js"></script>
+        <script src="/res/ztree/js/jquery.ztree.excheck-3.5.js"></script>
+        <script src="/res/ztree/js/jquery.ztree.exedit-3.5.js"></script>*@
+</head>
+<body class="easyui-layout">
+    <input type="hidden" id="MenuId" />
+    <div id="tab" class="easyui-tabs" data-options="fit:true">
+        <div title="菜单权限" style="padding:5px">
+            <table style="width: 100%; height: 100%" id="treegrid"></table>
+            <input type="hidden" id="hideMenu" />
+        </div>
+        <div title="部门权限" style="padding:5px">
+            <div class="easyui-layout" data-options="fit:true">
+                <div data-options="region:'west'" title="" style="width:200px;padding:10px">
+                    <ul id="treeMenu" class="ztree"></ul>
+                </div>
+                <div data-options="region:'center'" title="">
+                    <div class="easyui-layout" data-options="fit:true" style="border:0px;">
+                        <div data-options="region:'north'"
+                             style="height: 95px; padding:5px; border: 0px; border-bottom: 1px solid #d4d4d4">
+                            <div id="divSet" style="display:none">
+                                <br />
+                                <input type="radio" id="DataScope_0" name="DataScope" value="0" onclick="changeDataScope()" />无限制&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="radio" id="DataScope_1" name="DataScope" value="1" onclick="changeDataScope()" />本机构及下属机构
+                                <br />
+                                <input type="radio" id="DataScope_2" name="DataScope" value="2" onclick="changeDataScope()" />本机构&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="radio" id="DataScope_3" name="DataScope" value="3" onclick="changeDataScope()" />本部门及下属部门
+                                <br />
+                                <input type="radio" id="DataScope_4" name="DataScope" value="4" onclick="changeDataScope()" />本部门&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="radio" id="DataScope_5" name="DataScope" value="5" onclick="changeDataScope()" />本人
+                            </div>
+                            <span id="lblSet" style="display:none">该模块没有部门范围权限配置功能</span>
+                        </div>
+                        <div data-options="region:'center'" style="padding: 5px; border: 0px; ">
+                            <ul id="treeDep" class="ztree"></ul>
+                            <span id="lblmsg" style="display:none">该模块没有部门业务权限配置功能</span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    //菜单部门权限
+    var obj = new Object();
+    //菜单数据权限
+    var objDataScope = new Object();
+    //是否修改菜单操作权限
+    var isEditOpt = false;
+    //是否修改部门业务权限
+    var isEditDpt = false;
+    //是否修改部门范围权限
+    var isEditData = false;
+    //是否拥有部门业务权限配置功能
+    var DepartmentAuthority = '';
+
+    // 菜单树
+    var settingMenu = {
+        view: {
+            selectedMulti: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        async: {
+            enable: true,
+            url: "@Url.Action("GetMenuTree", "Config")?ID=@ViewBag.ID&type=@ViewBag.Type",
+        },
+        callback: {
+            onClick: OnClick
+        }
+    };
+
+    // 部门树
+    var settingDpt = {
+        view: {
+            selectedMulti: false
+        },
+        check: {
+            enable: true,
+            chkStyle: "checkbox",
+            chkboxType: { "Y": "s", "N": "s" },
+            autoCheckTrigger: false
+        },
+        data: {
+            key: {
+                name: "DepartmentName"
+            },
+            simpleData: {
+                enable: true,
+                idKey: "ID",
+                pIdKey: "ParentID",
+                rootPId: 0
+            }
+        },
+        async: {
+            enable: true,
+            url: "@Url.Action("GetDepTree", "Config")?ID=@ViewBag.ID&type=@ViewBag.Type",
+            otherParam: { "showAll": "1" }
+        },
+        callback: {
+            onCheck: onCheck
+        }
+    };
+
+    $(function () {
+        //初始化Tab1菜单树
+        $('#treegrid').treegrid({
+            //iconCls: 'icon-site',
+            method: 'Get',
+            url: "@Url.Action("GetMenuTree", "Config")?ID=@ViewBag.ID&type=@ViewBag.Type",
+            idField: 'id',
+            treeField: 'name',
+            rownumbers: true,
+            async: false, //同步
+            columns: [[
+                { field: 'name', title: '菜单', halign: 'center', formatter: formatMenu, width: 170 },
+                { field: 'MenuOptIds', title: '操作', halign: 'center', formatter: formatOpt }
+            ]],
+            onClickRow: function (rowIndex, rowData) {
+                $(this).treegrid('unselect', rowIndex.id);
+            },
+            onLoadSuccess: function (row, data) {
+                init();
+            }
+        });
+
+        //根据tab1选择菜单得到tab2的菜单树
+        $("#tab").tabs({
+            onSelect: function (title, content) {
+                if (content == "1") {
+                    var selectedMenu = "";//选中的菜单操作
+                    $('input:checkbox.sys_menu:checked').each(function (i) {
+                        selectedMenu += this.value + ":";
+                        var name = this.name;
+                    })
+
+                    if (selectedMenu.length > 0) {
+                        selectedMenu = selectedMenu.substring(0, selectedMenu.length - 1);
+                    }
+
+                    //加载菜单树，参数为Tab1中选中的菜单ID集合
+                    settingMenu.async.otherParam = { nodeID: selectedMenu };
+                    $.fn.zTree.init($("#treeMenu"), settingMenu);
+
+                    $('#divSet').hide();
+                    $('#lblSet').hide();
+                    $('#treeDep').hide();
+                    $('#lblmsg').hide();
+                }
+            }
+        })
+    });
+
+    //tab1相关方法 start
+    //格式话菜单
+    function formatMenu(value, row) {
+        if (value) {
+            var s = "";
+            s = " <input type='checkbox' class='sys_menu' id='Menu_" + row.id + "' name='Menu_" + row.id + "' value='" + row.id + "' " + (row.IsChecked ? 'checked' : '') + " onclick='clickMenu(\"" + row.id + "\")' />" + value;
+            return s;
+        } else {
+            return '';
+        }
+    }
+
+    //格式化菜单操作
+    function formatOpt(value, row) {
+        var s = "";
+        if (value) {
+            var ids = value.split(',');
+            for (var i = 0; i < ids.length; i++) {
+                s += " <input type='checkbox' class='sys_opt' name='Menu_" + row.id + "' value='" + row.MenuOptions[i].ID + "' " + (row.MenuOptions[i].IsChecked ? 'checked' : '') + " onclick='clickOpt(\"" + row.id + "\")'/>" + row.MenuOptions[i].MenuOpName;
+            }
+            return s;
+        } else {
+            return '';
+        }
+    }
+
+    //菜单点击事件
+    function clickMenu(v) {
+        var s = '#Menu_' + v;
+
+        //子节点跟随父节点选中或取消选中
+        var nodes = $("#treegrid").treegrid("getChildren", v);
+        for (i = 0; i < nodes.length; i++) {
+            $(('#Menu_' + nodes[i].id))[0].checked = $(s)[0].checked;
+
+            if (!$(s)[0].checked) {
+                $("input:checkbox[name=Menu_" + nodes[i].id + "]").removeAttr("checked");
+            }
+            else {
+                $("input:checkbox[name=Menu_" + nodes[i].id + "]").prop("checked", "checked");
+            }
+        }
+
+        //上级节点操作
+        if ($(s)[0].checked) {//父节点跟随子节点选中
+            var parent = $("#treegrid").treegrid("getParent", v);
+
+            while (parent) {
+                $(('#Menu_' + parent.id))[0].checked = true;
+                parent = $("#treegrid").treegrid("getParent", parent.id);
+                if (parent) {
+                    $(('#Menu_' + parent.id))[0].checked = true;
+                }
+            }
+
+        } else {//子节点取消选中时，判断其同胞节点是否都未选中，若都未选中，则取消选中父节点。
+            var parent = $("#treegrid").treegrid("getParent", v);
+            if (parent) {
+                //判断父节点是否应该取消选中
+                var flag = false;
+                var snodes = $("#treegrid").treegrid("getChildren", parent.id);
+                for (j = 0; j < snodes.length; j++) {
+                    if ($(('#Menu_' + snodes[j].id))[0].checked) {
+                        flag = true;
+                        break;
+                    }
+                }
+                //取消父节点选中
+                if (!flag) {
+                    $(('#Menu_' + parent.id))[0].checked = false;
+                    $("input:checkbox[name=Menu_" + parent.id + "]").removeAttr("checked");
+                }
+
+                //递归判断更上级节点是否应取消选中，递归判断到某级不需要取消选中的节点为止
+                while (!flag && parent) {
+                    parent = $("#treegrid").treegrid("getParent", parent.id);
+                    if (parent) {
+                        flag = false;
+                        snodes = $("#treegrid").treegrid("getChildren", parent.id);
+
+                        for (j = 0; j < snodes.length; j++) {
+                            if ($(('#Menu_' + snodes[j].id))[0].checked) {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (!flag) {
+                            $(('#Menu_' + parent.id))[0].checked = false;
+                            $("input:checkbox[name=Menu_" + parent.id + "]").removeAttr("checked");
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($("input:checkbox[name=Menu_" + v + "].sys_menu").is(":checked") == false) {
+            $("input:checkbox[name=Menu_" + v + "]").removeAttr("checked");
+        } else {
+            $("input:checkbox[name=Menu_" + v + "]").prop("checked", "checked");
+        }
+        //菜单操作权限有修改
+        isEditOpt = true;
+    }
+
+    //操作点击事件
+    function clickOpt(v) {
+        if ($("input:checkbox[name=Menu_" + v + "].sys_opt").is(":checked") == true) {
+            $("input:checkbox[name=Menu_" + v + "].sys_menu").prop("checked", "checked");
+
+            var parent = $("#treegrid").treegrid("getParent", v);
+
+            while (parent) {
+                $(('#Menu_' + parent.id))[0].checked = true;
+                parent = $("#treegrid").treegrid("getParent", parent.id);
+                if (parent) {
+                    $(('#Menu_' + parent.id))[0].checked = true;
+                }
+            }
+        }
+        //菜单操作权限有修改
+        isEditOpt = true;
+    }
+
+    function init() {
+        //去掉结点前面的文件及文件夹小图标
+        $(".tree-icon,.tree-file").removeClass("tree-icon tree-file");
+        $(".tree-icon,.tree-folder").removeClass("tree-icon tree-folder tree-folder-open tree-folder-closed");
+    }
+    //tab1相关方法 end
+
+    //tab2相关方法
+    //tab2目录树点击事件
+    function OnClick(event, treeId, treeNode) {
+        //保存当前选择目录ID
+        $('#MenuId').val(treeNode.id);
+        //是否以页面数据为准(0:以数据库数据为准；1:以页面数据为准)
+        var isWindow = '0';
+        var menuDpt = '';
+        var menuDataScope = '';
+
+        DepartmentAuthority = treeNode.DepartmentAuthority;
+
+        var tmpDataScope = 0;
+        if (treeNode.DepartmentScopeAuthority == 'Y') {
+            $('#divSet').show();
+            $('#lblSet').hide();
+            $('input[name=DataScope]:checked').removeAttr('checked');
+            if (objDataScope[treeNode.id] != null) {
+                menuDataScope = objDataScope[treeNode.id];//页面选择的数据范围
+                $('input[name=DataScope]').get(menuDataScope).checked = true;
+            }
+            else {
+                if (treeNode.DataScope != null) {
+                    $('input[name=DataScope]').get(treeNode.DataScope).checked = true;
+                }
+                //else if (treeNode.DepartmentScopeAuthority == 'Y') {
+                //    $('input[name=DataScope]').get(0).checked = true;
+                //}
+            }
+        }
+        else {
+            $('#divSet').hide();
+            $('#lblSet').show();
+        }
+
+        //有业务权限的菜单 打开部门树，无业务权限的菜单 提示
+        if (treeNode.DepartmentAuthority == 'Y') {
+
+            if (obj[treeNode.id] != null) {
+                isWindow = '1';
+                menuDpt = obj[treeNode.id];//页面选择的部门集合
+            }
+
+            $('#lblmsg').hide();
+            settingDpt.async.otherParam = { menuId: treeNode.id, isWindow: isWindow, menuDpt: menuDpt };
+            //初始化部门树
+            $.fn.zTree.init($("#treeDep"), settingDpt);
+
+            if ($('input[name=DataScope]:checked').val() == '0' || treeNode.DepartmentScopeAuthority == 'N') {
+                $('#treeDep').show();
+            }
+            else {
+                $('#treeDep').hide();
+            }
+        }
+        else {
+            $('#treeDep').hide();
+            $('#lblmsg').show();
+        }
+    }
+
+    //数据范围选择事件
+    function changeDataScope() {
+        //菜单部门权限有修改
+        isEditData = true;
+        //获取选中的项
+        //保存选中项 菜单:数据范围
+        objDataScope[$('#MenuId').val()] = $('input[name=DataScope]:checked').val();
+
+        if ($('input[name=DataScope]:checked').val() == '0' && DepartmentAuthority == 'Y') {
+            $('#treeDep').show();
+        }
+        else {
+            $('#treeDep').hide();
+        }
+    }
+
+    //部门树选择事件
+    function onCheck(event, treeId, treeNode) {
+        //菜单部门权限有修改
+        isEditDpt = true;
+        //获取所有选中的项
+        var treeObj = $.fn.zTree.getZTreeObj("treeDep");
+        var nodes = treeObj.getCheckedNodes(true);
+        //保存选中项 菜单:部门
+        obj[$('#MenuId').val()] = '';
+        for (var i = 0; i < nodes.length; i++) {
+            obj[$('#MenuId').val()] += nodes[i].ID + ',';
+        }
+        obj[$('#MenuId').val()] = obj[$('#MenuId').val()].substring(0, obj[$('#MenuId').val()].length - 1);
+    }
+    //tab2相关方法 end
+
+    //数据提交
+    function saveForm() {
+        var selectedMenu = "";//选中的菜单
+        var selectedOpt = "";//选中的操作
+        var selectedMenuDpt = "";//选中的菜单:部门组合
+        var selectedMenuScope = "";//选中的菜单:范围组合
+
+        var selectedMenuOpt = "";//选中的菜单操作
+
+        $('input:checkbox.sys_menu:checked').each(function (i) {
+            selectedMenuOpt += this.value + ":";
+            var name = this.name;
+
+            $('input:checkbox.sys_opt:checked').each(function (i) {
+                if (name == this.name) {
+                    selectedOpt += this.value + ",";
+                }
+            });
+            if (selectedOpt.length > 0) {
+                selectedOpt = selectedOpt.substring(0, selectedOpt.length - 1);
+            }
+
+            selectedMenuOpt += selectedOpt + ";";
+            selectedOpt = "";
+
+            selectedMenu += this.value + ",";
+        });
+        if (selectedMenuOpt.length > 0) {
+            selectedMenuOpt = selectedMenuOpt.substring(0, selectedMenuOpt.length - 1);
+        }
+        if (selectedMenu.length > 0) {
+            selectedMenu = selectedMenu.substring(0, selectedMenu.length - 1);
+        }
+
+        //选中的菜单:部门组合
+        $.each(obj, function (key, val) {
+            selectedMenuDpt += key + ":" + val + ";";
+        });
+        selectedMenuDpt = selectedMenuDpt.substring(0, selectedMenuDpt.length - 1);
+
+
+        //选中的菜单:范围组合
+        $.each(objDataScope, function (key, val) {
+            selectedMenuScope += key + ":" + val + ";";
+        });
+        selectedMenuScope = selectedMenuScope.substring(0, selectedMenuScope.length - 1);
+
+
+        var b = false;//返回结果给父窗体，ajax提交一定要同步提交
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Config", "Config")',
+            data: {
+                "id": "@ViewBag.ID",
+                "type": "@ViewBag.Type",
+                "isEditOpt": isEditOpt,
+                "isEditDpt": isEditDpt,
+                "isEditData": isEditData,
+                "selectedMenuOpt": selectedMenuOpt,
+                "selectedMenuDpt": selectedMenuDpt,
+                "selectedMenuScope": selectedMenuScope
+            },
+            dataType: 'json',
+            async: false, //同步
+            success: function (data) {
+                if (data.Code == "ok") {
+                    //var win = window.parent.activeWindow[window.parent.activeWindow.length - 1];
+                    ////刷新父窗体列表,"reload"刷新当前页，"load"从第一页开始刷新
+                    //win.$("#DataGrid").datagrid("reload");
+                    b = true;
+                } else {
+                    window.parent.$.messager.alert("错误", data.Message, "error");
+                    b = false;
+                }
+            },
+            error: function () {
+                window.parent.$.messager.alert("错误", "操作失败", "error");
+                b = false;
+            }
+        });
+        return b;
+
+    }
+</script>
+<style type="text/css">
+    .tabs-icon {
+        background: none;
+        width: 18px;
+        line-height: 18px;
+        display: inline-block;
+    }
+</style>

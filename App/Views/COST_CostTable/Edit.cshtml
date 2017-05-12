@@ -1,0 +1,112 @@
+﻿@model Langben.DAL.COST_CostTable
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+ @section CurentPlace {
+    修改  
+}
+
+@using (Html.BeginForm("", "api/COST_CostTableApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('COST_CostTable')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.ID )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CostTableType) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CostTableType, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CostTableType) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.ChargeCost)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.ChargeCost)
+                @Html.ValidationMessageFor(model => model.ChargeCost)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.ServiceCost)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.ServiceCost)
+                @Html.ValidationMessageFor(model => model.ServiceCost)
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Status) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Status, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.Status) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CRM_Company_ID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CRM_Company_ID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CRM_Company_ID) 
+            </div>@Html.HiddenFor(model => model.CreateTime )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CreateUserID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CreateUserID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CreateUserName)
+                @Html.ValidationMessageFor(model => model.CreateUserName)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.BranchID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BranchID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.BranchID) 
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            
+
+            // 获取待编辑内容并显示
+            var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/COST_CostTableApi/" + id,
+                type: "POST",
+                // async: false,
+                success: function (res) {
+                    $("#ID").val(res.ID);$("#CostTableType").val(res.CostTableType);$("#ChargeCost").val(res.ChargeCost);$("#ServiceCost").val(res.ServiceCost);$("#Remark").val(res.Remark);$("#Status").val(res.Status);$("#CRM_Company_ID").val(res.CRM_Company_ID);$("#CreateTime").val(res.CreateTime);$("#CreateUserID").val(res.CreateUserID);$("#CreateUserName").val(res.CreateUserName);$("#BranchID").val(res.BranchID);
+                }
+            })
+        });
+        
+
+    </script>
+
+
+

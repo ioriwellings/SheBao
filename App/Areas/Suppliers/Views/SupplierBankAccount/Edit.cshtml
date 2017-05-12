@@ -1,0 +1,58 @@
+﻿@model Langben.DAL.SupplierBankAccount
+
+@{
+    Layout = "~/Views/Shared/CRMEdit.cshtml";
+}
+@using Common
+@using Models
+@section CurentPlace {
+    修改
+}
+
+@using (Html.BeginForm("", "../api/SupplierBankAccountApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.SupplierId)
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Bank)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Bank)
+                @Html.ValidationMessageFor(model => model.Bank)
+            </div>
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Account)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Account)
+                @Html.ValidationMessageFor(model => model.Account)
+            </div>
+
+        </div>
+    </fieldset>
+}
+
+<script type="text/javascript">
+    $(function () {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.BankID';
+        $.ajax({
+            url: "/api/SupplierBankAccountApi/Get/" + id,
+            //type: "Get",
+            // async: false,
+            success: function (res) {
+                var jsonarray = eval("(" + res + ")");
+                $("#ID").val(jsonarray.ID);
+                $("#SupplierId").val(jsonarray.SupplierId);
+                $("#Bank").val(jsonarray.Bank);
+                $("#Account").val(jsonarray.Account);
+            }
+        })
+    });
+</script>

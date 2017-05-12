@@ -1,0 +1,328 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>人员选择</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+    <link href="/Scripts/ztree/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+    <script src="/Scripts/ztree/js/jquery.ztree.core-3.5.js"></script>
+    <script src="/Scripts/ztree/js/jquery.ztree.excheck-3.5.js"></script>
+    <script src="/Scripts/ztree/js/jquery.ztree.exedit-3.5.js"></script>
+    <script type="text/javascript">
+        var setting = {
+            view: {
+                fontCss: setFontCss,
+                selectedMulti: false
+            },
+            check: {
+                enable: false,
+                autoCheckTrigger: false
+            }, data: {
+                key: {
+                    name: "DepartmentName"
+                },
+                simpleData: {
+                    enable: true,
+                    idKey: "ID",
+                    pIdKey: "ParentID",
+                    rootPId: 0
+                }
+            },
+            async: {
+                enable: true,
+                url: "/Person/GetCompany",
+                otherParam: { "showAll": "1" }
+                //otherParam: { "state":$("#txtValue").val()}
+            },
+            callback: {
+                beforeAsync: zTreeBeforeAsync,
+                onClick: zTreeCompanyOnclick
+            }
+        };
+        var zTreeDep;
+        function zTreeBeforeAsync() {
+            zTreeDep = $.fn.zTree.getZTreeObj("treeDemo");
+            var state;
+            if ($("#ckbAll").is(':checked') == true) {
+                state = 0;//显示停用部门
+            }
+            else {
+                state = 1;//不显示停用部门
+            }
+            zTreeDep.setting.async.otherParam.showAll = state;
+        }
+
+        ///公司单击节点
+        function zTreeCompanyOnclick(event, treeId, treeNode) {
+            if (treeNode.ID != "0") {
+                $("#hidCompanyID").val(treeNode.ID);
+                $("#hidCompanyName").val(treeNode.DepartmentName);
+
+                //获取角色
+                $.ajax({
+                    type: "post",
+                    async: false,
+                    url: "/Person/GroupGetUser",
+                    data: "departID=" + treeNode.ID + "&r=" + Math.random(),
+                    beforeSend: function (XMLHttpRequest) {
+                    },
+                    success: function (msg) {
+                        if (msg != null) {// 用户
+                            $("#div_Text").html(msg);
+                        }
+                        else {
+                        }
+                    }
+                });
+                zTreeDep = $.fn.zTree.getZTreeObj("treeDemo");
+                //$("#tabselectUser tr:not(:first)").each(function (i) {
+                //    ////如果下面选中的列表中有用户，则遍历将右侧的用户选中
+                //    var strUserIDs = $(this).children('td').eq(1).attr("userid");
+                //    var strUsers = strUserIDs.split(",");
+                //    for (var i = 0; i < strUsers.length; i++) {
+                //        $("#div_Text input[type='checkbox']").each(function () {
+                //            if (parseInt($(this).prop("value")) == parseInt(strUsers[i])) {
+                //                $(this).prop("checked", true);
+                //            }
+                //        });
+                //    }
+                //});
+            }
+        }
+
+        function zTreeBeforeAsync(treeId, treeNode) {
+            return true;
+        };
+        ////异步加载完成之后
+        //function zTreeOnAsyncSuccess(event, treeId, treeNode, msg) {
+        //    var nodes = zTreeDep.getNodes();
+        //    //遍历已经选中的公司部门列表，如果有相等的部门则置为选中
+        //    for (var i = 0; i < nodes.length; i++) {
+        //        EachChildNodes(nodes[i], nodes);
+        //    }
+        //    // $(this).children('td').eq(1).attr("id")
+
+        //};
+
+        ////递归遍历部门树形目录，如果有已经选择过的则选中树形目录
+        //function EachChildNodes(node, treeObj) {
+        //    $("#tabselectUser tr:not(:first)").each(function () {
+        //        //首先选中当前节点的选择
+        //        if ($(this).children('td').eq(1).attr("id") == node.id) {
+        //            node.checked = true;
+        //            zTreeDep.updateNode(node);
+        //        }
+
+        //    });
+        //    //判断是否有子节点
+        //    if (node.children == null)
+        //        return;
+        //    for (var i = 0; i < node.children.length; i++) {
+        //        $("#tabselectUser tr:not(:first)").each(function () {
+        //            //首先选中当前节点的选择
+        //            if ($(this).children('td').eq(1).attr("id") == node.children[i].id) {
+        //                node.checked = true;
+        //                zTreeDep.updateNode(node);
+        //            }
+
+        //        });
+        //        EachChildNodes(node.children[i], treeObj);
+        //    }
+        //}
+
+        var newCount = 1;
+
+        // 添加节点样式
+        function setFontCss(treeId, treeNode) {
+            //alert(treeNode.XYBZ);
+        }
+        var valid = null;
+        var zTreeDep;
+        $(document).ready(function () {
+
+            //加载树
+            var zTreeDep = $.fn.zTree.init($("#treeDemo"), setting);
+
+
+            //$("#btnSave").click(function () {
+            //    $("#form1").submit();
+            //});
+        });
+
+        //选中用户
+        function selectChk(obj) {
+            //首先如果部门树有选中，则进行角色遍历获取最新的选中角色
+            if (zTreeDep.getSelectedNodes(true).length > 0) {
+                var strUserNames = "";
+                var strUserIDs = "";
+                var arrChk = $("#div_Text input[name='chk']:checked");
+                $(arrChk).each(function () {
+                    strUserNames += $(this).attr("text") + ",";
+                    strUserIDs += $(this).attr("userid") + ",";
+                });
+                //$("#hidUserNames").val(strUserNames);
+                var result = false;
+                var row;
+                if ($(obj).prop("checked") == true) {//如果当前角色为选中状态遍历判断列表中是否存在当前选中的角色，如果存在则进行
+                    $("#tabselectUser tr").each(function (i) {
+                        if ($(this).attr("departid") == $(obj).attr("departid")) {
+                            result = true;
+                            row = i;
+                        }
+                    });
+                    if (!result) {//如果不存在则新增一行
+                        var tr = "<tr departid=" + $(obj).attr("departid") + " class=\"datagrid-header-row\"><td>" + $("#hidCompanyName").val() + "</td><td userid='" + obj.value + "'>" + $(obj).attr("text") + "</td></tr>";
+                        var rows = $("#tabselectUser").find("tr").length;
+                        var curRow = $("#tabselectUser tbody tr:eq(" + rows + ")");
+                        $("#tabselectUser").append(tr);
+                    }
+                    else {//存在则在角色和名称进行追加
+                        $("#tabselectUser tbody tr:eq(" + row + ") td:eq(1)").text(strUserNames);
+                        $("#tabselectUser tbody tr:eq(" + row + ") td:eq(1)").attr("userid", strUserIDs);
+                    }
+                }
+                else {//复选框去掉选中状态后，重新绑定列表
+                    $("#tabselectUser  tr").each(function (i) {
+                        if ($(this).attr("departid") == $(obj).attr("departid")) {
+                            result = true;
+                            row = i;
+                        }
+                    });
+                    $("#tabselectUser tbody tr:eq(" + row + ") td:eq(1)").text(strUserNames);
+                    $("#tabselectUser tbody tr:eq(" + row + ") td:eq(1)").attr("userid", strUserIDs);
+                }
+            }
+            else { //遍历最右侧角色复选框全部职位未选中
+                alertError("提示", "请选择部门!", true, false);
+                $("#div_Text input[type='checkbox']").attr("checked", false);
+            }
+            $.parser.parse($("#tabselectUser"));
+        }
+
+        var strCompanyIDs = "";
+        var strDepIDs = "";
+        var strUserIDs = ""
+        ///点击确定获取已经设置好的属性
+        function GetSetValue() {
+            var array = [];
+            $.each($("#tabselectUser tr:not(:first)"), function () {
+                var userids = $(this).children('td').eq(1).attr("userid");
+                var userid = userids.split(',');
+                var userNames = $(this).children('td').eq(1).text();
+                var userName = userNames.split(',');
+                for (var i = 0; i < userid.length; i++) {
+                    if (userid[i] != "")
+                        array.push({
+                            'DepartID': $(this).attr("departid"),
+                            'UserID': userid[i],
+                            'UserName': userName[i]
+                        });
+                }
+
+            });
+
+            var returnValue = { 'ReturnData': array }
+            // document.write(JSON.stringify(returnValue))
+            return JSON.stringify(returnValue);
+
+
+
+            //strCompanyIDs = ""; strDepIDs = ""; strDepIDs = "";
+            //$("#tabselectUser tr:not(:first)").each(function () {
+            //    strCompanyIDs += $(this).prop("id") + ",";
+            //    strDepIDs += $(this).children('td').eq(1).attr("id") + ",";
+            //    if ($(this).children('td').eq(2).attr("id") != undefined)
+            //        strUserIDs += $(this).children('td').eq(2).attr("id") + "," + ";";
+            //});
+            //if ($.trim(strCompanyIDs).length <= 1) {
+            //    alertError("提示", "请选择部门才能够进行保存!", true, false); return
+            //}
+            //else {
+
+            //    $("#hidSubmitRoleID").val(strUserIDs);
+            //    $("#hidSubmitDepID").val(strDepIDs);
+            //    $("#hidSubmitCompanyID").val(strCompanyIDs);
+
+            //    //保存
+            //}
+        }
+
+        function GetSetValuen() {
+            var ryid = "";
+            var array = [];
+            $.each($("#tabselectUser tr:not(:first)"), function () {
+                var userids = $(this).children('td').eq(1).attr("userid");
+                var userid = userids.split(',');
+                var userNames = $(this).children('td').eq(1).text();
+                var userName = userNames.split(',');
+                for (var i = 0; i < userid.length; i++) {
+                    if (userid[i] != "") {
+                        ryid += userid[i] + ",";
+                    }
+                }
+
+            });
+
+
+            return ryid;
+        }
+    </script>
+</head>
+<body class="easyui-layout">
+    @*<input type="button" name="btn" value="btn" onclick="GetSetValue() " />*@
+    <form id="add" class="registerform">
+        <div class="easyui-layout" style="width:700px;height:450px;">
+
+            <input type="hidden" id="hidUserIds" name="UserIds" />
+            <input type="hidden" name="RoleID" value="@ViewBag.ID" />
+            <div data-options="region:'north',collapsible:false,split:true">
+                <div class="input_search-label">
+                    <label>用户组：</label>
+                </div>
+                <div class="input_search-field">
+                    @Html.DropDownList("Group", (SelectList)ViewData["ddlGroup"], "--请选择--", new { style = "width:204px;height:26px", @class = "easyui-combobox" })
+                </div>
+            </div>
+            <div data-options="region:'west',title:'公司',split:true,collapsible:false " style="width: 200px;height:150px">
+                <ul id="treeDemo" class="ztree"></ul>
+            </div>
+            @*<div data-options="region:'center',title:'部门',split:true,collapsible:false " style="width: 200px;height:150px">
+                    <ul id="ztreedep" class="ztree"></ul>
+                </div>*@
+            <div data-options="region:'east',split:true" title="人员" style="width:500px;">
+                <div id="div_Text">
+                </div>
+                <div>
+                    @*<input type="hidden" id="hidUserNames" value="" />
+                        <input type="hidden" id="hidRoleIDS" value="" />
+                        <input type="hidden" id="hidCompanyID" value="" />
+                        <input type="hidden" id="hidDepID" value="" />*@
+                    <input type="hidden" id="hidCompanyName" value="" />
+
+                    @*<input type="hidden" id="hidSubmitRoleID" value="" />
+                        <input type="hidden" id="hidSubmitDepID" value="" />
+                        <input type="hidden" id="hidUID" value="@Request["UID"]          />
+                        <input type="hidden" id="hidSubmitCompanyID" value="" />*@
+                    @*<input type="button" id="btnSave" value="保存" onclick="GetSetValue()" />
+                        <input type="button" id="btnReturn" onclick="Return()" value="返回" />*@
+
+                </div>
+            </div>
+            <div data-options="title:'选中用户',region:'south'," style="width:700px; height:150px">
+
+                <table id="tabselectUser" class="datagrid-htable" border="0" cellspacing="0" cellpadding="0" style="height: 25px;">
+
+                    <tr class="datagrid-header-row"><td style='display:none;'>ID</td><td style="width:100px">部门名称</td><td>人员</td></tr>@ViewBag.HTML
+                </table>
+            </div>
+        </div>
+    </form>
+</body>
+</html>

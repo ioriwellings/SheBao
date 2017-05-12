@@ -1,0 +1,63 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+
+
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>失败</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+
+
+</head>
+
+
+<body>
+    <div>
+        失败原因： <textarea id="htyy"></textarea>
+        <input type="button" value="保存" onclick="FeedBackIndex()" />
+    </div>
+</body>
+</html>
+<script>
+    function FeedBackIndex() {
+
+        var msg = $("#htyy").val();
+
+        if (msg.length == 0) {
+            alert('请输入失败信息！');
+            return false;
+        }
+
+        if (msg.length > 4000) {
+            alert('最多允许输入4000字！');
+            return false;
+        }
+
+        var ids = '@ViewBag.ids';
+        msg = escape(msg);
+       $.ajax({
+        type: 'POST',
+        url: '../api/EmployeeAddApi/FeedBackAction?ids='+ids+"&message="+msg,
+       // data: { "ids": ids, "message": msg },  //最正确的Ajax传参
+        dataType: 'json',
+        async: true, //异步
+        success: function (data) {
+            alert(data);
+            $("#htyy").val("");
+            window.location("/EmployeeAdd/FeedbackList");
+        },
+        error: function () {
+            alert(data);
+        }
+     });
+    }
+</script>
+

@@ -1,0 +1,309 @@
+﻿@model Langben.DAL.EmployeeApprove
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:80px">
+
+
+    <div class='input_search'>
+        <div class='input_search-label'>
+            <input type="checkbox" id="ckAll" onclick="CheckAll(this)" />
+            @Html.LabelFor(model => model.InsuranceKinds):
+        </div>
+        <div class='input_search-field' style="width:750px">
+            @Html.CheckBoxList("InsuranceKinds", Models.SysFieldModels.GetSelectList(typeof(Common.EmployeeAdd_InsuranceKindId)), new { style = "width:20px" })
+        </div>
+    </div>
+    <br style="clear: both;" />
+
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CompanyName):
+        </div>
+        <div class="input_search-field">
+            @Html.TextBox("CompanyName", "", new { @class = "easyui-textbox", @style = "height:26px" })
+        </div>
+    </div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.Name):
+        </div>
+        <div class='input_search-field'>
+            @Html.TextBox("Name", "", new { @class = "easyui-textbox", @style = "height:26px" })
+        </div>
+    </div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.YearMonth):
+        </div>
+        <div class='input_search-field'>
+            <input type="text" class="Wdate" name="YearMonth" onclick="WdatePicker({dateFmt:'yyyyMM',realDateFmt:'yyyyMM'})" />
+        </div>
+    </div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.CollectState):
+        </div>
+        <div class='input_search-field'>
+            @Html.DropDownList("CollectState", Models.SysFieldModels.GetEnumList(typeof(Common.CollectState)), new { onchange = "CollectStateChange(this.value)", @class = "easyui-combobox" })
+        </div>
+    </div>
+
+
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CertificateNumber):
+        </div>
+        <div class="input_search-field">
+            <p class="cerNo">
+                @Html.TextArea("CertificateNumber", new { @class = "CertificateNumber" })
+            </p>
+
+        </div>
+    </div>
+
+
+
+    <div class="input_search input_search_btn">
+
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+
+</div>
+<br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        var search = "";
+        $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+            if (this.name)
+                search = search + this.name + "&" + this.value + "^";
+            //else
+            //    search = search + this.name + "&" + this.value + "^";
+        });
+
+        $('#flexigridData').datagrid({
+            title: '社保专员报减信息', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            fit:true,
+            collapsible: false,
+            queryParams: { search: search },
+            url: '../api/EmployeeStopPaymentApi/PostSupplierList', //获取数据的url
+            toolbar: [
+                {
+                    id: "view",
+                    text: '详细',
+                    iconCls: 'icon-search',
+                    handler: function () {
+                        return getView("员工客服已确认");
+                    }
+                },
+                {
+                    id: "view2",
+                    text: '详细',
+                    iconCls: 'icon-search',
+                    handler: function () {
+                        return getView("社保专员已提取");
+                    }
+                },
+                 {
+                     id: "excel",
+                     text: '提取信息',
+                     iconCls: 'icon-excel',
+                     handler: function () {
+                         return doExcel();
+                     }
+                 }, {
+                     id: "excel2",
+                     text: '导出Excel',
+                     iconCls: 'icon-excel',
+                     handler: function () {
+                         return doExcel();
+                     }
+                 }
+                 , {
+                     id: "back",
+                     text: '退回信息',
+                     iconCls: 'icon-remove',
+                     handler: function () {
+                         return doBack();
+                     }
+                 }],
+            columns: [[
+                { field: 'CompanyName', title: '@Html.DisplayNameFor(model => model.CompanyName)', align: 'center', width: 300 }
+                , { field: 'Name', title: '@Html.DisplayNameFor(model => model.Name)', align: 'center', width: 80 }
+                , { field: 'CertificateNumber', title: '@Html.DisplayNameFor(model => model.CertificateNumber)', align: 'center', width: 160 }
+                , { field: 'City', title: '@Html.DisplayNameFor(model => model.City)', align: 'center', width: 80 }
+                , { field: 'PoliceAccountNature', title: '@Html.DisplayNameFor(model => model.PoliceAccountNature)', align: 'center', width: 100 }
+                , { field: 'InsuranceKinds', title: '@Html.DisplayNameFor(model => model.InsuranceKinds)', align: 'center', width: 220 }
+                , { field: 'YearMonth', title: '@Html.DisplayNameFor(model => model.YearMonth)', align: 'center', width: 80 }
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+        $('#excel2').attr("style", "display:none");
+        $('#view2').attr("style", "display:none");
+    });
+    function getView(e) {
+
+        
+        var arr = $('#flexigridData').datagrid('getSelections');
+        if (arr.length == 1) {
+            window.location.href = "/EmployeeStopPaymentForCustomer/Update?id=" + arr[0].CompanyEmployeeRelationId + "&state=" + e + "&backUrl=EmployeeStopPayment/SupplierList";
+
+        } else {
+            $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+        }
+        return false;
+    }
+    function CollectStateChange(e) {
+
+        if (e == "已提取") {
+            debugger;
+            var a = $("#excel");
+
+            $('#back').attr("style", "display:none");
+            $('#excel').attr("style", "display:none");
+            $('#excel2').removeAttr("style");
+
+            $('#view').attr("style", "display:none");
+            $('#view2').removeAttr("style");
+        } else {
+            $('#back').removeAttr("style");
+            $('#excel').removeAttr("style");
+            $('#excel2').attr("style", "display:none");
+
+            $('#view').attr("style", "display:none");
+            $('#view2').removeAttr("style");
+        }
+        flexiQuery();
+    }
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+
+        //将查询条件按照分隔符拼接成字符串
+        var search = "";
+        $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+            if (this.name)
+                search = search + this.name + "&" + this.value + "^";
+        });
+        //执行查询
+        $('#flexigridData').datagrid('load', { search: search });
+    };
+
+    //“选择”按钮，在其他（与此页面有关联）的页面中，此页面以弹出框的形式出现，选择页面中的数据
+    function flexiSelect() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Id);
+        }
+        arr.push("^");
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Wage);
+        }
+        //主键列和显示列之间用 ^ 分割   每一项用 , 分割
+        if (arr.length > 0) {//一条数据和多于一条
+            returnParent(arr.join("&")); //每一项用 & 分割
+        }
+    }
+
+    //导出信息
+    function doExcel() {
+
+        var search = "";
+        $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+
+            search = search + this.id + "&" + this.value + "^";
+        });
+
+        var p = $('#flexigridData').datagrid('options').columns[0];
+        var field = [];//所有的列名
+        var title = [];//所有的标题名称
+        $(p).each(function () {
+            field.push(this.field);
+            title.push(this.title);
+        });
+        $.ajax({
+            url: "../api/EmployeeStopPaymentApi/SupplierExport",
+            type: "POST",
+            data: { "search": search },  //最正确的Ajax传参
+            success: function (res) {
+
+
+                if (res.Code == 1) {
+                    window.open("../" + res.URL);
+                    alert(res.Message);
+                    $('#flexigridData').datagrid('reload');
+                }
+                else {
+                    alert(res.Message);
+                }
+
+            },
+            error: function () {
+
+                alert('导出失败！');
+
+
+            }
+
+        })
+
+    };
+    //退回信息的按钮
+    function doBack() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].AddIds);
+        }
+        debugger;
+        var cityid = rows[0].CityID;
+        $.messager.confirm('操作提示', "确认退回这 " + arr.length + " 项吗？", function (r) {
+            if (r) {
+                window.location.href = "../EmployeeStopPayment/EmployeeFallback?ids=" + arr.join("") + "&cityid=" + cityid;
+            }
+        });
+    };
+    //险种全选
+    function CheckAll(obj) {
+        if ($(obj).prop('checked')) {
+            $("input[name='InsuranceKinds']").prop("checked", true);
+        } else {
+            $("input[name='InsuranceKinds']").prop("checked", false);
+        }
+    }
+</script>
+

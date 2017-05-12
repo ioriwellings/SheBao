@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{90AE47ED-B0D9-4B2A-A7AC-1C6D74B51DE6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Langben.BLL</RootNamespace>
+    <AssemblyName>BLL</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\DLL\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AllotBLL.cs" />
+    <Compile Include="COST_PayGongJiJinBCBLL.cs" />
+    <Compile Include="COST_PayGongJiJinBLL.cs" />
+    <Compile Include="COST_PayGongShangBLL.cs" />
+    <Compile Include="COST_PayRecordBLL.cs" />
+    <Compile Include="COST_PayRecordStatusBLL.cs" />
+    <Compile Include="COST_PayShengYuBLL.cs" />
+    <Compile Include="COST_PayShiYeBLL.cs" />
+    <Compile Include="COST_PayTemporaryBLL.cs" />
+    <Compile Include="COST_PayYangLaoBLL.cs" />
+    <Compile Include="COST_PayYiLiaoBLL.cs" />
+    <Compile Include="COST_PayYiLiaoDaEBLL.cs" />
+    <Compile Include="CRM_CompanyContractBLL.cs" />
+    <Compile Include="CRM_CompanyContract_AuditBLL.cs" />
+    <Compile Include="CRM_CompanyFinance_BillBLL.cs" />
+    <Compile Include="CRM_CompanyFinance_Bill_AuditBLL.cs" />
+    <Compile Include="CRM_CompanyFinance_PaymentBLL.cs" />
+    <Compile Include="CRM_CompanyFinance_Payment_AuditBLL.cs" />
+    <Compile Include="CRM_Company_InsuranceBLL.cs" />
+    <Compile Include="CRM_Company_PoliceInsuranceBLL.cs" />
+    <Compile Include="CRM_ZD_HYBLL.cs" />
+    <Compile Include="EmployeeMiddleImportRecordBLL.cs" />
+    <Compile Include="Framework\DataOfDiffrent.cs" />
+    <Compile Include="Framework\ExceptionsHander.cs" />
+    <Compile Include="Framework\SysFieldHander.cs" />
+    <Compile Include="LadderLowestPriceBLL.cs" />
+    <Compile Include="LadderPriceBLL.cs" />
+    <Compile Include="ORG_GroupBLL.cs" />
+    <Compile Include="ORG_GroupUserBLL.cs" />
+    <Compile Include="ORG_MenuBLL.cs" />
+    <Compile Include="ORG_MenuOpBLL.cs" />
+    <Compile Include="ORG_RoleBLL.cs" />
+    <Compile Include="ORG_RoleDepartmenScopetAuthorityBLL.cs" />
+    <Compile Include="ORG_RoleDepartmentAuthorityBLL.cs" />
+    <Compile Include="ORG_RoleMenuOpAuthorityBLL.cs" />
+    <Compile Include="ORG_UserCityBLL.cs" />
+    <Compile Include="ORG_UserDepartmenScopetAuthorityBLL.cs" />
+    <Compile Include="ORG_UserDepartmentAuthorityBLL.cs" />
+    <Compile Include="ORG_UserInsuranceKindBLL.cs" />
+    <Compile Include="ORG_UserMenuOpAuthorityBLL.cs" />
+    <Compile Include="ORG_UserRoleBLL.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EmployeeBLL.cs" />
+    <Compile Include="EmployeeContactBLL.cs" />
+    <Compile Include="EmployeeBankBLL.cs" />
+    <Compile Include="PoliceInsuranceBLL.cs" />
+    <Compile Include="PoliceRejectRelationshipBLL.cs" />
+    <Compile Include="InsuranceKindBLL.cs" />
+    <Compile Include="PoliceCascadeRelationshipBLL.cs" />
+    <Compile Include="PoliceMasterRelationshipBLL.cs" />
+    <Compile Include="PoliceOperationBLL.cs" />
+    <Compile Include="PoliceAccountNatureBLL.cs" />
+    <Compile Include="CityBLL.cs" />
+    <Compile Include="AttachmentBLL.cs" />
+    <Compile Include="CompanyEmployeeRelationBLL.cs" />
+    <Compile Include="EmployeeAddBLL.cs" />
+    <Compile Include="EmployeeStopPaymentBLL.cs" />
+    <Compile Include="SCHR\AllotBLL.cs" />
+    <Compile Include="SCHR\COST_PayRecordBLL.cs" />
+    <Compile Include="SCHR\COST_PayRecordStatusBLL.cs" />
+    <Compile Include="SCHR\COST_CostTableBLL.cs" />
+    <Compile Include="SCHR\COST_CostTableInsuranceBLL.cs" />
+    <Compile Include="SCHR\COST_CostTableOtherBLL.cs" />
+    <Compile Include="SCHR\COST_CostTableServiceBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyToBranchBLL.cs" />
+    <Compile Include="SCHR\CRM_Company_InsuranceBLL.cs" />
+    <Compile Include="SCHR\EmployeeGoonPayment2BLL.cs" />
+    <Compile Include="SCHR\EmployeeGoonPaymentBLL.cs" />
+    <Compile Include="SCHR\EmployeeMiddleImportRecordBLL.cs" />
+    <Compile Include="SCHR\LadderLowestPriceBLL.cs" />
+    <Compile Include="SCHR\LadderPriceBLL.cs" />
+    <Compile Include="SCHR\ORG_DepartmentBLL.cs" />
+    <Compile Include="SCHR\ORG_MenuBLL.cs" />
+    <Compile Include="SCHR\ORG_MenuOpBLL.cs" />
+    <Compile Include="SCHR\ORG_RoleMenuOpAuthorityBLL.cs" />
+    <Compile Include="SCHR\ORG_UserBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyBankAccount_AuditBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyContract_AuditBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyFinance_Bill_AuditBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyFinance_Payment_AuditBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyLadderPriceBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyLadderPrice_AuditBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyLinkManBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyLinkMan_AuditBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyPriceBLL.cs" />
+    <Compile Include="SCHR\CRM_CompanyPrice_AuditBLL.cs" />
+    <Compile Include="SCHR\CRM_Company_AuditBLL.cs" />
+    <Compile Include="SCHR\EmployeeBLL.cs" />
+    <Compile Include="SCHR\EmployeeAddBLL.cs" />
+    <Compile Include="SCHR\EmployeeMiddleBLL.cs" />
+    <Compile Include="SCHR\EmployeeStopPaymentBLL.cs" />
+    <Compile Include="SCHR\InsuranceKindBLL.cs" />
+    <Compile Include="SCHR\PoliceInsuranceBLL.cs" />
+    <Compile Include="SCHR\SupplierBLL.cs" />
+    <Compile Include="SCHR\SupplierLinkManBLL.cs" />
+    <Compile Include="SupplierBillBLL.cs" />
+    <Compile Include="SupplierBLL.cs" />
+    <Compile Include="SupplierBankAccountBLL.cs" />
+    <Compile Include="SupplierLinkManBLL.cs" />
+    <Compile Include="SupplierNatureCityBLL.cs" />
+    <Compile Include="EmployeeGoonPaymentBLL.cs" />
+    <Compile Include="EmployeeGoonPayment2BLL.cs" />
+    <Compile Include="EmployeeInsuranceAttachmentBLL.cs" />
+    <Compile Include="EmployeeAddHistoryBLL.cs" />
+    <Compile Include="EmployeeStopPaymentHistoryBLL.cs" />
+    <Compile Include="EmployeeGoonPaymentHistoryBLL.cs" />
+    <Compile Include="EmployeeGoonPayment3adsaBLL.cs" />
+    <Compile Include="EmployeeMiddleBLL.cs" />
+    <Compile Include="PoliceOperationPoliceInsurancePoliceAccountNature2BLL.cs" />
+    <Compile Include="CRM_CompanyBLL.cs" />
+    <Compile Include="CRM_CompanyLinkManBLL.cs" />
+    <Compile Include="CRM_CompanyToBranchBLL.cs" />
+    <Compile Include="CRM_CompanyBankAccountBLL.cs" />
+    <Compile Include="PRD_ProductBLL.cs" />
+    <Compile Include="COST_CostTableBLL.cs" />
+    <Compile Include="CRM_CompanyPriceBLL.cs" />
+    <Compile Include="CRM_CompanyLadderPriceBLL.cs" />
+    <Compile Include="COST_CostTableOtherBLL.cs" />
+    <Compile Include="COST_CostTableServiceBLL.cs" />
+    <Compile Include="COST_CostTableInsuranceBLL.cs" />
+    <Compile Include="COST_ExpenditureInsuranceBLL.cs" />
+    <Compile Include="CRM_Company_AuditBLL.cs" />
+    <Compile Include="CRM_CompanyLinkMan_AuditBLL.cs" />
+    <Compile Include="CRM_CompanyBankAccount_AuditBLL.cs" />
+    <Compile Include="CRM_CompanyPrice_AuditBLL.cs" />
+    <Compile Include="CRM_CompanyLadderPrice_AuditBLL.cs" />
+    <Compile Include="UserCityCompanyBLL.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{ade2ca10-f91e-4312-ba9d-5d264291e549}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL\DAL.csproj">
+      <Project>{d1ac05a2-96af-4124-ad40-ad0a05c84f5c}</Project>
+      <Name>DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IBLL\IBLL.csproj">
+      <Project>{9b7fca89-a8a4-4fa8-b67b-0bf0fe9c53cd}</Project>
+      <Name>IBLL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

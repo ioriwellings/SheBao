@@ -1,0 +1,57 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+
+
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>回退</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+
+
+</head>
+
+
+<body>
+    <div> 
+          回退原因： <textarea id="htyy"></textarea>
+        <input type="button" value="回退" onclick="Fallback()" />
+        <input type="button" value="返回" onclick="Fanhui()" />
+    </div>
+</body>
+</html>
+<script>
+    function Fallback() {
+
+        var msg = $("#htyy").val();
+        var ids = '@ViewBag.ids';
+       
+        msg = escape(msg);
+       $.ajax({
+           type: 'POST',
+           url: "../api/EmployeeAddApi/Zrkf_FallBack?ids=" + ids + "&message=" + msg,
+           dataType: 'json',
+           async: true, //异步
+           success: function (data) {
+               alert(data);
+               $("#htyy").val("");
+               window.location("/EmployeeAdd/ApproveList");
+           },
+           error: function () {
+               alert(data);
+           }
+       });
+    }
+    function Fanhui() {
+        window.location.href = '/EmployeeAdd/ApproveList';
+    }
+</script>
+

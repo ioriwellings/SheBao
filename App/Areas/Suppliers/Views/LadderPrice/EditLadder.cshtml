@@ -1,0 +1,81 @@
+﻿@model Langben.DAL.LadderPrice
+
+@{
+    Layout = "~/Views/Shared/CRMEdit.cshtml";
+}
+@using Common
+@using Models
+@section CurentPlace {
+    修改
+}
+
+@using (Html.BeginForm("", "../api/LadderPriceApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.LadderLowestPriceId)
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BeginLadder) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BeginLadder, new { onkeyup = "isInt(this)", @class = "text-box single-line" })
+                @Html.ValidationMessageFor(model => model.BeginLadder)
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.EndLadder) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.EndLadder, new { onkeyup = "isInt(this)", @class = "text-box single-line" })
+                @Html.ValidationMessageFor(model => model.EndLadder)
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.SinglePrice)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.SinglePrice)
+                @Html.ValidationMessageFor(model => model.SinglePrice)
+            </div>
+
+        </div>
+    </fieldset>
+}
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.ID';
+        $.ajax({
+            url: "/api/LadderPriceApi/Get/" + id,
+            type: "Get",
+            // async: false,
+            success: function (res) {
+                $("#Id").val(res.Id);
+                $("#LadderLowestPriceId").val(res.LadderLowestPriceId);
+
+                $("#SinglePrice").val(res.SinglePrice);
+                $("#EndLadder").val(res.EndLadder);
+                $("#BeginLadder").val(res.BeginLadder);
+            }
+        })
+    });
+
+
+</script>
+
+
+

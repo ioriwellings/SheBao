@@ -1,0 +1,481 @@
+﻿@model Langben.DAL.CRM_CompanyLinkMan
+@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" >
+
+    <div class='input_search' style="padding-top:10px;">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="GoBack('@Request.QueryString["path"]')">
+            返回
+        </a>
+    </div>
+</div>
+<br style="clear: both;" />
+
+<table width="99%"  class="table table-bordered">
+    <tr><td width="80px">企业编号:</td><td align="left"><label id="CompanyCode"></label></td><td width="80px">企业名称：</td><td><label id="CompanyName"></label></td></tr>
+    <tr>
+        <td>所属行业:</td>
+        <td>
+            @Html.DropDownList("HY", (SelectList)ViewData["HY"], "请选择", new { onchange = "GetSonNode(this)", @style = "font-size:14px;" })<select id="ddlSonHY" onchange="GetSonValue(this)"></select>
+            <input type="hidden" id="Dict_HY_Code" name="Dict_HY_Code" />
+        </td>
+    </tr>
+    <tr><td>组织机构代码:</td><td><label id="OrganizationCode"></label></td><td>注册地址:</td><td><label id="RegisterAddress"></label></td></tr>
+    <tr><td>办公地址:</td><td colspan="3"><label id="OfficeAddress"></label></td></tr>
+</table>
+
+<table id="girdBaseInfo" ></table>
+<table id="linkManTable" ></table>
+<table id="girdBackInfo" ></table>
+<table id="gridPrice"></table>
+<table id="girdStepPrice" ></table>
+<table id="gridFinanceBill" ></table>
+<table id="gridFinancePayment"></table>
+<table id="gridGridContract" ></table>
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        BindBaseInfo();
+        BindLinkMan();
+        BindBackInfo();
+        BindCompanyFinanceBill();
+        BindPrice(); BindContract();
+    });
+    function GetSonValue(obj) {
+        if (obj.value != "") {
+            $("#Dict_HY_Code").val(obj.value);
+        }
+        else {
+            $("#Dict_HY_Code").val('');
+        }
+    }
+    //获得下级节点
+    function GetSonNode(obj) {
+        var parentID = obj.value;
+        var parentName = $("#" + obj.id).find("option:selected").text();
+        if (parentID != "") {
+            $.ajax({
+                type: 'Get',
+                url: '/api/CRM_ZD_HYApi/GetHYNode/' + parentID,
+                dataType: 'json',
+                async: false, //同步
+                success: function (data) {
+                    $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+                    var count = 0;
+                    var jsonArray = eval("(" + data + ")");
+                    $.each(jsonArray, function (i, itemValue) {
+                        count++;
+                        $("#ddlSonHY").append("<option value = '" + itemValue.Code + "'>" + itemValue.HYMC + "</option>");
+                        //$("<option><option>").val(itemValue.ID).html(itemValue.CPLXMC)
+                    })
+                    //if (count == 1) {
+                    //    $("#ddlPost").val(itemID);
+                    //}
+                },
+                error: function () {
+                    $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+                }
+            });
+        }
+        else {
+            $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+        }
+    }
+    function BindBaseInfo() {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Company_ID';
+        $.ajax({
+            url: "/api/CRM_CompanyApi/Get/" + id,
+            type: "Get",
+            // async: false,
+            success: function (data) {
+                var res = eval("(" + data + ")");
+                $("#ID").val(res.ID); $("#CompanyCode").text(res.CompanyCode == null ? "" : res.CompanyCode);
+                $("#CompanyName").text(res.CompanyName);
+                $("#TaxRegistryNumber").text(res.TaxRegistryNumber);
+                $("#OrganizationCode").text(res.OrganizationCode == null ? "" : res.OrganizationCode);
+                $("#RegisterAddress").text(res.RegisterAddress);
+                $("#OfficeAddress").text(res.OfficeAddress);
+                //$("#Status").val(res.Status);
+
+                $("#HY").val(res.ParentCode).change();
+                $("#Dict_HY_Code").val(res.Dict_HY_Code);
+                $("#ddlSonHY").val(res.Dict_HY_Code);
+                $("#HY").attr("disabled", "disabled");
+                $("#ddlSonHY").attr("disabled", "disabled");
+            }
+        })
+    }
+    ///绑定联系人信息
+    function BindLinkMan() {
+
+        $('#linkManTable').datagrid({
+            title: '客户_企业联系人信息', //列表的标题
+            iconCls: 'icon-site',
+            width: '98%',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: '/api/CRM_CompanyLinkManApi/PostData', //获取数据的url
+            queryParams: { search: "CRM_Company_IDDDL_Int&@ViewBag.Company_ID" },
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            columns: [[
+                { field: 'CRM_Company_ID', title: '', hidden: true, width: 111 }
+                , { field: 'LinkManName', title: '姓名', width: 111 }
+                , { field: 'Position', title: '职务', width: 111 }
+                , { field: 'Address', title: '联系人地址', width: 111 }
+                , { field: 'Mobile', title: '手机号', width: 111 }
+                , { field: 'Telephone', title: '固话', width: 111 }
+                , { field: 'Email', title: '邮箱', width: 111 }
+                , { field: 'CreateTime', title: '创建时间', width: 111, formatter: formatDatebox }
+                , { field: 'CreateUserID', title: '创建人id', hidden: true, width: 111 }
+                , { field: 'CreateUserName', title: '创建人名称', width: 111 }
+                , { field: 'Status', title: '状态', formatter: FormatterStatus, width: 111 }
+                , { field: 'Remark', title: '备注', width: 111 }
+            ]],
+            rownumbers: true
+
+        });
+
+        //var parent = window.dialogArguments; //获取父页面
+        //if (parent == "undefined" || parent == null) {
+        //    //    不是在iframe中打开的
+        //} else {
+        //    //隐藏所有的按钮和分隔符
+        //    $(".l-btn.l-btn-plain").hide();
+        //    $(".datagrid-btn-separator").hide();
+        //    //添加选择按钮
+        //    $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        //}
+    }
+    // 状态
+    function FormatterStatus(value, row, index) {
+        var a = "";
+        if (value == 0) {
+            a = '停用';
+        }
+        else if (value == 1) {
+            a = '启用';
+        }
+        else if (value == 2) {
+            a = '修改中';
+        }
+        return a;
+    }
+    ///绑定企业财务开票信息s
+    function BindCompanyFinanceBill() {
+        $('#gridFinanceBill').datagrid({
+            title: '客户_企业财务信息_开票信息', //列表的标题
+            iconCls: 'icon-site',
+            width: '98%',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: '/api/CRM_CompanyFinance_BillApi/PostData', //获取数据的url
+            queryParams: {
+                search: '@ViewBag.Company_ID'
+            },
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            columns: [[
+                { field: 'CRM_Company_ID', title: '企业ID', width: 111, hidden: true }
+                , { field: 'BillName', title: '开票名称', width: 111 }
+                  , { field: 'TaxRegistryNumber', title: '税务登记证号', width: 111 }
+                , {
+                    field: 'CreateTime', title: '创建时间', width: 111
+                , formatter: formatDatebox
+                }
+                , { field: 'CreateUserName', title: '创建人', width: 111 }
+
+            ]],
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            //$('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    }
+
+    ///绑定财务付款信息
+    function BindCompanyFinancePayment() {
+        $('#gridFinancePayment').datagrid({
+            title: '客户_企业财务信息_付款信息', //列表的标题
+            iconCls: 'icon-site',
+            width: '98%',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: '/api/CRM_CompanyFinance_PaymentApi/PostData', //获取数据的url
+            queryParams: {
+                search: '@ViewBag.Company_ID'
+            },
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            columns: [[
+                { field: 'CRM_Company_ID', title: '企业ID', width: 111, hidden: true }
+                , { field: 'PaymentName', title: '付款名称', width: 111 }
+                , {
+                    field: 'CreateTime', title: '创建时间', width: 111
+                , formatter: formatDatebox
+                }
+                , { field: 'CreateUserName', title: '创建人', width: 111 }
+                , {
+                    field: 'Status', title: '状态', width: 111,
+                    formatter: function (value, row, index) {
+                        var a = "";
+                        if (value == 0) {
+                            a = '停用';
+                        }
+                        else if (value == 1) {
+                            a = '启用';
+                        }
+                        else if (value == 2) {
+                            a = '修改中';
+                        }
+                        return a;
+                    }
+                }
+
+            ]],
+            rownumbers: true
+
+        });
+    }
+
+    function BindBackInfo() {
+        $('#girdBackInfo').datagrid({
+            title: '客户_企业银行账户', //列表的标题
+            iconCls: 'icon-site',
+            width: '98%',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: '/api/CRM_CompanyBankAccountApi/PostData', //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            queryParams: { search: "CRM_Company_IDDDL_Int&@ViewBag.Company_ID" },
+
+            columns: [[
+
+
+                { field: 'CRM_Company_ID', title: '公司ID', width: 111, hidden: true }
+                , { field: 'Bank', title: '开户行名称', width: 111 }
+                , { field: 'Account', title: '银行账号', width: 111 }
+                , {
+                    field: 'CreateTime', title: '创建时间', width: 111
+                , formatter: formatDatebox
+                }
+                , { field: 'CreateUserID', title: '创建人名称', width: 111, hidden: true }
+                , { field: 'CreateUserName', title: '创建人名称', width: 111 }
+                , { field: 'Status', title: '状态', formatter: FormatterStatus, width: 111 }
+
+
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    }
+
+    ///绑定报价信息
+    function BindPrice() {
+        $(function () {
+            $('#gridPrice').datagrid({
+                title: '客户_企业报价', //列表的标题
+                iconCls: 'icon-site',
+                width: '98%',
+                height: 'auto',
+                //nowrap: false,
+                striped: true,
+                collapsible: true,
+                url: '/api/CRM_CompanyPriceApi/PostData', //获取数据的url
+                queryParams: {
+                    search: '@ViewBag.Company_ID'
+                },
+                sortName: 'ID',
+                sortOrder: 'desc',
+                idField: 'ID',
+                columns: [[
+                    { field: 'CRM_Company_ID', title: '公司ID', width: 129, hidden: true }
+                    , { field: 'ProductName', title: '产品名称', width: 129 }
+                    , { field: 'PriceType', title: '报价类型', width: 129, hidden: true }
+                    , { field: 'LowestPrice', title: '整户服务费', width: 129 }
+                    , { field: 'AddPrice', title: '补缴服务费', width: 129 }
+                    , {
+                        field: 'Status', title: '状态', width: 129,
+                        formatter: function (value, row, index) {
+                            var a = "";
+                            if (value == 0) {
+                                a = '停用';
+                            }
+                            else if (value == 1) {
+                                a = '启用';
+                            }
+                            else if (value == 2) {
+                                a = '修改中';
+                            }
+                            return a;
+                        }
+                    }
+                ]],
+                rownumbers: true
+
+            });
+            $('#girdStepPrice').datagrid({
+                title: '客户_企业阶梯报价', //列表的标题
+                iconCls: 'icon-site',
+                width: '98%',
+                height: 'auto',
+                //nowrap: false,
+                striped: true,
+                collapsible: true,
+                url: '/api/CRM_CompanyLadderPriceApi/PostData', //获取数据的url
+                queryParams: {
+                    search: '@ViewBag.Company_ID'
+                },
+                sortName: 'BeginLadder',
+                sortOrder: 'Asc',
+                idField: 'ID',
+
+                columns: [[
+                    { field: 'CRM_Company_ID', title: '产品', width: 129, hidden: true }
+                    , { field: 'ProductName', title: '产品名称', width: 129 }
+                    , { field: 'SinglePrice', title: '单人服务费', width: 129 }
+                    , { field: 'BeginLadder', title: '起始阶梯', width: 129 }
+                    , { field: 'EndLadder', title: '终止阶梯', width: 129 }
+                    , {
+                        field: 'Status', title: '状态', width: 129,
+                        formatter: function (value, row, index) {
+                            var a = "";
+                            if (value == 0) {
+                                a = '停用';
+                            }
+                            else if (value == 1) {
+                                a = '启用';
+                            }
+                            else if (value == 2) {
+                                a = '修改中';
+                            }
+                            return a;
+                        }
+                    }
+                    , { field: 'BranchID', title: '@Html.DisplayNameFor(model => model.BranchID)', width: 129, hidden: true }
+
+                ]],
+                rownumbers: true
+
+            });
+
+            var parent = window.dialogArguments; //获取父页面
+            if (parent == "undefined" || parent == null) {
+                //    不是在iframe中打开的
+            } else {
+                //隐藏所有的按钮和分隔符
+                $(".l-btn.l-btn-plain").hide();
+                $(".datagrid-btn-separator").hide();
+                //添加选择按钮
+                //$('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+            }
+        });
+
+    }
+
+    ///绑定合同信息
+    function BindContract() {
+        $('#gridGridContract').datagrid({
+            title: '客户_企业合同信息', //列表的标题
+            iconCls: 'icon-site',
+            width: '98%',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            queryParams: { search: "CRM_Company_IDDDL_Int&@ViewBag.Company_ID" },
+            url: '/api/CRM_CompanyContractAPI/PostData', //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            columns: [[
+
+
+                @*{ field: 'CRM_Company_ID', title: '@Html.DisplayNameFor(model => model.CRM_Company_ID)', width: 159 }*@
+                 { field: 'BillDay', title: '账单日', width: 100 }
+                , { field: 'ReceivedDay', title: '回款日', width: 100 }
+                , { field: 'FeesCycle', title: '结费周期', width: 100 }
+                , { field: 'ChangeDay', title: '变动截止日', width: 100 }
+                , { field: 'DatumDay', title: '资料交付日', width: 100 }
+                , {
+                    field: 'ServceEndDay', title: '服务截止日', formatter: formatDatebox, width: 100
+
+                }
+                , { field: 'SendBillDay', title: '发送账单日', width: 100 }
+                , {
+                    field: 'ServiceBeginDay', title: '服务起始日', formatter: formatDatebox, width: 100
+
+                }
+                , { field: 'Status', title: '状态', formatter: FormatterStatus, width: 100 }
+                , {
+                    field: 'CreateTime', title: '创建时间', width: 100, formatter: formatDatebox
+                }
+                , { field: 'CreateUserName', title: '创建人', width: 80 }
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    }
+
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        if (path == 'ServiceIndex') {//责任客服分配新企业时跳转的页面
+            window.location.href = "/CRM/CRM_Company_ServiceManager/" + path + "/?tmp=" + tmp;
+        }
+        else if (path == 'AlreadyIndex') {//责任客服重新分配企业时跳转的页面
+            window.location.href = "/CRM/CRM_Company_ServiceManager/" + path + "/?tmp=" + tmp;
+        }
+        else{
+            window.location.href = "/CRM/" + path + "/Index/?tmp=" + tmp;
+        }
+    }
+</script>

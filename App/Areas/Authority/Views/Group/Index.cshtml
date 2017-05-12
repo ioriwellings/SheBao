@@ -1,0 +1,341 @@
+﻿@model Langben.DAL.ORG_Role
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#flexigridData").datagrid({
+            title: '列表',
+            iconCls: 'icon-site',
+            url: "/Group/GetData",
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            //url: "/api/CRM_Company_AuditApi/PostData",
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            toolbar: [
+
+                {
+                    text: '新增',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        return add();
+                    }
+                },
+                 {
+                     text: '修改',
+                     iconCls: 'icon-edit',
+                     handler: function () {
+                         return edit();
+                     }
+                 },
+                 {
+                     text: '删除',
+                     iconCls: 'icon-cancel',
+                     handler: function () {
+                         return Delete();
+                     }
+                 }],
+            columns: [[
+
+            { field: 'ck', checkbox: true },
+            { field: 'Code', title: '编码', width: 200 },
+            { field: 'GroupName', title: '用户组名称', width: 200 },
+            { field: 'Des', title: '描述', width: 111 },
+             { field: 'ID', title: '员工配置', width: 150, formatter: Operate }
+
+
+            ]],
+            pagination: true,
+            rownumbers: true,
+            singleSelect: false, //允许选择多行
+            selectOnCheck: true,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+            checkOnSelect: true, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+            onClickRow: function (rowIndex, rowData) {
+                $(this).datagrid('unselectRow', rowIndex);
+            }
+        });
+    });
+
+
+    //编辑
+    function edit() {
+
+        var rows = $('#flexigridData').datagrid('getChecked');
+        if (rows.length == 0) {
+            alert('请选择数据!');
+            //alertWarning("警告", "请选择数据", true, true);
+            return;
+        }
+        else if (rows.length > 1) {
+            alert('只能选择一条数据进行编辑!');
+            //alertWarning("警告", "只能选择一条数据进行编辑", true, true);
+            return;
+        }
+        else {
+            var id = rows[0]["ID"];
+            var name = rows[0]["GroupName"];
+            Eidth(id, '修改' + name);
+        }
+    }
+
+
+    function Delete() {
+
+        var rows = $('#flexigridData').datagrid('getChecked');
+        if (rows.length == 0) {
+            alert('请选择数据!');
+            //alertWarning("警告", "请选择数据", true, true);
+            return;
+        }
+        else {
+            var ids = '';
+
+            for (var i = 0; i < rows.length; i++) {
+                ids = ids + ',' + rows[i]["ID"];
+            }
+
+
+            $.ajax({
+                type: "POST",
+                url: "/api/GroupApi/Shanchu?IDs=" + ids,
+                async: false,
+                success: function (msg) {
+                    if (msg.Code == 1) {
+                        var roleName = $.trim($("#txtName").val());
+                        var search = roleName;
+                        alert(msg.Message);
+                        $("#flexigridData").datagrid("load", {
+                            search: search
+                        });
+                    }
+                    else {
+
+                        alert(msg.Message);
+                    }
+                }
+            });
+
+        }
+    }
+
+    //新增
+    function add() {
+        Eidth('', '新增');
+    }
+
+    //查询
+    function flexiQuery() {
+        var roleName = $.trim($("#txtName").val());
+        var search = roleName;
+        $("#flexigridData").datagrid("load", {
+            search: search
+        });
+    }
+    //员工配置
+    function Operate(value, rowData, rowIndex) {
+
+        var editoradd = 0;//判断是对 配置人员新增还是编辑
+        $.ajax({
+            type: "POST",
+            url: "/api/GroupApi/Pdedit?ID=" + rowData["ID"],//判断方法
+            async: false,
+            success: function (msg) {
+                if (msg.Code == 1) {
+
+                    flag = '1';
+                }
+                else {
+
+                    flag = '-1';
+                }
+            }
+        });
+
+
+
+
+
+        var html1 = "<a href='javascript:void(0)'  onclick='OpenConfig(\"" + 9 + "\",\"" + rowData["ID"] + "\",1,1)'>人员配置</a> ";
+        //var html2 = " <a href='javascript:void(0)'  onclick='OpenConfig(\"" + 9 + "\",\"" + rowData["ID"] + "\",1,2)'>领导配置</a>";
+        //return html1 + html2;
+        return html1;
+    }
+
+
+    function OpenConfig(menuid, Id, Type, flag) {
+        var roleName = $.trim($("#txtName").val());
+        var search = roleName;
+        @*CommonSelect("@Url.Action("ConfigAuthority", "Config")?id=" + id + "&type=role", name + ' 人员配置', "1003px", "503px");*@
+        //window.activeWindow.push(window);//注册保存父窗体集合
+        window.$("#dialogFrame1").prop("src", "@Url.Action("Add", "Person")?menuid=" + menuid + "&Id=" + Id + "&Type=" + Type);
+        window.$("#dialogWin1").dialog({
+            title: name,
+            width: '750px',
+            height: '550px',
+            iconCls: 'icon-save',
+            cache: false,
+            modal: true,
+            closed: false,
+            buttons: [{
+                text: '保存', iconCls: 'icon-save',
+                handler: function (evt) {
+
+
+                    //var win = top.dialog.get('dialogWin1').iframeNode.contentWindow;
+                    var aa = window.$("#dialogFrame1").prop('contentWindow');
+                    var cc = aa.GetSetValue();
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/GroupApi/EditGroupUser?ID=" + Id,
+                        data: {"datainfo":cc},
+                        async: false,
+                        success: function (msg) {
+                            if (msg.Code == 1) {
+                                $.messager.alert('操作提示', '保存成功！', 'info');
+                                window.$("#dialogWin1").dialog("close");//关闭弹出框
+                                flag = '1';
+                            }
+                            else {
+                                $.messager.alert('操作提示', '保存失败！', 'info');
+                                window.$("#dialogWin1").dialog("close");//关闭弹出框
+                                flag = '-1';
+                            }
+                        }
+                    });
+
+
+
+
+
+
+                    //var index = $.inArray('two', anArray);
+                    //debugger;
+                    //$.each(ccc, function (index, val) {
+                    //    alert();
+                    //});
+
+                    //$.each(ccc, function (i, item) {
+
+
+                    //    alert(item);
+
+                    //});
+
+                    //if (ccc == '1') {
+                    //    alert('保存成功！');
+                    //    window.$("#dialogWin1").dialog("close");//关闭弹出框
+                    //    $("#flexigridData").datagrid("load", {
+                    //        search: search
+                    //    });
+
+                    //}
+                    //else {
+
+                    //    alert('保存成功！');
+
+                    //}
+
+
+
+                }
+            }, {
+                text: '关闭', iconCls: 'icon-cancel',
+                handler: function () {
+                    window.$("#dialogWin1").dialog("close");//关闭弹出框
+                }
+            }],
+            onResize: function () {
+                window.$(this).dialog('center');//弹出框居中
+            },
+            onClose: function () {
+                window.$("#dialogFrame1").prop("src", "");
+                //window.activeWindow.pop();//关闭窗口，释放已注册的父窗体集合
+            }
+        });
+
+    }
+
+
+
+    //领导配置
+    function OperateLader(value, rowData, rowIndex) {
+        return "<a href='javascript:void(0)'  onclick='OpenConfig(\"" + value + "\",\"" + rowData["RoleName"] + "\")'>领导配置</a>";
+    }
+    // 编辑
+    function Eidth(id, name) {
+        var roleName = $.trim($("#txtName").val());
+        var search = roleName;
+        @*CommonSelect("@Url.Action("ConfigAuthority", "Config")?id=" + id + "&type=role", name + ' 人员配置', "1003px", "503px");*@
+        //window.activeWindow.push(window);//注册保存父窗体集合
+        window.$("#dialogFrame1").prop("src", "@Url.Action("Edit", "Group")?id=" + id);
+        window.$("#dialogWin1").dialog({
+            title: name,
+            width: '500px',
+            height: '300px',
+            iconCls: 'icon-save',
+            cache: false,
+            modal: true,
+            closed: false,
+            buttons: [{
+                text: '保存', iconCls: 'icon-save',
+                handler: function (evt) {
+
+
+
+                    //var win = top.dialog.get('dialogWin1').iframeNode.contentWindow;
+                    var aa = window.$("#dialogFrame1").prop('contentWindow');
+                    var ccc = aa.Tijiao();
+                    if (ccc == '1') {
+                        $.messager.alert('操作提示', '保存成功！', 'info');
+                        window.$("#dialogWin1").dialog("close");//关闭弹出框
+                        $("#flexigridData").datagrid("load", {
+                            search: search
+                        });
+
+                    }
+                    else if (ccc == '-1') {
+                        $.messager.alert('操作提示', '保存失败！', 'info');
+
+                    }
+                    else {
+
+                        $.messager.alert('操作提示', ccc, 'info');
+                    }
+
+
+
+                }
+            }, {
+                text: '关闭', iconCls: 'icon-cancel',
+                handler: function () {
+                    window.$("#dialogWin1").dialog("close");//关闭弹出框
+                }
+            }],
+            onResize: function () {
+                window.$(this).dialog('center');//弹出框居中
+            },
+            onClose: function () {
+                window.$("#dialogFrame1").prop("src", "");
+                //window.activeWindow.pop();//关闭窗口，释放已注册的父窗体集合
+            }
+        });
+
+    }
+</script>
+
+<div id="divQuery">
+    <div class='input_search' style="padding-top:10px;">
+        用户组名称：<input type="text" id="txtName" name="txtName" />
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+    </div>
+</div>
+<br style="clear: both;" />
+
+<div id="dialogWin1" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="dialogFrame1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>

@@ -1,0 +1,192 @@
+﻿@{
+    Layout = null;
+}
+<script src="~/Scripts/Myl.js"></script>
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>客户分配</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+</head>
+<body>
+
+    <div>
+        <div id="radioclick">
+
+        </div>
+        <input type="button" onclick="Fenpei()" value="分配" /><input type="button" onclick="history.back()" value="返回" />
+
+    </div>
+</body>
+</html>
+<script>
+    //function back()
+    //{
+    //    window.location.href = '/Allot/Index';
+    //}
+    $(function () {
+
+        var id = '@ViewBag.id';//企业id
+        var usernid = '@ViewBag.usernid';//客服人员
+        var compname = '@ViewBag.compname';//企业名称
+        var Sercount = ' @ViewBag.count';
+
+
+        var citycode = ' @ViewBag.citycode';//城市代码
+        LoadKfry();
+        $("#qymc").html("");
+        $("#sercount").html("");
+        $("#qymc").append(compname);//企业名称
+        $("#sercount").append(Sercount);//服务人数
+
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            //方法所在页面和方法名
+            url: "/Allot/kfry?citycode=" + citycode,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+
+                var htmlstr = "";
+                for (var i = 0; i < data.length; i++) {
+
+            
+                    if (usernid == data[i]["ID"]) {
+
+                        htmlstr += " <input type='radio' name='rd' id=" + data[i]["ID"] + " checked='checked' />" + data[i]["RName"] + "";
+                    }
+                    else {
+
+                        htmlstr += " <input type='radio' name='rd' id=" + data[i]["ID"] + " />" + data[i]["RName"] + "";
+                    }
+
+                    htmlstr += getusercount(data[i]["ID"]);
+                }
+                $("#radioclick").append(htmlstr);
+            },
+            error: function (err) {
+                alert(err);
+            }
+        });
+
+        $("#radioclick").find(':radio').click(function () {
+            var nn = this;
+            //  alert(nn.id);
+            // liandong(nn.id, nn.checked);
+        });
+
+
+        // $("#kfry").val(usernid);//客服人员
+
+    });
+
+    //获取个数
+    function getusercount(userid) {
+        var htmlstr = "";
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            async: false,
+            //方法所在页面和方法名
+            url: "/Allot/GetSercount?UserID_YG=" + userid,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (dataa) {
+
+                htmlstr += "(" + dataa + ") ";
+
+            },
+            error: function (err) {
+                alert(err);
+            }
+
+        });
+        return htmlstr;
+    }
+
+    //加载客服人员
+    function LoadKfry() {
+        var usernid = '@ViewBag.usernid';//客服人员
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            //方法所在页面和方法名
+            url: "/EmployeeAdd/Kfry?CityCode=1",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+
+                htmlstr = "";
+                for (var i = 0; i < data.length; i++) {
+                    if (usernid == data[i].UserID) {
+
+                        htmlstr += " <option value=" + data[i].UserID + " selected='selected'>" + data[i].RealName + "</option>";
+                    }
+                    else {
+                        htmlstr += " <option value=" + data[i].UserID + ">" + data[i].RealName + "</option>";
+                    }
+
+                }
+                $("#kfry").html("");
+                $("#kfry").append(htmlstr);
+            },
+            error: function (err) {
+                alert(err);
+            }
+        });
+    }
+
+    function Fanhui() {
+        window.location.href = '/EmployeeAdd/ApproveList';
+    }
+    //分配客户
+    function Fenpei() {
+        var citycode = '@ViewBag.citycode';
+
+        var id = '@ViewBag.id';//企业id
+        var usernid = $('input:radio[name="rd"]:checked')[0].id;//客服人员
+        $.ajax({
+            type: 'POST',
+            url: '../api/EmployeeAddApi/FenpeiAction?id=' + id + "&usernid=" + usernid + "&Citycode=" + citycode,
+            //  data: { "id": id, "usernid": usernid },  //最正确的Ajax传参
+            dataType: 'json',
+            async: true, //异步
+            success: function (data) {
+                alert(data);
+                window.location('/Allot/Index');
+
+            },
+            error: function () {
+                alert(data);
+            }
+        });
+    }
+    function ChangeSer() {
+
+        var usernid = $("#UserID_YGDDL_Int").val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/EmployeeAdd/Sercount',
+            data: { "UserID_YG": usernid },  //最正确的Ajax传参
+            dataType: 'json',
+            async: true, //异步
+            success: function (data) {
+
+                $("#sercount").html("");
+                $("#sercount").append(data);
+            },
+            error: function () {
+
+                alert(data);
+            }
+        });
+    }
+</script>
+

@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@section CurentPlace {
+    设置报减失败
+}
+
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" onclick="setFail()" value="保存并提交" />
+        <input class="a2 f2" type="button" onclick="BackList('EmployeeStopPaymentFeedback')" value="返回列表" />
+    </legend>
+    <span>姓名：@Html.Raw(ViewBag.EmpName)</span>
+
+    <br />
+    <span>险种：<span id="span1">@Html.Raw(ViewBag.strHtml)</span></span>
+    <br />
+    原因:<br />
+    <textarea id="txtRemark" style="width :350px" rows="3"></textarea>
+</fieldset>
+
+
+<script type="text/javascript">
+    function setFail() {
+        
+        var remark = $("#txtRemark").val();
+        var stopIds = "";
+        $("input[id^=cbox_]").each(function (i, value) {
+            if ($(value).is(":checked")) {
+                var stopId = value.id.substring(5);
+                stopIds += stopId + ",";
+            }
+        });
+        
+        if (stopIds == "") {
+            $.messager.alert("警告", "请先选择险种", "warning");
+            return false;
+        }
+        if (remark == "") {
+            $.messager.alert("警告", "请填写失败原因", "warning");
+            return false;
+        }
+
+        $.ajax({
+            url: "/api/EmployeeStopPaymentFeedbackApi/SetFail?stopIds=" + stopIds + "&remark=" + remark,
+            type: "POST",
+            async: false,
+            success: function (res) {
+                if (res.Code == 1) {
+                    alert(res.Message);
+                    BackList('EmployeeStopPaymentFeedback');
+                }
+            },
+            error: function (a, b, c) {
+
+            }
+        });
+    }
+
+</script>
+

@@ -1,0 +1,42 @@
+﻿@model Langben.DAL.ORG_MenuOp
+
+@{
+    Layout = "~/Views/Shared/CRMCreate.cshtml";
+}
+
+@section CurentPlace {
+    创建
+}
+@using (Html.BeginForm("", "../MenuOp/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="创建" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            <div class="editor-label">
+                菜单功能ID：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.ID)
+                @Html.ValidationMessageFor(model => model.ID)
+            </div>
+            <div class="editor-label">
+                菜单功能名称：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.MenuOpName)
+                @Html.ValidationMessageFor(model => model.MenuOpName)
+            </div>
+            <div class="editor-label">
+                所属菜单：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownList("menuList", (SelectList)ViewData["ddlMenu"], "请选择", new { ID = "ORG_Menu_ID", Name = "ORG_Menu_ID", @style = "font-size:14px;" })
+            </div>
+        </div>
+    </fieldset>
+}
+
+

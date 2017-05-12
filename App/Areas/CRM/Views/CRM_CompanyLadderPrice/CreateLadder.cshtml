@@ -1,0 +1,73 @@
+﻿@model Langben.DAL.CRM_CompanyLadderPrice_Audit
+
+@{
+    Layout = "~/Views/Shared/CRMCreate.cshtml";
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+
+    创建
+
+}
+@using (Html.BeginForm("", "../api/CRM_CompanyLadderPrice_AuditApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="保存" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            <input type="hidden" value="@ViewBag.companyID" name="CRM_Company_ID" />
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.PRD_Product_ID) ：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownList("ddl_PRD_Product_ID", (SelectList)ViewData["listPrd"], "请选择", new { @style = "font-size:14px;", @disabled = "disabled", @id = "proid" })
+                @Html.ValidationMessageFor(model => model.PRD_Product_ID)
+                @Html.Hidden("PRD_Product_ID", (int)ViewBag.productID)
+            </div>
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.SinglePrice)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.SinglePrice, new { onkeyup = "isMoney(this)", @class = "text-box single-line" })
+                @Html.ValidationMessageFor(model => model.SinglePrice)
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BeginLadder) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BeginLadder, new { onkeyup = "isInt(this)", @class = "text-box single-line" })
+                @Html.ValidationMessageFor(model => model.BeginLadder)
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.EndLadder) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.EndLadder, new { onkeyup = "isInt(this)", @class = "text-box single-line" })
+                @Html.ValidationMessageFor(model => model.EndLadder)
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#proid').val('@ViewBag.productID');
+    });
+
+</script>
+
+

@@ -1,0 +1,238 @@
+﻿@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Res/jquery.uploadify-v2.1.4/jquery-1.4.2.min.js"></script>
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + @(ViewBag.Cityid), function (data) {
+            ///几个险种
+            if (data != null) {
+                var type=@(ViewBag.type);
+                var table = "<table id=\"tabRateInfo\" style=\"padding-left:100px;\">";
+                table += "<tr>";
+                table += "<td></td>";
+                table += "<td></td>";
+                table += "<td>";
+                $.each(data, function (i, item1) {
+                    table += "<input type=\"checkbox\" value=\"" + item1["Name"] + "\" id=\"\" name=\"ck\" />" + item1["Name"] + "";
+                });
+                table += "</td>";
+                table += "</tr>";
+                table += "<tr>";
+                table += "<td></td>";
+                if(type==1)
+                {
+                    table += "<td> 终止原因:</td>";
+                }
+                else{
+                    table += "<td> 挂起原因:</td>";
+                }
+                table += "<td>  <textarea id=\"htyy\"></textarea></td>";
+                table += "</tr>";
+                table += "<tr>";
+                table += "<td></td>";
+                table += "<td></td>";
+               
+                if(type==1)
+                {
+                    table += "<td> <input type=\"button\" value=\"终止\" onclick=\"Employeestop()\" /><input type=\"button\" value=\"返回\" onclick=\"javascript:history.back(-1);\" />  </td>";
+
+                }
+                else{
+                    table += "<td> <input type=\"button\" value=\"挂起\" onclick=\"Hang()\" /><input type=\"button\" value=\"返回\" onclick=\"javascript:history.back(-1);\" />  </td>";
+                }
+                table += "</tr>";
+                table += "</table>";
+                $("#div1").html(table);
+            }
+            var ids = '@ViewBag.ids';//报增表id
+            var Cityid = '@ViewBag.Cityid';//城市id
+            var alltype = '@ViewBag.alltype';
+           
+            var allarr = alltype.split(',');//险种
+            var flag = '@ViewBag.flag';
+            //$("#divQuery").find(':checkbox').click(function () {
+            //    var nn = this;
+            //    liandong(nn.id, nn.checked);
+            //});
+            var datann = $("#divQuery").find(':checkbox');
+            if (flag == '1') {
+                for (var i = 0; i < datann.length; i++) {
+
+                    if ($.inArray(datann[i].value, allarr) == -1) {
+
+                        datann[i].disabled = 'disabled';
+                    }
+
+                }
+            }
+            $.ajax({
+                //要用post方式
+                type: "Post",
+                //方法所在页面和方法名
+                url: "/api/EmployeeAddApi/InsuranceKindCity?Cityid=" + Cityid,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    var KindLis = data;
+                    var datan = $("#divQuery").find(':checkbox');
+                    for (var i = 0; i < datan.length; i++) {
+                        for (var j = 0; j < KindLis.total; j++) {
+                            if (datan[i].value == KindLis.rows[j].Name) {
+                                datan[i].id = KindLis.rows[j].Id;
+                            }
+                        }
+                    }
+                },
+                error: function (err) {
+                }
+            });
+        });
+    });
+    //挂起
+    function Hang() {
+        var msg = $("#htyy").val();
+        if (msg == '') {
+            alert('挂起原因不能为空！');
+            return false;
+        }
+        if (msg.length > 4000) {
+            alert('最高输入字数为4000');
+            return false;
+        }
+        var datan = $("#divQuery").find("input[name='ck']:checked").length;
+        if (datan == 0)
+        {
+            alert('请选择险种！');
+            return false;
+        }
+        var alltype = '';
+        var datan = $("#divQuery").find(':checkbox');
+        for (var i = 0; i < datan.length; i++) {
+
+            if (datan[i].checked) {
+                alltype = alltype + ',' + datan[i].value;
+            }
+        }
+        alltype = escape(alltype);
+        var ids = '@ViewBag.ids';
+        msg = escape(msg);
+        $.ajax({
+            type: 'POST',               
+            url: "../api/EmployeeAddApi/POSTEmployeeHang?ids=" + ids + "&message=" + msg+"&alltype=" + alltype,
+            // data: { "ids": ids, "message": msg },  //最正确的Ajax传参
+            dataType: 'json',
+            async: true, //异步
+            success: function (data) {
+              
+                $("#htyy").val("");
+                //window.location("/EmployeeAdd/SupplierList");
+                window.location.href = "../EmployeeAdd/EmployeeModifyList";
+            },
+            error: function () {
+                alert(data);
+            }
+        });
+    }
+
+
+
+
+    //终止
+    function Employeestop() {
+        var msg = $("#htyy").val();
+        if (msg == '') {
+            alert('终止原因不能为空！');
+            return false;
+        }
+        if (msg.length > 4000) {
+            alert('最高输入字数为4000');
+            return false;
+        }
+        var datan = $("#divQuery").find("input[name='ck']:checked").length;
+        if (datan == 0)
+        {
+            alert('请选择险种！');
+            return false;
+        }
+        var alltype = '';
+        var datan = $("#divQuery").find(':checkbox');
+        for (var i = 0; i < datan.length; i++) {
+
+            if (datan[i].checked) {
+                alltype = alltype + ',' + datan[i].value;
+            }
+        }
+        alltype = escape(alltype);
+        var ids = '@ViewBag.ids';
+        msg = escape(msg);
+        $.ajax({
+            type: 'POST',               
+            url: "../api/EmployeeAddApi/POSTEmployeeStop?ids=" + ids + "&message=" + msg+"&alltype=" + alltype,
+            // data: { "ids": ids, "message": msg },  //最正确的Ajax传参
+            dataType: 'json',
+            async: true, //异步
+            success: function (data) {
+             
+                $("#htyy").val("");
+                //window.location("/EmployeeAdd/SupplierList");
+                window.location.href = "../EmployeeAdd/EmployeeModifyList";
+            },
+            error: function () {
+                alert(data);
+            }
+        });
+    }
+</script>
+<div id="divQuery">
+    <div id="div1"></div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

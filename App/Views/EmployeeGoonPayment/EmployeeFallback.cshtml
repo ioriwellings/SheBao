@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+
+
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>回退</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+
+
+</head>
+
+
+<body>
+    <div>
+        <table>
+            <tr><td>回退原因：</td><td><textarea id="htyy"></textarea></td></tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="button" value="回退" onclick="EmployeeFallback()" />
+                    <input type="button" value="返回" onclick="history.go(-1)" />
+                </td>
+            </tr>
+        </table>
+
+
+    </div>
+</body>
+</html>
+<script>
+    function EmployeeFallback() {
+        var msg = $("#htyy").val();
+        if (msg == '') {
+            alert('回退原因不能为空！');
+            return false;
+        }
+        if (msg.length > 4000) {
+            alert('最高输入字数为4000');
+            return false;
+        }
+        var ids = '@ViewBag.ids';
+        msg = escape(msg);
+        $.ajax({
+            type: 'POST',
+            url: "../api/EmployeeGoonPaymentApi/EmployeeFallbackAction?ids=" + ids + "&message=" + msg,
+            dataType: 'json',
+            async: true, //异步
+            success: function (data) {
+                alert(data);
+                $("#htyy").val("");
+                window.location.href = "../EmployeeGoonPayment/ExtractionList";
+            },
+            error: function () {
+                alert(data);
+            }
+        });
+    }
+</script>

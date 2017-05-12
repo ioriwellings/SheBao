@@ -1,0 +1,129 @@
+﻿@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        // 获取内容并显示
+
+        $.ajax({
+            url: "/api/CRM_CompanyBankAccountApi/Get/@ViewBag.MainTableID",
+            type: "Get",
+            async: false,
+            success: function (res) {
+                $("#Bank").text(res.Bank);
+                $("#Account").text(res.Account);
+            }
+        })
+
+        $.ajax({
+            url: "/api/CRM_CompanyBankAccount_AuditApi/Get/@ViewBag.ID",
+            type: "Get",
+            async: false,
+            success: function (res) {
+                $("#Audit_Bank").text(res.Bank);
+                $("#Audit_Account").text(res.Account);
+
+            }
+        })
+
+
+        if ($('#Audit_Bank').text() != $('#Bank').text()) {
+            $('#Audit_Bank').css('color', 'red');
+        }
+        if ($('#Audit_Account').text() != $('#Account').text()) {
+            $('#Audit_Account').css('color', 'red');
+        }
+   
+        $('#BasicGrid').datagrid()
+
+    });
+
+    function PassEdit() {
+        $.ajax({
+            url: "/api/CRM_CompanyBankAccount_AuditApi/PassEdit/@ViewBag.ID?MainTableID=@ViewBag.MainTableID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function ReturnEdit() {
+        $.ajax({
+            url: "/api/CRM_CompanyBankAccount_AuditApi/ReturnEdit/@ViewBag.ID?MainTableID=@ViewBag.MainTableID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                if (data.Code == 1) {
+                    $.messager.alert('操作提示', data.Message, 'info', function () {
+                        if (data.Code == 1) {
+                            //window.location.href = 'javascript:history.go(-1)';
+                            GoBack();
+                        }
+                    });
+                }
+            }
+        })
+    }
+
+    function GoBack() {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/CRM_Company_Audit/Index/?tmp=" + tmp;
+    }
+</script>
+
+<div id="divQuery">
+    <div class='input_search' style="padding-top:10px;">
+        @if (ViewBag.State == 1)
+        {
+            <input class="a2 f2" type="button" onclick="PassEdit()" value="通过" />
+            <input class="a2 f2" type="button" onclick="ReturnEdit()" value="退回" />
+        }
+        <input class="a2 f2" type="button" onclick="GoBack()" value="返回列表" />
+
+    </div>
+</div>
+
+<br style="clear: both;" />
+
+<input type="hidden" id="ID" value="@ViewBag.ID" />
+<input type="hidden" id="MainTableID" value="@ViewBag.MainTableID" />
+<div class="p5">
+    <table id="BasicGrid" style="width: auto; height: auto; border: 1px solid #ccc;">
+        <thead>
+            <tr>
+                <th data-options="field:'ID',width:100" align="center">信息类别</th>
+                <th data-options="field:'Bank',width:200" align="center">开户行名称</th>
+                <th data-options="field:'Account',width:150" align="center">银行账号</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td align="center">企业原信息</td>
+                <td align="center"><span id="Bank"></span></td>
+                <td align="center"><span id="Account"></span></td>
+
+            </tr>
+            <tr>
+                <td align="center">企业新信息</td>
+                <td align="center"><span id="Audit_Bank"></span></td>
+                <td align="center"><span id="Audit_Account"></span></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+
+

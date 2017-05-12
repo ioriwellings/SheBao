@@ -1,0 +1,93 @@
+﻿@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@section CurentPlace {
+    设置报减成功
+}
+
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" onclick="setSuccess()" value="保存并提交" />
+        <input class="a2 f2" type="button" onclick="BackList('/Suppliers/SupplierStopFeedBack/Index')" value="返回列表" />
+    </legend>
+   
+
+    <br />
+    <span>险种：<span id="divQuery">
+
+    <input type="checkbox" id='all' value="-1" name="ck" onclick="SetAll()" />全选
+    <input type="checkbox" value="养老" name="ck" />养老
+    <input type="checkbox" value="医疗" name="ck" />医疗
+    <input type="checkbox" value="生育" name="ck" />生育
+    <input type="checkbox" value="失业" name="ck" />失业
+    <input type="checkbox" value="工伤" name="ck" />工伤
+    <input type="checkbox" value="公积金" name="ck" />公积金
+    <input type="checkbox" value="大病" name="ck" />大病
+
+
+</span></span>
+</fieldset>
+
+
+<script type="text/javascript">
+    $(function () {
+
+        //默认加载的时候险种为全选
+        var datan = $("#divQuery").find(':checkbox');
+        for (var i = 0; i < datan.length; i++) {
+            datan[i].checked = true;
+        }
+
+    })
+    //全选
+    function SetAll() {
+
+        var datan = $("#divQuery").find(':checkbox');
+        var Flag = datan[0].checked;//全选按钮状态
+        for (var i = 0; i < datan.length; i++) {
+
+            if (datan[i].id != "all") {
+
+                datan[i].checked = Flag;
+            }
+        }
+
+    }
+    function setSuccess() {
+
+        var stopIds = "@ViewBag.stopIds";
+        var alltype = "";
+
+
+
+        var datan = $("#divQuery").find(':checkbox');
+  
+        for (var i = 0; i < datan.length; i++) {
+
+            if (datan[i].id != "all" && datan[i].checked == true) {
+             
+                alltype +=  datan[i].value + ",";
+            }
+        }     
+        if (alltype == "") {
+            alert("请至少选择一个险种");
+            return;
+        }
+        alltype = escape(alltype);
+        $.ajax({
+            url: "/api/SupplierStopFeedBackApi/SetSuccess?stopIds=" + stopIds + "&alltype=" + alltype,
+            type: "POST",
+            async: false,
+            success: function (res) {
+                if (res.Code == 1) {
+                    alert(res.Message);
+                    window.location.href = "/Suppliers/SupplierStopFeedBack/Index";
+                }
+            },
+            error: function (a, b, c) {
+
+            }
+        });
+    }
+
+</script>

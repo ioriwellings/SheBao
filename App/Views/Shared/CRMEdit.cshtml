@@ -1,0 +1,109 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head id="MyHead">
+
+    <title></title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+    <style type="text/css">
+        .combo {
+            font-family: 微软雅黑,新宋体;
+            height: 24px;
+            width: 210px;
+            border: 1px solid #CCC;
+        }
+    </style>
+    @RenderSection("HeadContent", false)
+
+    <script type='text/javascript'>
+        function ajaxFrom(form, url) {
+            if (url != '/api/CRM_EmployeeBankApi/Put') {
+                $.ajax({
+                    url: url,
+                    type: "Put",
+                    data: $(form).serialize(),
+                    dataType: "json",
+                    success: function (data) {
+
+                        if (data.Code == 1) {
+                            if ($.messager) {
+                                $.messager.defaults.ok = '继续';
+                                $.messager.alert('', '提交成功！', 'info', function (r) {
+                                    var gridID = $.trim(window.parent.$("#hidGridID").val());
+                                    if (gridID != "")
+                                        window.parent.$("#" + gridID).datagrid("reload");
+                                    else
+                                        window.parent.$("#flexigridData").datagrid("reload");
+
+                                    window.parent.$("#window").dialog("close");//关闭弹出框
+                                });
+                            }
+                        }
+                        else { $.messager.alert('操作提示', data.Message, 'warning'); }
+                    }
+                });
+            }
+            else
+            {
+                if (Check()) {
+                    $.ajax({
+                        url: url,
+                        type: "Put",
+                        data: $(form).serialize(),
+                        dataType: "json",
+                        success: function (data) {
+
+                            if (data.Code == 1) {
+                                if ($.messager) {
+                                    $.messager.defaults.ok = '继续';
+                                    $.messager.alert('', '提交成功！', 'info', function (r) {
+                                        var gridID = $.trim(window.parent.$("#hidGridID").val());
+                                        if (gridID != "")
+                                            window.parent.$("#" + gridID).datagrid("reload");
+                                        else
+                                            window.parent.$("#flexigridData").datagrid("reload");
+
+                                        window.parent.$("#window").dialog("close");//关闭弹出框
+                                    });
+                                }
+                            }
+                            else { $.messager.alert('操作提示', data.Message, 'warning'); }
+                        }
+                    });
+                }
+            }
+            
+        }
+
+        $(function () {
+            $('.easyui-combobox').combobox({
+                width: 243,
+                onSelect: function (record) {
+                    var strs = record.text.split("—");
+                    $(this).combobox('setValue', strs[0]);
+                }
+            });
+            $("form").submit(function (form) {
+                if (form.result) {
+                    ajaxFrom(this, this.action);
+                }
+                return false;
+            });
+            //按钮样式
+            $('.a2').mouseover(function () { this.style.color = "#ae1121"; }).mouseout(function () { this.style.color = "#333"; });
+
+        });
+    </script>
+</head>
+<body>
+    <div class="mbx">
+        @RenderSection("CurentPlace", false)
+    </div>
+
+    @Html.ValidationSummary(true)
+    @RenderBody()
+
+</body>
+</html>

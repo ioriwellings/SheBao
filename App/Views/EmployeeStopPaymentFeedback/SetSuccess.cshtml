@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@section CurentPlace {
+    设置报减成功
+}
+
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" onclick="setSuccess()" value="保存并提交" />
+        <input class="a2 f2" type="button" onclick="BackList('EmployeeStopPaymentFeedback')" value="返回列表" />
+    </legend>
+    <span>姓名：@Html.Raw(ViewBag.EmpName)</span>
+
+    <br />
+    <span>险种：<span id="span1">@Html.Raw(ViewBag.strHtml)</span></span>
+</fieldset>
+
+
+<script type="text/javascript">
+    function setSuccess() {
+        var stopIds = "";
+        $("input[id^=cbox_]").each(function (i, value) {
+            if ($(value).is(":checked")) {
+                var stopId = value.id.substring(5);
+                stopIds += stopId + ",";
+            }
+        });
+        if (stopIds == "") {
+            alert("请至少选择一个险种");
+            return;
+        }
+        $.ajax({
+            url: "/api/SupplierStopExportApi/SetSuccess?stopIds=" + stopIds,
+            type: "POST",
+            async: false,
+            success: function (res) {
+                if (res.Code == 1) {
+                    alert(res.Message);
+                    window.location.href = "/Suppliers/SupplierStopFeedBack/SupFeedbackSuccess";
+                }
+            },
+            error: function (a, b, c) {
+
+            }
+        });
+    }
+
+</script>

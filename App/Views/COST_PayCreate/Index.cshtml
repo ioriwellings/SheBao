@@ -1,0 +1,98 @@
+﻿@{ Layout = "~/Views/Shared/Index.cshtml"; }
+
+<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+<script src="~/Scripts/jquery.form.js"></script>
+@*<title>支出导入</title>*@
+
+<div>
+    <fieldset id="downmyfieldset">
+        <legend>Excel模版</legend><font color="red">社保支出数据的模板在此下载，若模板格式不正确，则不能导入!</font>
+        <a href="~/Template/Excel/社保支出导入模板.xlsx" style="color:red;text-align:center;">点此处下载模板</a>
+    </fieldset>
+</div>
+<form id="formImport">
+    <div style="margin-top: 20px;">
+        <fieldset id="upmyfieldset">
+            <legend>社保支出导入</legend>
+            @*<div class="input_search-label">
+                    供应商：
+                </div>
+                <div class="input_search-field">
+                    <select id="ddl_Suppliers" class="easyui-combobox" style="width:auto"></select>
+                </div>*@
+            <div class='input_search'>
+                <div class="input_search-label">
+                    年月：
+                </div>
+                <div class="input_search-field">
+                    <input id="yearMonth" value="" class="yearMonth" style="width:auto" />
+                </div>
+            </div>
+            <div class='input_search'>
+                <div class="input_search-label">
+                    选择文件：
+                </div>
+                <div class="input_search-field">
+                    <input id="FileUpload" type="file" name="files" style="width: 250px; height: 24px; background: White" class="easyui-validatebox" />
+                </div>
+            </div>
+            
+
+        </fieldset><div style="padding-top:10px;">
+    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="create()">导入</a>
+</div>
+        <br />
+        <div id="error" style="color:red;"></div>
+
+    </div>
+</form>
+
+<script type="text/javascript">
+    //绑定年月控件
+    $(".yearMonth").simpleCanleder();
+
+    //$(function () {
+    //    GetSuppliers();
+    //});
+    //function GetSuppliers() {
+
+    //    $.ajax({
+    //        type: "get",
+    //        dataType: "json",
+    //        url: '/api/Cost_PayCreateApi/GetSuppliers',
+    //        async: true,
+    //        success: function (data) {
+    //            $("#ddl_Suppliers").append("<option value='0'>请选择</option>");
+    //            $.each(data.rows, function (i, item) {
+
+    //                $("#ddl_Suppliers").append("<option value='" + item["Id"] + "'>" + item["Name"] + "</option>");
+    //            })
+    //        }
+    //    })
+    //}
+
+    function create() {
+        var ym = document.getElementById("yearMonth").value.replace("-", "");
+        // 提交表单
+        $("#formImport").ajaxSubmit({
+            url: "/COST_PayCreate/ImportExcel?yearM=" + ym,
+            type: "Post",
+            dataType: "JSON",
+            beforeSend: function () {
+
+            },
+            //error: function (data) {
+            //    alert(data.Message);
+            //},
+            success: function (data) {
+                if (data.Code == 1) {
+                    alert(data.Message)
+                }
+                else {
+                    $("#error").html(data.Message)
+                }
+            }
+        });
+    }
+</script>

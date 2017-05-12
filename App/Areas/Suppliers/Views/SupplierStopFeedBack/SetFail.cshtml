@@ -1,0 +1,118 @@
+﻿@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@section CurentPlace {
+    设置报减失败
+}
+
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" onclick="SetFail()" value="保存并提交" />
+        <input class="a2 f2" type="button" onclick="BackList('/Suppliers/SupplierStopFeedBack')" value="返回列表" />
+    </legend>
+
+    <br />
+    <div>
+        <span>
+            险种：<span id="divQuery">
+
+                <input type="checkbox" id='all' value="-1" name="ck" onclick="SetAll()" />全选
+                <input type="checkbox" value="养老" name="ck" />养老
+                <input type="checkbox" value="医疗" name="ck" />医疗
+                <input type="checkbox" value="生育" name="ck" />生育
+                <input type="checkbox" value="失业" name="ck" />失业
+                <input type="checkbox" value="工伤" name="ck" />工伤
+                <input type="checkbox" value="公积金" name="ck" />公积金
+                <input type="checkbox" value="大病" name="ck" />大病
+
+
+            </span>
+        </span>
+    </div>
+    <div>
+        <span>
+            失败原因：
+            <textarea id="txtReason"></textarea>
+        </span>
+    </div>
+</fieldset>
+
+
+<script type="text/javascript">
+    $(function () {
+        var datan = $("#divQuery").find(':checkbox');
+        for (var i = 0; i < datan.length; i++) {
+            datan[i].checked = true;
+        }
+    })
+
+    //全选
+    function SetAll() {
+
+        var datan = $("#divQuery").find(':checkbox');
+        var Flag = datan[0].checked;//全选按钮状态
+        for (var i = 0; i < datan.length; i++) {
+
+            if (datan[i].id != "all") {
+
+                datan[i].checked = Flag;
+            }
+        }
+
+    }
+
+    function SetFail() {
+        var alltype = '';
+        var ids = '@ViewBag.stopIds';
+        var CompanyEmployeeRelationId = '@ViewBag.CompanyEmployeeRelationId';
+        var insurance = $("#divQuery").find(':checkbox');
+
+        if (insurance.length == 0) {
+            $.messager.alert("警告", "请选择险种", "warning");
+            return false;
+        }
+
+        var reason = $("#txtReason").val();
+        if (reason == "") {
+            $.messager.alert("警告", "请填写失败原因", "warning");
+            return false;
+        }
+        if (reason.length > 4000) {
+            $.messager.alert("警告","最多允许输入4000字！");
+            return false;
+        }
+
+        for (var i = 0; i < insurance.length; i++) {
+
+            if (insurance[i].checked && insurance[i].value != "-1") {
+                alltype = alltype + ',' + insurance[i].value;
+            }
+        }
+
+        alltype = escape(alltype);
+
+
+
+        $.ajax({
+            url: "/api/SupplierStopFeedBackApi/SetFail?ids=" + ids + "&reason=" + reason + "&alltype=" + alltype,
+            type: "POST",
+            async: false,
+            success: function (res) {
+                if (res.Code == 1) {
+                    $("#txtReason").val("");
+                    $.messager.alert(res.Message);
+                    BackList('/Suppliers/SupplierStopFeedBack');
+                }
+                else {
+                    $.messager.alert(res.Message);
+                    return false;
+                }
+            },
+            error: function (a, b, c) {
+
+            }
+        });
+    }
+
+</script>
+

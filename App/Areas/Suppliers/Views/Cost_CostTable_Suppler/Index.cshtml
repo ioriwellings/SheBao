@@ -1,0 +1,160 @@
+﻿@{ Layout = "~/Views/Shared/Index.cshtml"; }
+
+<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+<script src="~/Scripts/jquery.form.js"></script>
+@*<title>供应商费用表导入</title>*@
+
+<div>
+    <fieldset id="downmyfieldset">
+        <legend>Excel模版</legend><font color="red">供应商费用表导入模板在此下载，若模板格式不正确，则不能导入!</font>
+        <a href="~/Template/Excel/供应商费用表导入模板.xlsx" style="color:red;text-align:center;">点此处下载模板</a>
+    </fieldset>
+</div>
+<form id="formImport">
+    <div style="margin-top: 20px;">
+        <fieldset id="upmyfieldset">
+            <legend>供应商费用表导入</legend>
+            <div class="input_search-label">
+                数据来源：
+            </div>
+            <div class="input_search-field">
+                <select id="CreateFrom" class="easyui-combobox" style="width:auto">
+                    <option value="2">供应商费用</option>
+                    <option value="3">供应商预算费用</option>
+                </select>
+            </div>
+            <div class='input_search'>
+                <div class="input_search-label">
+                    年月：
+                </div>
+                <div class="input_search-field">
+                    <input id="yearMonth" value="" class="yearMonth" style="width:auto" />
+                </div>
+            </div>
+            <div class="input_search">
+                <div class="input_search-label">
+                    供应商名称：
+                </div>
+                <div class="input_search-field">
+                    <select id="SupplierList"></select>
+                </div>
+            </div>
+            <div class='input_search'>
+                <div class="input_search-label">
+                    选择文件：
+                </div>
+                <div class="input_search-field">
+                    <input id="FileUpload" type="file" name="files" style="width: 250px; height: 24px; background: White" class="easyui-validatebox" />
+                </div>
+            </div>
+
+
+        </fieldset><div style="padding-top:10px;">
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="create()">导入</a>
+        </div>
+        <br />
+        <div id="error" style="color:red;"></div>
+
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(function () {
+        GetCitySupplerList();
+    });
+    //绑定年月控件
+    $(".yearMonth").simpleCanleder();
+
+    //$(function () {
+    //    GetSuppliers();
+    //});
+    //function GetSuppliers() {
+
+    //    $.ajax({
+    //        type: "get",
+    //        dataType: "json",
+    //        url: '/api/Cost_PayCreateApi/GetSuppliers',
+    //        async: true,
+    //        success: function (data) {
+    //            $("#ddl_Suppliers").append("<option value='0'>请选择</option>");
+    //            $.each(data.rows, function (i, item) {
+
+    //                $("#ddl_Suppliers").append("<option value='" + item["Id"] + "'>" + item["Name"] + "</option>");
+    //            })
+    //        }
+    //    })
+    //}
+
+    function create() {
+        var file = $('#FileUpload').val();
+        if (file == "") {
+            $.messager.alert("提示", "请选择文件", "warning");
+            return;
+        }
+
+        var ym = document.getElementById("yearMonth").value.replace("-", "");
+        var SuplierId = $('#SupplierList').combobox('getValue');//供应商
+
+        var CreateFrom = $('#CreateFrom').combobox('getValue');//供应商
+        // 提交表单
+        $("#formImport").ajaxSubmit({
+            url: "/Cost_CostTable_Suppler/ImportExcel?yearM=" + ym + "&suppliersid=" + SuplierId + "&CreateFrom=" + CreateFrom,
+            type: "Post",
+            dataType: "JSON",
+            beforeSend: function () {
+
+            },
+            //error: function (data) {
+            //    alert(data.Message);
+            //},
+            success: function (data) {
+                if (data.Code == 1) {
+                    $("#error").html("成功导入")
+                    $.messager.alert("提示", "成功导入", "info");
+                }
+                else {
+                    $("#error").html(data.Message)
+                }
+            }
+        });
+    }
+
+    function GetCitySupplerList() {
+
+        var apiUrl = "/api/SupplierApi/GetAllSuppliers/";
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: apiUrl,
+            async: false,
+            success: function (data) {
+
+                if (data != null && data.total != 0) {
+                    for (i = 0; i < data.total; i++) {
+                        $("#SupplierList").append("<option value='" + data.rows[i].ID + "'>" + data.rows[i].Name + "</option>");
+                    }
+                }
+                SetSupplierList();
+            },
+            error: function () {
+                $("#SupplierList").html('<option value="">无</option>');
+                SetSupplierList();
+                $.messager.alert('操作提示', "获取供应商失败", 'error');
+            }
+        });
+
+    }
+    function SetSupplierList() {
+        $("#SupplierList").combobox({
+            onSelect: function () {
+                //如果不写onSelect方法，就无法获取下拉框选择的值
+            }
+        });
+        $("#CreateFrom").combobox({
+            onSelect: function () {
+                //如果不写onSelect方法，就无法获取下拉框选择的值
+            }
+        });
+    }
+</script>

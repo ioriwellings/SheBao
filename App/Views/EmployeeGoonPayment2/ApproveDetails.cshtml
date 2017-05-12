@@ -1,0 +1,260 @@
+﻿@using Langben.DAL;
+@model Langben.DAL.EmployeeAdd
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+    Langben.DAL.Employee Enployee = ViewBag.Employee;
+
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+    社保调基
+}
+<script src="~/Res/jquery.uploadify-v2.1.4/jquery-1.4.2.min.js"></script>
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //企业所属地
+        CRM_Companylist();
+        //社保缴纳地
+        Citylist();
+        //户口性质
+        PoliceAccountNaturelist();
+
+        var Parameter =@ViewBag.Parameter
+        $("#PoliceAccountNaturelist").val("@ViewBag.PoliceAccountNatureId")
+        $("#Citylist").val("@ViewBag.CityId")
+        $("#CRM_Companylist").val("@ViewBag.CompanyId")
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPayment2Api/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=1&Parameter=" + Parameter,
+            success: function (data) {
+                debugger;
+                $("#yanglao_id").val(data.yanglao_id);
+                $("#Pension_Wage").val(data.OldWage);
+                $("#Pension_NewWage").val(data.NewWage);
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPayment2Api/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=2&Parameter=" + Parameter,
+            success: function (data) {
+                debugger
+                $("#yiliao_id").val(data.yiliao_id);
+                $("#YILIAO_Wage").val(data.OldWage);
+                $("#YILIAO_NewWage").val(data.NewWage);
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPayment2Api/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=3&Parameter=" + Parameter,
+            success: function (data) {
+                $("#gongshang_id").val(data.gongshang_id);
+                $("#GONGSHANG_Wage").val(data.OldWage);
+                $("#GONGSHANG_NewWage").val(data.NewWage);
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPayment2Api/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=4&Parameter=" + Parameter,
+            success: function (data) {
+                debugger
+                $("#shiye_id").val(data.shiye_id);
+                $("#SHIYE_Wage").val(data.OldWage);
+                $("#SHIYE_NewWage").val(data.NewWage);
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPayment2Api/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=5&Parameter=" + Parameter,
+            success: function (data) {
+                $("#gongjijin_id").val(data.gongjijin_id);
+                $("#GONGJIJIN_Wage").val(data.OldWage);
+                $("#GONGJIJIN_NewWage").val(data.NewWage);
+            }
+        });
+
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPayment2Api/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=6&Parameter=" + Parameter,
+            success: function (data) {
+                $("#shengyu_id").val(data.shengyu_id);
+                $("#SHENGYU_Wage").val(data.OldWage);
+                $("#SHENGYU_NewWage").val(data.NewWage);
+            }
+        });
+    });
+    //缴纳地
+    function CRM_Companylist() {
+        myAjax("/api/EmployeeAddApi/getCompanyList", '', function (data) {
+            $("#CRM_Companylist").append("<option value=>请选择</option>");
+            $.each(data, function (i, item1) {
+                $("#CRM_Companylist").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+            });
+        });
+    }
+    ///缴纳地初始绑定
+    function Citylist() {
+        myAjax("/api/EmployeeAddApi/getCitylist", '', function (data) {
+            $("#Citylist").append("<option value=>请选择</option>");
+            $.each(data, function (i, item1) {
+                $("#Citylist").append("<option value='" + item1["Cityid"] + "'>" + item1["Name"] + "</option>");
+            });
+
+        });
+    }
+    //户口性质
+    function PoliceAccountNaturelist() {
+        myAjax("/api/EmployeeAddApi/getPoliceAccountNatureList", 'ID=@ViewBag.CityId', function (data) {
+
+            $("#PoliceAccountNaturelist").append("<option value=>请选择</option>");
+            $.each(data, function (i, item1) {
+                $("#PoliceAccountNaturelist").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+            });
+        });
+    }
+
+
+</script>
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" onclick="javascript:history.back(-1);" value="返回" />
+    </legend>
+    <div class="bigdiv">
+        <input type="hidden" id="EmployeeId" value="@Enployee.Id" />
+        <input type="hidden" id="EmployeeName" value="@Enployee.Name" />
+        <input type="hidden" id="CertificateNumber" value="@Enployee.CertificateNumber" />
+
+        <input type="hidden" id="yanglao_id" value="" />
+        <input type="hidden" id="yiliao_id" value="" />
+        <input type="hidden" id="gongshang_id" value="" />
+        <input type="hidden" id="shiye_id" value="" />
+        <input type="hidden" id="gongjijin_id" value="" />
+        <input type="hidden" id="shengyu_id" value="" />
+        <div class="editor-label">
+            人员姓名：
+        </div>
+        <div class="editor-field">
+
+            @Enployee.Name
+        </div>
+        <div class="editor-label">
+            证件号码：
+        </div>
+        <div class="editor-field">
+
+            @Enployee.CertificateNumber
+        </div>
+        <div class="editor-label">
+            所属企业：
+        </div>
+        <div class="editor-field">
+            <select id="CRM_Companylist" disabled="disabled"></select>
+        </div>
+
+        <div class="editor-label">
+            岗位：
+        </div>
+        <div class="editor-field">
+            @ViewBag.Station
+
+        </div>
+        <div class="editor-label">
+            社保缴纳地：
+        </div>
+        <div class="editor-field">
+            <select id="Citylist" disabled="disabled"></select>
+
+        </div>
+        <div class="editor-label">
+            户口性质：
+        </div>
+        <div class="editor-field">
+            <select id="PoliceAccountNaturelist" disabled="disabled"></select>
+        </div>
+        @*<div class="editor-label">
+                原社保工资：
+            </div>
+            <div class="editor-field">
+                <select id="Citylist" disabled="disabled"></select>
+
+            </div>
+            <div class="editor-label">
+                原公积金工资：
+            </div>
+            <div class="editor-field">
+
+                <select id="PoliceAccountNaturelist" disabled="disabled"></select>
+
+            </div>
+            <div class="editor-label">
+                新社保工资：
+            </div>
+            <div class="editor-field">
+                <select id="Citylist" disabled="disabled"></select>
+
+            </div>
+            <div class="editor-label">
+                新公积金工资：
+            </div>
+            <div class="editor-field">
+
+                <select id="PoliceAccountNaturelist" disabled="disabled"></select>
+
+            </div>*@
+        <table style="padding-left:100px;">
+            <tr>
+                <th>险种</th>
+                <th>原社保工资</th>
+                <th>新社保工资</th>
+            </tr>
+            <tr>
+                <td>养老</td>
+                <td><input type="text" id="Pension_Wage" readonly="readonly" /></td>
+                <td><input type="text" id="Pension_NewWage" readonly="readonly" /></td>
+            </tr>
+            <tr>
+                <td>医疗</td>
+                <td><input type="text" id="YILIAO_Wage" readonly="readonly" /></td>
+                <td><input type="text" id="YILIAO_NewWage" readonly="readonly" /></td>
+            </tr>
+            <tr>
+                <td>工伤</td>
+                <td><input type="text" id="GONGSHANG_Wage" readonly="readonly" /></td>
+                <td><input type="text" id="GONGSHANG_NewWage" readonly="readonly" /></td>
+            </tr>
+            <tr>
+                <td>失业</td>
+                <td><input type="text" id="SHIYE_Wage" readonly="readonly" /></td>
+                <td><input type="text" id="SHIYE_NewWage" readonly="readonly" /></td>
+            </tr>
+
+            <tr>
+                <td>生育</td>
+                <td><input type="text" id="SHENGYU_Wage" readonly="readonly" /></td>
+                <td><input type="text" id="SHENGYU_NewWage" readonly="readonly" /></td>
+            </tr>
+            <tr>
+                <td>公积金</td>
+                <td><input type="text" id="GONGJIJIN_Wage" readonly="readonly" /></td>
+                <td><input type="text" id="GONGJIJIN_NewWage" readonly="readonly" /></td>
+            </tr>
+        </table>
+
+    </div>
+</fieldset>

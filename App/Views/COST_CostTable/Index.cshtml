@@ -1,0 +1,423 @@
+﻿@model Langben.DAL.COST_CostTable
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+
+<div id="divQuery" data-options="region:'north',border:false" style="height:80px">
+    <div class="input_search">
+        <div class="input_search-label">
+            年月：
+        </div>
+        <div class="input_search-field">
+            <input id="YearMonth" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" />
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label" style="width:auto">
+            费用表类型：
+        </div>
+        <div class="input_search-field">
+            <select id="costTableType">
+                <option value="0">全部</option>
+                <option value="1">单立户</option>
+                <option value="2">大户代理</option>
+            </select>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            状态：
+        </div>
+        <div class="input_search-field">
+            <select id="status">
+                <option value="0">全部</option>
+                <option value="1">待责任客服验证</option>
+                <option value="2">待客户确认</option>
+                <option value="3">客户作废</option>
+                <option value="4">待责任客服确认</option>
+                <option value="5">责任客服作废</option>
+                <option value="6">待核销</option>
+                <option value="7">财务作废</option>
+                <option value="8">已核销</option>
+                <option value="9">已支付</option>
+            </select>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            公司名称：
+        </div>
+        <div class="input_search-field">
+            <select id="Company"></select>
+        </div>
+    </div>
+
+    <div class='input_search' style="padding-top:10px;">
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+ <br style="clear: both;" />
+<div id="toolbar" class="datagrid-toolbar">
+    @if (ViewBag.LockButton)
+{
+    <a href="javascript:void(0);" class="easyui-linkbutton"
+       data-options="plain:true,iconCls:'icon-lock'" onclick="LockFee()">锁定费用表</a>
+}
+</div>
+<div id="dialogWin1" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="dialogFrame1" frameborder="0" src="" scrolling="no" width="100%" height="70%"></iframe>
+</div>
+
+<script type="text/javascript" language="javascript">
+    $(".yearMonth").simpleCanleder();
+
+    function getCompany() {
+
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/COST_CostTableApi/GetCompany?menuId=1043",  // menuId为菜单编号，1043代表“责任客服费用审核”
+            async: true,
+            success: function (data) {
+                $("#Company").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+
+                    $("#Company").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+
+    $(function () {
+        getCompany();
+        LoadData();
+    })
+
+    function LoadData() {
+        var search = "";
+        search = "yearMonth$" + $("#YearMonth").val().replace('-', '') + "^costTableType$" + $("#costTableType").val() + "^status$" + $("#status").val() + "^companyId$" + $("#Company").val();
+
+        $('#flexigridData').datagrid({
+            title: '费用_费用表', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            fit:true,
+            collapsible: true,
+            url: 'api/COST_CostTableApi/PostData?search=' + search, //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            checkOnSelect: false,
+            toolbar: '#toolbar',
+            rowStyler: function(index,row){
+                if (row.StatusName == "责任客服作废") {
+                    return 'background-color:#ffee00;color:red;font-weight:bold;';
+                }
+            },
+            columns: [[
+                   
+                { field: 'ck', checkbox: true }
+                , { field: 'SerialNumber', title: '批次号', width: 110, align:'center', formatter: Href }
+                , { field: 'CompanyName', title: '公司名称', width: 150, align: 'center' }  // 数据库存储为ID，这里需要Name
+                , { field: 'CreateUserName', title: '上传客服', width: 150, align: 'center' }
+                , { field: 'CostTableType', title: '费用表类型', width: 86, align: 'center' }
+                , { field: 'StatusName', title: '状态', width: 120, align: 'center' }
+                , { field: 'Status', title: '', hidden: true, align: 'center' }  // 状态列值，用于做判断用
+                , {
+                    field: 'CreateTime', title: '上传时间', width: 120, align: 'center'
+                , formatter: formatDatebox
+                }
+                , { field: 'ChargeCost', title: '费用合计', width: 100, align: 'right' }
+                , { field: 'ID', title: '操作', width: 140, align:'center', formatter: Operat}
+            ]],
+            onLoadSuccess: function (data) { //加载完毕后获取所有的checkbox遍历
+                if (data.rows.length > 0) {
+                    for (var i = 0; i < data.rows.length; i++) {
+                        if (data.rows[i].Status != 4) {
+                            $("input[type='checkbox']")[i + 1].disabled = true;
+                        }
+                    }
+                }
+                    
+            },
+            onCheckAll: function(rows) {
+                $("input[type='checkbox']").each(function(index, el) {  
+                    console.log(el.disabled)
+                    if (el.disabled) {  
+                        $("#flexigridData").datagrid('uncheckRow', index - 1);
+                    }
+                })
+            },
+            pagination: true,
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    }
+
+    // 批次号链接到详情页面
+    function Href(val, row) {
+        var id = row.ID;
+
+        if ("@ViewBag.DetailButton" == "True") {
+            return "<a style='text-decoration:none' href='javascript:void(0)' onclick=\"GetView('" + id + "','" + row.SerialNumber + "')\" class='easyui-linkbutton' data-options='plain:true,iconCls:'icon-back''>" + row.SerialNumber + "</a>";
+        }
+        else {
+            return row.SerialNumber;
+        }
+    }
+
+    //导航到查看详细的按钮
+    function GetView(id, picihao) {
+        parent.addTab("批次号：【" + picihao + "】", "/COST_CostTable/Details/" + id, "tu0202", true, id)
+    }
+
+    // 添加“操作”列的链接文字（作废、导出、查看备注）
+    function Operat(val, row) {
+        var id = row.ID;
+        var html = "";
+
+        if ("@ViewBag.DeleteButton" == "True") {
+            // 暂时先将判断去掉，方便测试人员进行测试
+            //if (row.Status == 4) {  // 若费用表状态为“待责任客服确认”，则可以作废
+            html += "<a href='#' onclick=\"Delete('" + id + "')\">作废</a>&nbsp;&nbsp;&nbsp;";
+            //}
+        }
+        if ("@ViewBag.ExportButton" == "True") {
+            html += "<a href='#' onclick=\"Export('" + id + "')\">导出</a>&nbsp;&nbsp;&nbsp;";
+        }
+        if ("@ViewBag.RemarkButton" == "True") {
+            html += "<a href='#' onclick=\"Remark('" + id + "')\">备注</a>";
+        }
+        
+        return html;
+    }
+
+    // 作废操作
+    function Delete(id) {
+        var Status = "@((int)Common.COST_Table_Status.责任客服作废)";
+        $.messager.confirm('操作提示', "确认作废这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "api/COST_CostTableApi/DeleteCostTable?Status=" + Status + "&id=" + id,
+                    type: "DELETE",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //重新加载数据
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                            $("#flexigridData").datagrid("clearChecked");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+                    }
+                })
+            }
+        });
+
+    };
+
+
+    // 导出操作
+    function Export(id) {
+        $.ajax({
+            url: "api/COST_CostTableApi/PostExportToExcel?id=" + id,
+            type: "POST",
+            success: function (res) {
+                window.location.href = res;
+            }
+        })
+
+    };
+        
+    // 查看备注
+    function Remark(id) {
+
+        window.$("#dialogFrame1").prop("src", "@Url.Action("Remark", "COST_CostTable")?id=" + id);
+       window.$("#dialogWin1").dialog({
+           title: name,
+           width: '500px',
+           height: '200px',
+           iconCls: 'icon-save',
+           cache: false,
+           modal: true,
+           closed: false,
+           buttons: [{
+               text: '保存', iconCls: 'icon-save',
+               handler: function (evt) {
+                   var aa = window.$("#dialogFrame1").prop('contentWindow');
+                   var result = "-1";
+                   var idn = aa.$("#ID").val();
+                   var remark = aa.$("#Remarkn").val();
+                   $.ajax({
+                       type: "POST",
+                       url: "/api/COST_CostTableApi/EditRemark?ID=" + idn,
+                       data: { "Remark": remark },
+                       async: false,
+                       success: function (msg) {
+                           if (msg.Code == 1) {
+                               $.messager.alert('操作提示', '保存成功！', 'info');
+                               window.$("#dialogWin1").dialog("close");//关闭弹出框
+                              
+                           }
+                           else {
+                               $.messager.alert('操作提示', '保存失败！', 'info');                             
+                          
+                           }
+                       }
+                   });                    
+
+               }
+           }, {
+               text: '关闭', iconCls: 'icon-cancel',
+               handler: function () {
+                   window.$("#dialogWin1").dialog("close");//关闭弹出框
+               }
+           }],
+           onResize: function () {
+               window.$(this).dialog('center');//弹出框居中
+           },
+           onClose: function () {
+               window.$("#dialogFrame1").prop("src", "");
+               //window.activeWindow.pop();//关闭窗口，释放已注册的父窗体集合
+           }
+       });
+    }
+
+    //导航到锁定费用表的按钮
+    function LockFee() {
+        var rows = $('#flexigridData').datagrid('getChecked');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].ID);
+        }
+
+        $.messager.confirm('操作提示', "锁定后的费用表不可作废，确认锁定这 " + arr.length + " 项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "api/COST_CostTableApi/PostLock?query=" + arr.join(","),
+                    type: "POST",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新数据
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                            $("#flexigridData").datagrid("clearChecked");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+    }
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        LoadData();
+    };
+
+    //“导出”按钮     在6.0版本中修改
+    //function flexiExport() {
+
+    //    //将查询条件按照分隔符拼接成字符串
+    //    var search = "";
+    //    $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+    //        search = search + this.id + "&" + this.value + "^";
+    //    });
+          
+    //    var p = $('#flexigridData').datagrid('options').columns[0];
+    //    var field = [];//所有的列名
+    //    var title = [];//所有的标题名称
+    //    $(p).each(function () {
+    //        field.push(this.field);
+    //        title.push(this.title);              
+    //    });
+           
+    //    $.post("api/COST_CostTableApi/PostExport",
+    //        {
+    //            title: title.join(","),
+    //            field: field.join(","),
+    //            sortName: $('#flexigridData').datagrid('options').sortName,
+    //            sortOrder: $('#flexigridData').datagrid('options').sortOrder,
+    //            search: search
+    //        }, function (res) {
+    //            if (res.Code == 1) {
+    //                window.location.href = res.Message;
+    //            }
+    //            else $.messager.alert('操作提示', res.Message, 'info');
+
+    //        });
+//};
+
+    //“选择”按钮，在其他（与此页面有关联）的页面中，此页面以弹出框的形式出现，选择页面中的数据
+    function flexiSelect() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].ID);
+        }
+        arr.push("^");
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].CostTableType);
+        }
+        //主键列和显示列之间用 ^ 分割   每一项用 , 分割
+        if (arr.length > 0) {//一条数据和多于一条
+            returnParent(arr.join("&")); //每一项用 & 分割
+        }
+    }
+
+    ////导航到创建的按钮
+    //function flexiCreate() {
+
+    //    window.location.href = "../COST_CostTable/Create";
+    //    return false;
+    //}
+    ////导航到修改的按钮
+    //function flexiModify() {
+
+    //    var arr = $('#flexigridData').datagrid('getSelections');
+
+    //    if (arr.length == 1) {
+    //        window.location.href = "../COST_CostTable/Edit/" + arr[0].ID;
+
+    //    } else {
+    //        $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+    //    }
+    //    return false;
+    //};
+</script>
+

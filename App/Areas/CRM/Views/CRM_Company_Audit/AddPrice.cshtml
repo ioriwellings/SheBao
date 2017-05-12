@@ -1,0 +1,100 @@
+﻿@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        // 获取内容并显示
+        $.ajax({
+            url: "/api/CRM_CompanyPrice_AuditApi/GetPrice_Audit/@ViewBag.ID",
+            type: "Get",
+            async: false,
+            success: function (data) {
+                var res = eval("(" + data + ")");
+                $("#Audit_ProductName").text(res.ProductName);
+                $("#Audit_LowestPrice").text(res.LowestPrice == null ? '' : res.LowestPrice);
+                $("#Audit_AddPrice").text(res.AddPrice == null ? '' : res.AddPrice);
+            }
+        })
+     
+        $('#BasicGrid').datagrid()
+
+    });
+    function PassAdd() {
+        $.ajax({
+            url: "/api/CRM_CompanyPrice_AuditApi/PassAdd/@ViewBag.ID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function ReturnAdd() {
+        $.ajax({
+            url: "/api/CRM_CompanyPrice_AuditApi/ReturnAdd/@ViewBag.ID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function GoBack() {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/CRM_Company_Audit/Index/?tmp=" + tmp;
+    }
+</script>
+
+<div id="divQuery">
+    <div class='input_search' style="padding-top:10px;">
+        @if (ViewBag.State == 1)
+        {
+            <input class="a2 f2" type="button" onclick="PassAdd()" value="通过" />
+            <input class="a2 f2" type="button" onclick="ReturnAdd()" value="退回" />
+        }
+        <input class="a2 f2" type="button" onclick="GoBack()" value="返回列表" />
+
+    </div>
+</div>
+
+<br style="clear: both;" />
+
+<input type="hidden" id="ID" value="@ViewBag.ID" />
+<input type="hidden" id="MainTableID" value="@ViewBag.MainTableID" />
+
+<table id="BasicGrid" style="width: auto; height: auto; border: 1px solid #ccc;">
+    <thead>
+        <tr>
+            <th data-options="field:'ProductName',width:100">产品名称</th>
+            <th data-options="field:'LowestPrice',width:150">整户服务费</th>
+            <th data-options="field:'AddPrice',width:200">补缴服务费</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><span id="Audit_ProductName"></span></td>
+            <td><span id="Audit_LowestPrice"></span></td>
+            <td><span id="Audit_AddPrice"></span></td>
+        </tr>
+    </tbody>
+</table>
+
+
+

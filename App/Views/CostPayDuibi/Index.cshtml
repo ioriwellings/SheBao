@@ -1,0 +1,175 @@
+﻿@{ Layout = "~/Views/Shared/Index.cshtml"; }
+
+
+
+
+@*<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>*@
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+<div id="divQuery" data-options="region:'north',border:false" style="height:80px">
+    <div class="input_search">
+        <div class="input_search-label">
+            公司名称：
+        </div>
+        <div class="input_search-field">
+            <select id="Company"></select>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label" style="width:auto">
+            险种：
+        </div>
+        <div class="input_search-field">
+            <select id="costType">
+                <option value="1">养老</option>
+                <option value="2">医疗</option>
+                <option value="3">工伤</option>
+                <option value="4">失业</option>
+                <option value="5">公积金</option>
+                <option value="6">生育</option>
+                <option value="9">大病</option>
+                <option value="8">补充公积金</option>
+            </select>
+        </div>
+    </div>
+    <div class="input_search-label">
+        年月：
+    </div>
+    <div class="input_search-field">
+        <input type="text" id="yearMonthStart" onclick="WdatePicker({dateFmt:'yyyy-MM',realDateFmt:'yyyy-MM'})" />
+        @*<input id="" value="" class="yearMonth" style="width:auto" />*@
+        至
+        @*<input id="yearMonthEnd" value="" class="yearMonth" style="width:auto" />*@
+        <input type="text" id="yearMonthEnd" onclick="WdatePicker({dateFmt:'yyyy-MM',realDateFmt:'yyyy-MM'})" />
+    </div>
+
+    @*<div class="input_search">
+            <div class="input_search-label">
+                上传客服：
+            </div>
+            <div class="input_search-field">
+                <select id="Person"></select>
+            </div>
+        </div>*@
+    <div class='input_search' style="padding-top:10px;">
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+<br style="clear: both;" />
+<script type="text/javascript">
+    ////绑定年月控件
+    //$(".yearMonth").simpleCanleder();
+    $(function () {
+        getCompany();
+        getPerson();
+
+        $('#flexigridData').datagrid({
+            title: '企业社保收支对比', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            fit:true,
+            collapsible: false,
+            url: 'api/CostPayDuibiApi/PostData', //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+
+            columns: [[
+                { field: 'ID', title: '企业编码', width: 97, align: 'center' }
+                , { field: 'CompanyName', title: '企业名称', width: 200, align: 'center' }
+                , { field: 'CostTableType', title: '险种', width: 97, align: 'center' }
+                , { field: 'CompanyCost', title: '单位收入金额', width: 97, align: 'right' }
+                , { field: 'PersonCost', title: '个人收入金额', width: 97, align: 'right' }
+                , { field: 'CompanyPay', title: '单位支出金额', width: 97, align: 'right' }
+                , { field: 'PersonPay', title: '个人支出金额', width: 97, align: 'right' }
+                , { field: 'CompanyCha', title: '单位差额', width: 97, align: 'right' }
+                , { field: 'PersonCha', title: '个人差额', width: 97, align: 'right' }
+                , { field: 'Cha', title: '差额合计', width: 97, align: 'right' }
+                , {
+                    field: 'aaa', title: '操作', width: 140, align: 'center', formatter: Operat
+                }
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+    // 添加“操作”列的链接文字（查看明细）
+    function Operat(val, row) {
+        var id = row.ID;
+        var costType = row.costType;
+       
+        return "<a style='text-decoration:none' href='javascript:void(0)' onclick=\"GetView(" + id + "," + costType + ")\" class='easyui-linkbutton' data-options='plain:true,iconCls:'icon-back''>查看详情</a>";
+    }
+
+    //导航到查看详细的按钮
+    function GetView(id, costType) {
+        
+        window.location.href = "../CostPayDuibi/Details?Id=" + id + "&yearMonthStart=" + $("#yearMonthStart").val() + "&yearMonthEnd=" + $("#yearMonthEnd").val() + "&costType=" + costType;
+        return false;
+    }
+
+    function getCompany() {
+
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/COST_CostTableApi/GetCompany?menuID=1047",
+            async: true,
+            success: function (data) {
+                $("#Company").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+
+                    $("#Company").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+    function getPerson() {
+
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/COST_PayRecordApi/GetPerson",
+            async: true,
+            success: function (data) {
+                $("#Person").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+                    $("#Person").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        if ($("#yearMonthStart").val() == "" || $("#yearMonthEnd").val() == "") {
+            $.messager.alert('操作提示', "请选择查询年月", 'info');
+            return false;
+        }
+        else {
+            //将查询条件按照分隔符拼接成字符串
+            var search = "";
+            search = "Company&" + $("#Company option:selected").val() + "^costType&" + $("#costType  option:selected").val() + "^yearMonthStart&" + $("#yearMonthStart").val() + "^yearMonthEnd&" + $("#yearMonthEnd").val();
+
+            //执行查询
+            $('#flexigridData').datagrid('load', { search: search });
+        }
+    };
+</script>

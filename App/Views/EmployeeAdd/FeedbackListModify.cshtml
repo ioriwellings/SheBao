@@ -1,0 +1,380 @@
+﻿@using Langben.DAL;
+@model Langben.DAL.EmployeeAdd
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+    Langben.DAL.Employee Enployee = ViewBag.Employee;
+
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+    社保申报
+}
+<script src="~/Res/jquery.uploadify-v2.1.4/jquery-1.4.2.min.js"></script>
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#PoliceAccountNaturelist").val("@ViewBag.PoliceAccountNatureId")
+        $("#Citylist").val("@ViewBag.CityId")
+        var Cityid = "@ViewBag.CityId";
+        $("#CRM_Companylist").val("@ViewBag.CompanyId")
+
+        myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + @(ViewBag.CityId), function (data) {
+            if (data != null) {
+                var table = "<table id=\"tabRateInfo\" style=\"padding-left:100px;\">";
+                table += "<tr>";
+                table += "<th>险种</th><th>政策手续</th><th>工资</th><th>起缴时间</th><th>政策	</th><th>保险编号</th>";
+                table += "</tr>";
+                $.each(data, function (i, item1) {
+                    table += "<tr>";
+                    table += "<td>" + item1["Name"] + "</td>";
+                    table += "<td><select id=\"" + item1["Name"] + "_PoliceOperationlist\"  name=\"carlist\"   onchange=\"PoliceOperationlist('" + item1["Name"] + "')\"  ></select></td>";
+                    if (item1["Name"] == "公积金" || item1["Name"] == "补充公积金") {
+
+                        table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_Wage\"   disabled=\"disabled\"    /></td>";
+                        table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_StartTime\"  onclick=\"WdatePicker()\"   /></td>";
+                    }
+                    else {
+                        table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_Wage\"   disabled=\"disabled\"  /></td>";
+                        table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_StartTime\"  onclick=\"WdatePicker()\"    /></td>";
+                    }
+                    table += "<td><select id=\"" + item1["Name"] + "_PoliceInsurancelist\"     name=\"carlists\"  ></select></td>";
+                    table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_InsuranceNumber\"   disabled=\"disabled\"  /></td>";
+                    
+                    table += "<td><input type=\"hidden\" id='" + item1["Name"] + "_InsuranceKind'  disabled=\"disabled\"  value=\"" + item1["ID"] + "\" /></td>";
+                    table += "<td><input type=\"hidden\" id='" + item1["Name"] + "_Id'  disabled=\"disabled\"  value=\"\" /></td>";
+                    table += "</tr>";
+                });
+                table += "</table>";
+                $("#div1").html(table);
+                $.each(data, function (i, item1) {
+                    $("#" + item1["Name"] + "_InsuranceKind").val(item1["ID"]);
+                    myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item1["ID"], function (data) {
+                        $("#" + item1["Name"] + "_PoliceOperationlist").append("<option value=>请选择</option>");
+                        $.each(data, function (i, item2) {
+
+                            $("#" + item1["Name"] + "_PoliceOperationlist").append("<option value='" + item2["ID"] + "'>" + item2["Name"] + "</option>");
+                        });
+                    });
+
+                });
+                $.each(data, function (i, item1) {
+                    $("#" + item1["Name"] + "_InsuranceKind").val(item1["ID"]);
+                    $.ajax({
+                        type: "get",
+                        url: "/api/EmployeeAddApi/getEmployeeAddList1",
+                        async: false,
+                        data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&YearMonth="+@(ViewBag.YearMonth)+"&typeKind=" + item1["Name"] + "&Parameter=2",
+                        success: function (data) {
+                            if (data != null&&data!="") {
+                                $("#" + item1["Name"] + "_Wage").val(data.Wage);
+                                $("#" + item1["Name"] + "_StartTime").val(data.StartTime.substr(0, 10));
+                                $("#" + item1["Name"] + "_PoliceOperationlist").val(data.PoliceOperationId);
+                                $("#" + item1["Name"] + "_PoliceInsurancelist").append("<option value='" + data.PoliceInsuranceId + "'>" + data.PoliceInsuranceName + "</option>");
+                                //$("#" + item1["Name"] + "_PoliceInsurancelist").val(data.PoliceInsuranceId);
+                                $("#" + item1["Name"] + "_InsuranceNumber").val(data.InsuranceCode);
+                                $("#" + item1["Name"] + "_Id").val(data.id);
+                              
+                            }
+                        }
+                    });
+
+                });
+
+
+            }
+        });
+
+
+
+
+
+
+
+
+        $("#Modify").click(function () {
+            var PoliceAccountNaturelist = $("#PoliceAccountNaturelist").val();
+            if (PoliceAccountNaturelist == "") {
+                alert("请选择户口性质！");
+                return false;
+            }
+            var CompanyEmployeeRelationid = $("#CompanyEmployeeRelationid").val();
+            alert(CompanyEmployeeRelationid);
+            var Judge=1;
+            myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + @(ViewBag.CityId), function (data) {
+                if (data != null) {
+                    $.each(data, function (i, item1) {
+                        var PaymentTime = $("#" + item1["Name"] + "_StartTime").val();//起缴时间
+                        var PoliceOperation = $("#" + item1["Name"] + "_PoliceOperationlist").val();//养老政策手续
+                        var PoliceInsurancelist = $("#" + item1["Name"] + "_PoliceInsurancelist").val();//养老政策手续
+                        var Wage = $("#" + item1["Name"] + "_Wage").val();
+
+                        if (PaymentTime != "") {
+
+                            if (PoliceOperation == "") {
+                                alert("请选择" + item1["Name"] + "政策手续！");
+                                Judge=2;
+                                return false;
+                            }
+                            if (PoliceInsurancelist == "") {
+                                alert("请选择" + item1["Name"] + "社保政策！");
+                                Judge=2;
+                                return false;
+                            }
+                        }
+
+                    });
+                }
+                else
+                {
+                    return false;
+                }
+            });
+           
+            if(Judge==2)
+            {               
+                return false;
+            }
+           
+            var array = [];
+            $.each($("#tabRateInfo tr:not(:first)"), function () {
+                array.push({
+                    'InsuranceKind': $(this).children('td').eq(0).text(),
+                    'PoliceOperation': $(this).children('td').eq(1).find('select').first().val(),
+                    // 'Wage': $(this).children('td').eq(2).find('input').first().val(),
+                    'StartTime': $(this).children('td').eq(3).find('input').first().val(),
+                    'PoliceInsurance': $(this).children('td').eq(4).find('select').first().val(),
+                    //'InsuranceNumber': $(this).children('td').eq(5).find('input').first().val(),
+                    'Id': $(this).children('td').eq(7).find('input').first().val()
+                });
+            });
+            var submitData = {
+                "PoliceAccountNature": PoliceAccountNaturelist,  'Insurance': array
+            };
+           
+            $.ajax({
+                type: "POST",
+                url: "/api/EmployeeAddApi/POSTFeedbackModify?Reportedincreasedata=" + JSON.stringify(submitData)+"&CompanyEmployeeRelationid=" + CompanyEmployeeRelationid,
+                async: false,
+                data: {
+                },
+                success: function (msg) {
+                    if (msg.Code == 1) {
+                        alert(msg.Message);
+                    }
+                    else {
+                        alert("失败");
+                    }
+                }
+            });
+
+
+
+
+
+            @*var Judge=1;
+            var CompanyEmployeeRelationid = $("#CompanyEmployeeRelationid").val();
+            myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + @(ViewBag.CityId), function (data) {
+                if (data != null) {
+                    $.each(data, function (i, item1) {
+                        var PaymentTime = $("#" + item1["Name"] + "_StartTime").val();//起缴时间
+                        var PoliceOperation = $("#" + item1["Name"] + "_PoliceOperationlist").val();//养老政策手续
+                        var PoliceInsurancelist = $("#" + item1["Name"] + "_PoliceInsurancelist").val();//养老政策手续
+                        var Wage = $("#" + item1["Name"] + "_Wage").val();
+
+                        if (PaymentTime != "") {
+
+                            if (PoliceOperation == "") {
+                                alert("请选择" + item1["Name"] + "政策手续！");
+                                Judge=2;
+                                return false;
+                            }
+                            if (PoliceInsurancelist == "") {
+                                alert("请选择" + item1["Name"] + "社保政策！");
+                                Judge=2;
+                                return false;
+                            }
+                        }
+
+                    });
+                }
+                else
+                {
+                    return false;
+                }
+            });
+           
+            if(Judge==2)
+            {               
+                return false;
+            }
+            var array = [];
+            $.each($("#tabRateInfo tr:not(:first)"), function () {
+                array.push({
+                    'InsuranceKind': $(this).children('td').eq(0).text(),
+                    'PoliceOperation': $(this).children('td').eq(1).find('select').first().val(),
+                    // 'Wage': $(this).children('td').eq(2).find('input').first().val(),
+                    'StartTime': $(this).children('td').eq(3).find('input').first().val(),
+                    'PoliceInsurance': $(this).children('td').eq(4).find('select').first().val(),
+                    //'InsuranceNumber': $(this).children('td').eq(5).find('input').first().val(),
+                    'Id': $(this).children('td').eq(7).find('input').first().val()
+                });
+            });
+            var submitData = {
+                "PoliceAccountNature": PoliceAccountNaturelist,  'Insurance': array
+            };
+            alert(array);
+            $.ajax({
+                type: "POST",
+                url: "/api/EmployeeAddApi/POSTFeedbackModify?Reportedincreasedata=" + JSON.stringify(submitData)+"&CompanyEmployeeRelationid=" + CompanyEmployeeRelationid,
+                async: false,
+                data: {
+                },
+                success: function (msg) {
+                    if (msg.Code == 1) {
+                        alert(msg.Message);
+                    }
+                    else {
+                        alert(msg.Message);
+                    }
+                }
+            });*@
+
+
+
+
+
+
+
+
+        });
+    });
+    //缴纳地
+
+    function PoliceOperationlist(name) {
+        var kindid = $("#" + name + "_InsuranceKind").val();
+        $("#" + name + "_PoliceInsurancelist option").remove();
+        var PoliceOperationid = $("#" + name + "_PoliceOperationlist").val();
+        if (PoliceOperationid != "") {
+            var PoliceAccountNatureid = $("#PoliceAccountNaturelist").val();
+
+            if (PoliceAccountNatureid == "") {
+                alert("请选择户口性质");
+            }
+            else {
+                myAjax("/api/EmployeeAddApi/getPoliceInsuranceList", 'ID=' + PoliceOperationid + "&PoliceAccountNatureid=" + PoliceAccountNatureid + "&kindid=" + kindid, function (data) {
+
+                    $("#" + name + "_PoliceInsurancelist").append("<option value=>请选择</option>");
+                    $.each(data, function (i, item1) {
+                        $("#" + name + "_PoliceInsurancelist").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                    });
+                });
+            }
+        }
+    }
+    function PoliceAccountNaturelist1() {
+        $("select[name=carlist]").val("");
+        $("select[name=carlists]").val("");
+
+    }
+
+
+
+
+
+
+
+</script>
+@using (Html.BeginForm("", "api/EmployeeAddApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" value="修改" id="Modify" />
+            <input class="a2 f2" type="button" onclick="BackList('/EmployeeAdd/FeedbackList')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+            <input type="hidden" id="EmployeeId" value="@Enployee.Id" />
+            <input type="hidden" id="EmployeeName" value="@Enployee.Name" />
+            <input type="hidden" id="CertificateNumber" value="@Enployee.CertificateNumber" />
+
+            <input type="hidden" id="CompanyEmployeeRelationid" value="@ViewBag.CompanyEmployeeRelationid" />
+
+            <div class="editor-label">
+                人员姓名：
+            </div>
+            <div class="editor-field">
+
+                @Enployee.Name
+            </div>
+            <div class="editor-label">
+                证件号码：
+            </div>
+            <div class="editor-field">
+
+                @Enployee.CertificateNumber
+            </div>
+            <div class="editor-label">
+                缴纳地：
+            </div>
+            <div class="editor-field">
+                @{
+    List<City> City = new List<City>();
+    City = ViewBag.Citylist;
+    ViewData["Citylist"] = new SelectList(City, "Id", "Name");
+                }
+                @Html.DropDownList("Citylist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+
+            </div>
+            <div class="editor-label">
+                户口性质：
+            </div>
+            <div class="editor-field">
+                @{
+    List<PoliceAccountNature> PoliceAccountNature = new List<PoliceAccountNature>();
+    PoliceAccountNature = ViewBag.PoliceAccountNaturelist;
+    ViewData["PoliceAccountNaturelist"] = new SelectList(PoliceAccountNature, "Id", "Name");
+                }
+                @Html.DropDownList("PoliceAccountNaturelist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+
+            </div>
+            <div class="editor-label">
+                报增企业：
+            </div>
+            <div class="editor-field">
+                @{
+    List<CRM_Company> CRM_Company = new List<CRM_Company>();
+    CRM_Company = ViewBag.CRM_Companylist;
+    ViewData["CRM_Companylist"] = new SelectList(CRM_Company, "ID", "CompanyName");
+                }
+                @Html.DropDownList("CRM_Companylist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+
+            </div>
+
+
+
+            <div class="editor-label">
+
+            </div>
+            <div class="editor-field">
+
+            </div>
+            <div id="div1"></div>
+           
+            <div class="editor-label">
+
+            </div>
+            <div class="editor-field">
+
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+
+

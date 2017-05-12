@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9B7FCA89-A8A4-4FA8-B67B-0BF0FE9C53CD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Langben.IBLL</RootNamespace>
+    <AssemblyName>IBLL</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Framework\ISysFieldHander.cs" />
+    <Compile Include="IAllotBLL.cs" />
+    <Compile Include="ICOST_PayGongJiJinBCBLL.cs" />
+    <Compile Include="ICOST_PayGongJiJinBLL.cs" />
+    <Compile Include="ICOST_PayGongShangBLL.cs" />
+    <Compile Include="ICOST_PayRecordBLL.cs" />
+    <Compile Include="ICOST_PayRecordStatusBLL.cs" />
+    <Compile Include="ICOST_PayShengYuBLL.cs" />
+    <Compile Include="ICOST_PayShiYeBLL.cs" />
+    <Compile Include="ICOST_PayTemporaryBLL.cs" />
+    <Compile Include="ICOST_PayYangLaoBLL.cs" />
+    <Compile Include="ICOST_PayYiLiaoBLL.cs" />
+    <Compile Include="ICOST_PayYiLiaoDaEBLL.cs" />
+    <Compile Include="ICRM_CompanyContractBLL.cs" />
+    <Compile Include="ICRM_CompanyContract_AuditBLL.cs" />
+    <Compile Include="ICRM_CompanyFinance_BillBLL.cs" />
+    <Compile Include="ICRM_CompanyFinance_Bill_AuditBLL.cs" />
+    <Compile Include="ICRM_CompanyFinance_PaymentBLL.cs" />
+    <Compile Include="ICRM_CompanyFinance_Payment_AuditBLL.cs" />
+    <Compile Include="ICRM_Company_InsuranceBLL.cs" />
+    <Compile Include="ICRM_Company_PoliceInsuranceBLL.cs" />
+    <Compile Include="ICRM_ZD_HYBLL.cs" />
+    <Compile Include="IEmployeeMiddleImportRecordBLL.cs" />
+    <Compile Include="ILadderLowestPriceBLL.cs" />
+    <Compile Include="ILadderPriceBLL.cs" />
+    <Compile Include="IORG_UserCityBLL.cs" />
+    <Compile Include="IORG_UserInsuranceKindBLL.cs" />
+    <Compile Include="ISupplierBillBLL.cs" />
+    <Compile Include="ISupplierBLL.cs" />
+    <Compile Include="ISupplierBankAccountBLL.cs" />
+    <Compile Include="ISupplierLinkManBLL.cs" />
+    <Compile Include="ISupplierNatureCityBLL.cs" />
+    <Compile Include="IUserCityCompanyBLL.cs" />
+    <Compile Include="SCHR\IAllotBLL.cs" />
+    <Compile Include="SCHR\ICRM_Company_InsuranceBLL.cs" />
+    <Compile Include="SCHR\IEmployeeMiddleBLL.cs" />
+    <Compile Include="SCHR\IEmployeeGoonPayment2BLL.cs" />
+    <Compile Include="SCHR\IEmployeeGoonPaymentBLL.cs" />
+    <Compile Include="SCHR\IEmployeeMiddleImportRecordBLL.cs" />
+    <Compile Include="SCHR\ILadderLowestPriceBLL.cs" />
+    <Compile Include="SCHR\ILadderPriceBLL.cs" />
+    <Compile Include="SCHR\IORG_DepartmentBLL.cs" />
+    <Compile Include="IORG_GroupBLL.cs" />
+    <Compile Include="IORG_GroupUserBLL.cs" />
+    <Compile Include="IORG_MenuBLL.cs" />
+    <Compile Include="IORG_MenuOpBLL.cs" />
+    <Compile Include="IORG_RoleBLL.cs" />
+    <Compile Include="IORG_RoleDepartmenScopetAuthorityBLL.cs" />
+    <Compile Include="IORG_RoleDepartmentAuthorityBLL.cs" />
+    <Compile Include="IORG_RoleMenuOpAuthorityBLL.cs" />
+    <Compile Include="IORG_UserDepartmenScopetAuthorityBLL.cs" />
+    <Compile Include="IORG_UserDepartmentAuthorityBLL.cs" />
+    <Compile Include="IORG_UserMenuOpAuthorityBLL.cs" />
+    <Compile Include="IORG_UserRoleBLL.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="IEmployeeBLL.cs" />
+    <Compile Include="IEmployeeContactBLL.cs" />
+    <Compile Include="IEmployeeBankBLL.cs" />
+    <Compile Include="IPoliceInsuranceBLL.cs" />
+    <Compile Include="IPoliceRejectRelationshipBLL.cs" />
+    <Compile Include="IInsuranceKindBLL.cs" />
+    <Compile Include="IPoliceCascadeRelationshipBLL.cs" />
+    <Compile Include="IPoliceMasterRelationshipBLL.cs" />
+    <Compile Include="IPoliceOperationBLL.cs" />
+    <Compile Include="IPoliceAccountNatureBLL.cs" />
+    <Compile Include="ICityBLL.cs" />
+    <Compile Include="IAttachmentBLL.cs" />
+    <Compile Include="ICompanyEmployeeRelationBLL.cs" />
+    <Compile Include="IEmployeeAddBLL.cs" />
+    <Compile Include="IEmployeeStopPaymentBLL.cs" />
+    <Compile Include="IEmployeeGoonPaymentBLL.cs" />
+    <Compile Include="IEmployeeGoonPayment2BLL.cs" />
+    <Compile Include="IEmployeeInsuranceAttachmentBLL.cs" />
+    <Compile Include="IEmployeeAddHistoryBLL.cs" />
+    <Compile Include="IEmployeeStopPaymentHistoryBLL.cs" />
+    <Compile Include="IEmployeeGoonPaymentHistoryBLL.cs" />
+    <Compile Include="IEmployeeGoonPayment3adsaBLL.cs" />
+    <Compile Include="IEmployeeMiddleBLL.cs" />
+    <Compile Include="IPoliceOperationPoliceInsurancePoliceAccountNature2BLL.cs" />
+    <Compile Include="ICRM_CompanyBLL.cs" />
+    <Compile Include="ICRM_CompanyLinkManBLL.cs" />
+    <Compile Include="ICRM_CompanyToBranchBLL.cs" />
+    <Compile Include="ICRM_CompanyBankAccountBLL.cs" />
+    <Compile Include="IPRD_ProductBLL.cs" />
+    <Compile Include="ICOST_CostTableBLL.cs" />
+    <Compile Include="ICRM_CompanyPriceBLL.cs" />
+    <Compile Include="ICRM_CompanyLadderPriceBLL.cs" />
+    <Compile Include="ICOST_CostTableOtherBLL.cs" />
+    <Compile Include="ICOST_CostTableServiceBLL.cs" />
+    <Compile Include="ICOST_CostTableInsuranceBLL.cs" />
+    <Compile Include="ICOST_ExpenditureInsuranceBLL.cs" />
+    <Compile Include="ICRM_Company_AuditBLL.cs" />
+    <Compile Include="ICRM_CompanyLinkMan_AuditBLL.cs" />
+    <Compile Include="ICRM_CompanyBankAccount_AuditBLL.cs" />
+    <Compile Include="ICRM_CompanyPrice_AuditBLL.cs" />
+    <Compile Include="ICRM_CompanyLadderPrice_AuditBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyToBranchBLL.cs" />
+    <Compile Include="SCHR\IORG_MenuBLL.cs" />
+    <Compile Include="SCHR\IORG_MenuOpBLL.cs" />
+    <Compile Include="SCHR\IORG_RoleMenuOpAuthorityBLL.cs" />
+    <Compile Include="SCHR\IORG_UserBLL.cs" />
+    <Compile Include="SCHR\ICOST_PayRecordBLL.cs" />
+    <Compile Include="SCHR\ICOST_PayRecordStatusBLL.cs" />
+    <Compile Include="SCHR\ICOST_CostTableBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyBankAccount_AuditBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyContract_AuditBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyFinance_Bill_AuditBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyFinance_Payment_AuditBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyLadderPriceBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyLadderPrice_AuditBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyLinkManBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyLinkMan_AuditBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyPriceBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyPrice_AuditBLL.cs" />
+    <Compile Include="SCHR\ICRM_Company_AuditBLL.cs" />
+    <Compile Include="SCHR\ICRM_CompanyBLL.cs" />
+    <Compile Include="SCHR\IEmployeeAddBLL.cs" />
+    <Compile Include="SCHR\IEmployeeBLL.cs" />
+    <Compile Include="SCHR\IEmployeeStopPaymentBLL.cs" />
+    <Compile Include="SCHR\IInsuranceKindBLL.cs" />
+    <Compile Include="SCHR\IPoliceInsuranceBLL.cs" />
+    <Compile Include="SCHR\ISupplierBLL.cs" />
+    <Compile Include="SCHR\ISupplierLinkManBLL.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{ade2ca10-f91e-4312-ba9d-5d264291e549}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL\DAL.csproj">
+      <Project>{d1ac05a2-96af-4124-ad40-ad0a05c84f5c}</Project>
+      <Name>DAL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

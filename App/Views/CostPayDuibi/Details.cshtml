@@ -1,0 +1,34 @@
+﻿@model Langben.DAL.COST_CostTable
+
+@{
+    Layout = "~/Views/Shared/Details.cshtml";
+}
+@using Common
+@section CurentPlace {
+    详细
+}
+<legend>
+    <input class="a2 f2" type="button" onclick="window.location.href = 'javascript:history.go(-1)';" value="返回" />
+</legend>
+<table id="flexigridData" class="easyui-datagrid" title="费用明细表"
+       data-options="rownumbers:true,singleSelect:true,url:'../../api/CostPayDuibiApi/PostCostDetailData?id=@ViewBag.Id&yearMonthStart=@ViewBag.yearMonthStart&yearMonthEnd=@ViewBag.yearMonthEnd&costtype=@ViewBag.costType',method:'post'">
+    <thead>
+        @*data-options="frozen:true"*@
+        <tr>
+            <th data-options="field:'ID',width:100">企业编码</th>
+            <th data-options="field:'CompanyName',width:300">企业名称</th>
+            <th data-options="field:'YearMonth',width:100">年月</th>
+
+            <th data-options="field:'CostTableType',width:100">险种</th>
+            <th data-options="field:'CompanyCost',width:100">单位收入金额</th>
+
+            <th data-options="field:'PersonCost',width:100">个人收入金额</th>
+            <th data-options="field:'CompanyPay',width:100">单位支出金额</th>
+            <th data-options="field:'PersonPay',width:100">个人支出金额</th>
+            <th data-options="field:'CompanyCha',width:100">单位差额</th>
+            <th data-options="field:'PersonCha',width:100">个人差额</th>
+            <th data-options="field:'Cha',width:100">差额合计</th>
+        </tr>
+    </thead>
+</table>
+

@@ -1,0 +1,78 @@
+﻿@model Langben.DAL.LadderLowestPrice
+
+@{
+    Layout = "~/Views/Shared/CRMEdit.cshtml";
+}
+@using Common
+@using Models
+@section CurentPlace {
+    修改
+}
+
+@using (Html.BeginForm("", "../api/LadderLowestPriceApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            @*@Html.HiddenFor(model => model.Id)*@
+            <input id="Id" name="Id" type="hidden" />
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                产品：
+            </div>
+            <div class="editor-field">
+                <select id="ProductId" name="ProductId" style="font-size:14px;width:136px;">
+                    <option value="大户代理">大户代理</option>
+                    <option value="单立户代理">单立户代理</option>
+                </select>
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.LowestPrice)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.LowestPrice)
+                @Html.ValidationMessageFor(model => model.LowestPrice)
+            </div>
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.AddPrice)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.AddPrice)
+                @Html.ValidationMessageFor(model => model.AddPrice)
+            </div>
+
+        </div>
+    </fieldset>
+}
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.ID';
+        $.ajax({
+            url: "/api/LadderLowestPriceApi/Get/" + id,
+            type: "Get",
+            // async: false,
+            success: function (res) {
+                $("#Id").val(res.ID);
+                $("#ProductId").val(res.ProductID);
+                $("#LowestPrice").val(res.LowestPrice);
+                $("#AddPrice").val(res.AddPrice);
+            }
+        })
+    });
+
+</script>
+
+
+

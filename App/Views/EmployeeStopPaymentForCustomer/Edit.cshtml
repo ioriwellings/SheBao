@@ -1,0 +1,508 @@
+﻿@model Langben.DAL.StopPaymentEmployeeInfo
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+}
+@using Common
+@using Models
+@using NPOI.SS.Formula.Functions
+@section CurentPlace {
+    报减详情
+}
+
+
+
+<script src="~/Res/jquery.uploadify-v2.1.4/jquery-1.4.2.min.js"></script>
+<script src="~/Scripts/Myl.js"></script>
+
+
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" value="修改" id="Modify" />
+        <input class="a2 f2" type="button" onclick="BackList('EmployeeStopPaymentForCustomer')" value="返回列表" />
+    </legend>
+    <p>人员基本信息</p>
+    <table>
+        <tr>
+            <td>@Html.LabelFor(model => model.EmployeeName)</td>
+            <td>@Html.TextBoxFor(model => model.EmployeeName, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.CardId)</td>
+            <td>@Html.TextBoxFor(model => model.CardId, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.CompanyName)</td>
+            <td>@Html.TextBoxFor(model => model.CompanyName, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.Station)</td>
+            <td>@Html.TextBoxFor(model => model.Station, new { disabled = "disabled" })</td>
+        </tr>
+    </table>
+    <p>社保信息</p>
+    <table>
+        <tr>
+            <td>@Html.LabelFor(model => model.CityName)</td>
+            <td>@Html.TextBoxFor(model => model.CityName, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.PoliceAccountNatureName)</td>
+            <td>@Html.TextBoxFor(model => model.PoliceAccountNatureName, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.SB_Wage)</td>
+            <td>@Html.TextBoxFor(model => model.SB_Wage, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.GJJ_Wage)</td>
+            <td>@Html.TextBoxFor(model => model.GJJ_Wage, new { disabled = "disabled" })</td>
+        </tr>
+        @*<tr>
+                <td>报减时间</td>
+                <td><input id="YearMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" onchange="yearMonth_Change()" on></td>
+                <td>社保月</td>
+                <td><input id="InsuranceMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" /></td>
+            </tr>*@
+    </table>
+    <p>保险信息</p>
+    <table style="padding-left:100px;">
+        <tr>
+            <th>险种</th>
+            <th>社保月</th>
+            <th>报减类型</th>
+        </tr>
+        <tr>
+            <td>养老</td>
+
+            <td>
+                <input type="text" id="YANGLAO_endtime" disabled="disabled" />
+
+            </td>
+            <td><select id="YANGLAO_stoppaymenttype"></select></td>
+
+        </tr>
+        <tr>
+            <td>医疗</td>
+
+            <td>
+                <input type="text" id="YILIAO_endtime" disabled="disabled" />
+
+            </td>
+            <td><select id="YILIAO_stoppaymenttype"></select></td>
+
+        </tr>
+        <tr>
+            <td>生育</td>
+
+            <td>
+                <input type="text" id="SHENGYU_endtime" disabled="disabled" />
+
+            </td>
+            <td><select id="SHENGYU_stoppaymenttype"></select></td>
+
+        </tr>
+        <tr>
+            <td>失业</td>
+
+            <td>
+                <input type="text" id="SHIYE_endtime" disabled="disabled" />
+
+            </td>
+            <td><select id="SHIYE_stoppaymenttype"></select></td>
+
+        </tr>
+        <tr>
+            <td>工伤</td>
+
+            <td>
+                <input type="text" id="GONGSHANG_endtime" disabled="disabled" />
+
+            </td>
+            <td><select id="GONGSHANG_stoppaymenttype"></select></td>
+
+        </tr>
+        <tr>
+            <td>公积金</td>
+
+            <td>
+                <input type="text" id="GONGJIJIN_endtime" disabled="disabled" />
+
+            </td>
+            <td><select id="GONGJIJIN_stoppaymenttype"> </select></td>
+
+        </tr>
+
+    </table>
+    <div id="div1"></div>
+</fieldset>
+
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+
+
+
+
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Id';
+        var state = '@ViewBag.state';
+        $.ajax({
+            url: "/api/EmployeeStopPaymentForCustomerApi/GET?id=" + id + "&State=" + state,
+            type: "GET",
+            async: false,
+            success: function (res) {
+
+                $("#EmployeeName").val(res.EmployeeName);
+                $("#CardId").val(res.CardId);
+                $("#CompanyName").val(res.CompanyName);
+                $("#CityName").val(res.CityName);
+                $("#PoliceAccountNatureName").val(res.PoliceAccountNatureName);
+                $("#SB_Wage").val(res.SB_Wage);
+                $("#GJJ_Wage").val(res.GJJ_Wage);
+
+
+                $.ajax({
+                    url: "/api/EmployeeStopPaymentApi/EmploeeStop_Info?companyEmployeeRelationId=" + id + "&State='待责任客服确认'",
+                    type: "POST",
+
+                    success: function (res) {
+
+
+
+                        for (var i = 0; i < res.length; i++) {
+
+
+                            if (res[i].InsuranceKindName == '养老') {
+                                $("#YANGLAO_stoppaymenttype option").remove();
+                            
+                                $.ajax({
+                                    url: "/api/EmployeeStopPaymentSingleApi/PostPoliceOperation?kindId=" + res[i].InsuranceKindId,
+                                    type: "POST",
+                                    async: false,
+                                    success: function (res1) {
+                                        $.each(res1.rows, function (j, item) {
+
+                                          
+                                                $("#YANGLAO_stoppaymenttype").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                                          
+
+                                        });
+                                    },
+                                    error: function (a, b, c) {
+
+                                    }
+                                });
+
+                                $("#YANGLAO_stoppaymenttype").val(res[i].PoliceOperationId);
+                                $("#YANGLAO_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+
+                                $("#yanglao_id").val(res[i].ID);
+                                $("#YANGLAO_endtime").attr("disabled", false);
+
+                            }
+                            if (res[i].InsuranceKindName == '医疗') {
+
+                                $("#YILIAO_stoppaymenttype option").remove();
+
+                                $.ajax({
+                                    url: "/api/EmployeeStopPaymentSingleApi/PostPoliceOperation?kindId=" + res[i].InsuranceKindId,
+                                    type: "POST",
+                                    async: false,
+                                    success: function (res1) {
+                                        $.each(res1.rows, function (j, item) {
+
+
+                                            $("#YILIAO_stoppaymenttype").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+
+
+                                        });
+                                    },
+                                    error: function (a, b, c) {
+
+                                    }
+                                });
+                                $("#YILIAO_stoppaymenttype").val(res[i].PoliceOperationId);
+                                $("#YILIAO_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                                $("#yiliao_id").val(res[i].ID);
+                                $("#YILIAO_endtime").attr("disabled", false);
+
+                            }
+                            if (res[i].InsuranceKindName == '生育') {
+
+                                $("#SHENGYU_stoppaymenttype option").remove();
+                                $.ajax({
+                                    url: "/api/EmployeeStopPaymentSingleApi/PostPoliceOperation?kindId=" + res[i].InsuranceKindId,
+                                    type: "POST",
+                                    async: false,
+                                    success: function (res1) {
+                                        $.each(res1.rows, function (j, item) {
+
+
+                                            $("#SHENGYU_stoppaymenttype").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+
+
+                                        });
+                                    },
+                                    error: function (a, b, c) {
+
+                                    }
+                                });
+                                $("#SHENGYU_stoppaymenttype").val(res[i].PoliceOperationId);
+                                $("#SHENGYU_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                                $("#shengyu_id").val(res[i].ID);
+                                $("#SHENGYU_endtime").attr("disabled", false);
+
+                            }
+                            if (res[i].InsuranceKindName == '失业') {
+
+                                $("#SHIYE_stoppaymenttype option").remove();
+                                $.ajax({
+                                    url: "/api/EmployeeStopPaymentSingleApi/PostPoliceOperation?kindId=" + res[i].InsuranceKindId,
+                                    type: "POST",
+                                    async: false,
+                                    success: function (res1) {
+                                        $.each(res1.rows, function (j, item) {
+
+
+                                            $("#SHIYE_stoppaymenttype").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+
+
+                                        });
+                                    },
+                                    error: function (a, b, c) {
+
+                                    }
+                                });
+                                $("#SHIYE_stoppaymenttype").val(res[i].PoliceOperationId);
+                                $("#SHIYE_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                                $("#shiye_id").val(res[i].ID);
+                                $("#SHIYE_endtime").attr("disabled", false);
+
+                            }
+                            if (res[i].InsuranceKindName == '工伤') {
+
+                                $("#GONGSHANG_stoppaymenttype option").remove();
+                                $.ajax({
+                                    url: "/api/EmployeeStopPaymentSingleApi/PostPoliceOperation?kindId=" + res[i].InsuranceKindId,
+                                    type: "POST",
+                                    async: false,
+                                    success: function (res1) {
+                                        $.each(res1.rows, function (j, item) {
+
+
+                                            $("#GONGSHANG_stoppaymenttype").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+
+
+                                        });
+                                    },
+                                    error: function (a, b, c) {
+
+                                    }
+                                });
+                                $("#GONGSHANG_stoppaymenttype").val(res[i].PoliceOperationId);
+                                $("#GONGSHANG_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                                $("#gongshang_id").val(res[i].ID);
+                                $("#GONGSHANG_endtime").attr("disabled", false);
+                            }
+                            if (res[i].InsuranceKindName == '公积金') {
+
+                                $("#GONGJIJIN_stoppaymenttype option").remove();
+                                $.ajax({
+                                    url: "/api/EmployeeStopPaymentSingleApi/PostPoliceOperation?kindId=" + res[i].InsuranceKindId,
+                                    type: "POST",
+                                    async: false,
+                                    success: function (res1) {
+                                        $.each(res1.rows, function (j, item) {
+
+
+                                            $("#GONGJIJIN_stoppaymenttype").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+
+
+                                        });
+                                    },
+                                    error: function (a, b, c) {
+
+                                    }
+                                });
+                                $("#GONGJIJIN_stoppaymenttype").val(res[i].PoliceOperationId);
+                                $("#GONGJIJIN_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                                $("#gongjijin_id").val(res[i].ID);
+                                $("#GONGJIJIN_endtime").attr("disabled", false);
+
+                            }
+
+                        }
+                    },
+                    error: function () {
+
+                        alert('初始化失败！');
+
+
+                    }
+
+                })
+
+
+                //var table = "<table>";
+                //table += "<tr>";
+                //table += "<th></th><th>险种</th><th>基数</th><th>社保月</th><th>报减类型</th>";
+                //table += "</tr>";
+                //for (var i = 0; i < res.LstStopPaymentInsuranceKindInfos.length; i++) {
+                //    table += "<tr>";
+                //    table += "<td><input type=\"checkbox\" id='cbox_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "' value=\"" + res.LstStopPaymentInsuranceKindInfos[i].EmployeeAddId + "\" /></td>";
+                //    table += "<td>" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindName + "</td>";
+                //    table += "<td>" + res.LstStopPaymentInsuranceKindInfos[i].Wage + "</td>";
+                //    table += "<td><input id=\"InsuranceMonth_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "\" class=\"easyui-datetimespinner\" value=\"" + res.LstStopPaymentInsuranceKindInfos[i].StopDate + "\" data-options=\"formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]\" style=\"width:180px;\" /></td>";
+                //    table += "<td> <select id=\"select_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "\"></select><input type=\"hidden\" id=\"police_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "\" value=\"" + res.LstStopPaymentInsuranceKindInfos[i].PoliceInsuranceId + "\"/><input type=\"hidden\" id=\"relation_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "\" value=\"" + res.LstStopPaymentInsuranceKindInfos[i].CompanyEmployeeRelationId + "\"/></td>";
+                //    table += "</tr>";
+
+
+
+
+
+                //}
+                //table += "</table>";
+
+                //$("#div1").html(table);
+
+
+            }
+        });
+
+
+
+
+
+
+    });
+    function formatter2(date) {
+        if (!date) { return ''; }
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        return y + '-' + (m < 10 ? ('0' + m) : m);
+    };
+    function parser2(s) {
+        if (!s) { return null; }
+        var ss = s.split('-');
+        var y = parseInt(ss[0], 10);
+        var m = parseInt(ss[1], 10);
+        if (!isNaN(y) && !isNaN(m)) {
+            return new Date(y, m - 1, 1);
+        } else {
+            return new Date();
+        }
+    };
+
+    function yearMonth_Change() {
+        var ym = $("#YearMonth").val();
+        alert(ym);
+
+        $("input[id^=InsuranceMonth_]").attr(ym);
+    }
+
+    function CreatePost() {
+        var parameters = "";
+        var bjDate = $("#YearMonth").val();
+        $("input[id^=cbox_]").each(function (i, value) {
+            if ($(value).is(":checked")) {
+                var param = "";
+                var kindId = value.id.substring(5);
+                var addId = $(value).val();
+                var sby = $("#InsuranceMonth_" + kindId).val();
+                var oper = $("#select_" + kindId).val();
+                var policeId = $("#police_" + kindId).val();
+                var rerlationId = $("#relation_" + kindId).val();
+                param = addId + "," + sby + "," + oper + "," + bjDate + "," + kindId + "," + policeId + "," + rerlationId; //EmployeeAddID,社保月,报减类型,报减自然月,险种，政策,企业员工关系
+                parameters += param + ";";
+            }
+        });
+        $.ajax({
+            url: "/api/EmployeeStopPaymentSingleApi/Post?parameters=" + parameters,
+            type: "POST",
+            async: false,
+            success: function (res) {
+                if (res.Code == 1) {
+                    alert(res.Message);
+                    BackList('EmployeeStopPaymentSingle');
+                }
+            },
+            error: function (a, b, c) {
+
+            }
+        });
+    }
+
+    $("#Modify").click(function () {
+
+
+
+        //养老
+        var yanglao_id = $("#yanglao_id").val();
+        var YANGLAO = $("#YANGLAO_stoppaymenttype").val();//养老社保报减方式
+      
+
+        //医疗
+        var yiliao_id = $("#yiliao_id").val();
+        var YILIAO = $("#YILIAO_stoppaymenttype").val();//医疗社保报减方式
+       
+
+        //生育
+        var shengyu_id = $("#shengyu_id").val();
+        var SHENGYU = $("#SHENGYU_stoppaymenttype").val();//生育社保报减方式
+
+        //失业
+        var shiye_id = $("#shiye_id").val();
+        var SHIYE = $("#SHIYE_stoppaymenttype").val();//失业社保报减方式
+     
+
+        //工伤
+        var gongshang_id = $("#gongshang_id").val();
+        var GONGSHANG = $("#GONGSHANG_stoppaymenttype").val();//工伤社保报减方式
+       
+        //公积金
+        var gongjijin_id = $("#gongjijin_id").val();
+        var GONGJIJIN = $("#GONGJIJIN_stoppaymenttype").val();//工伤社保报减方式
+        $.ajax({
+            type: 'POST',
+            url: "/api/EmployeeStopPaymentApi/FeedbackModify?yanglao_id=" + yanglao_id + "&yiliao_id=" + yiliao_id + "&gongshang_id=" + gongshang_id + "&shiye_id=" + shiye_id + "&gongjijin_id=" + gongjijin_id + "&shengyu_id=" + shengyu_id + "&yanglao=" + YANGLAO + "&yiliao=" + YILIAO + "&shiye=" + SHIYE + "&gongshang=" + GONGSHANG + "&gongjijin=" + GONGJIJIN+"&shengyu="+SHENGYU,
+            // data: { "ids": ids, "message": msg },  //最正确的Ajax传参
+            dataType: 'json',
+            async: true, //异步
+            success: function (msg) {
+                if (msg.Code == 1) {
+                    alert(msg.Message);
+                    window.location.href = "/EmployeeStopPaymentForCustomer/Index";
+                }
+
+
+            },
+            error: function () {
+                alert(msg.Message);
+            }
+        });
+
+
+
+        //$.ajax({
+        //    type: "POST",
+        //    url: "/api/EmployeeStopPaymentApi/FeedbackModify?yanglao_id=" + yanglao_id + "&yiliao_id=" + yiliao_id + "&gongshang_id=" + gongshang_id + "&shiye_id=" + shiye_id + "&gongjijin_id=" + gongjijin_id + "&shengyu_id=" + shengyu_id,
+        //    async: false,
+        //    data: {
+
+        //        Pension_PaymentTime: YANGLAO_endtime,
+        //        Medical_PaymentTime: YILIAO_endtime,
+        //        WorkInjury_PaymentTime: GONGSHANG_endtime,
+        //        Unemployment_PaymentTime: SHIYE_endtime,
+        //        HousingFund_PaymentTime: GONGJIJIN_endtime,
+        //        Maternity_PaymentTime: SHENGYU_endtime
+
+        //    },
+        //    success: function (msg) {
+        //        if (msg.Code == 1) {
+        //            alert(msg.Message);
+        //        }
+        //        else {
+        //            alert("失败");
+        //        }
+        //    }
+        //});
+
+
+
+
+
+
+    });
+</script>

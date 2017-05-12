@@ -1,0 +1,116 @@
+﻿@model Langben.DAL.ORG_Group
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>权限配置</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+   
+    @*<link href="/res/ztree/ztreestyle/ztreestyle.css" rel="stylesheet" />
+        <script src="/res/ztree/js/jquery.ztree.core-3.5.js"></script>
+        <script src="/res/ztree/js/jquery.ztree.excheck-3.5.js"></script>
+        <script src="/res/ztree/js/jquery.ztree.exedit-3.5.js"></script>*@
+</head>
+
+<body class="easyui-layout">
+   
+    <div style="padding:10px 10px">
+        <table cellpadding="5">
+            <tr>
+                <td align="right">
+                    编码：
+                </td>
+                <td>
+                    @*@Html.TextBox("Code", @Model.Code, new { @class = "input_style", datatype = "*", nullmsg = "必填", sucmsg = "通过", @MaxLength = "50" })*@
+                    <input type="text" id="Code" style="width:350px;" value="@Model.Code" />
+                </td>
+            </tr>
+
+            <tr>
+                <td align="right">
+                    名称：
+                </td>
+                <td>
+                    @*@Html.TextBox("GroupName", @Model.GroupName, new { @class = "input_style", datatype = "*", nullmsg = "必填", sucmsg = "通过", @MaxLength = "100" })*@
+                    <input type="text"  id="GroupName"  width="400" style="width:350px;" value="@Model.GroupName" />
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    描述：
+                </td>
+                <td>
+                    @*@Html.TextBox("Des", @Model.Des, new { @class = "input_style", datatype = "*", nullmsg = "必填", sucmsg = "通过", @MaxLength = "200" })*@
+                    <input type="text" id="Des" width="400" style="width:350px; " value="@Model.Des" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <input type="hidden" id="ID" value="@Model.ID" />
+</body>
+</html>
+
+<script>
+    function Tijiao()
+    {
+
+        var flag = '';
+        var id = $("#ID").val();
+        var Code = $("#Code").val();
+        var GroupName = $("#GroupName").val();
+        var Des = $("#Des").val();
+
+
+        Code = escape(Code);
+        GroupName = escape(GroupName);
+        Des = escape(Des);
+
+        if (Code=='')
+        {
+            flag = '编码不能为空！';
+        }
+        if (GroupName == '') {
+            flag = '名称不能为空！';
+        }
+        if (Des == '') {
+            flag = '描述不能为空！';
+        }
+
+        if (Code != '' && GroupName != '' && Des != '') {
+            $.ajax({
+                type: "POST",
+                url: "/api/GroupApi/EditGroup?ID=" + id + "&Code=" + Code + "&GroupName=" + GroupName + "&Des=" + Des,
+                async: false,
+                success: function (msg) {
+                    if (msg.Code == 1) {
+
+                        flag = '1';
+                    }
+                    else {
+
+                        flag = '-1';
+                    }
+                }
+            });
+        }
+        return flag;
+    }
+
+</script>
+
+<style type="text/css">
+    .tabs-icon {
+        background: none;
+        width: 18px;
+        line-height: 18px;
+        display: inline-block;
+    }
+</style>

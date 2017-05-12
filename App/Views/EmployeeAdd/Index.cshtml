@@ -1,0 +1,131 @@
+﻿@model Langben.DAL.Employee
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:80px">
+
+
+
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CertificateNumber):
+        </div>
+        <div class="input_search-field">
+            <p class="cerNo">
+                <textarea rows="2" id="CardIDs" class="CertificateNumber"></textarea>
+
+                @*<input type="text" id="CertificateNumber" /> onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"*@
+            </p>
+        </div>
+    </div>
+
+
+    <div class="input_search input_search_btn ">
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+
+</div>
+        <br style="clear: both;" />
+
+        <script type="text/javascript" language="javascript">
+            $(function () {
+
+                $('#flexigridData').datagrid({
+                    title: '员工', //列表的标题
+                    iconCls: 'icon-site',
+                    width: 'auto',
+                    height: 'auto',
+                    //nowrap: false,
+                    striped: true,
+                    fit:true,
+                    collapsible: false,
+                    url: 'api/EmployeeAddApi/PostData', //获取数据的url
+                    sortName: 'Id',
+                    sortOrder: 'desc',
+                    idField: 'Id',
+                    toolbar: [
+                         {
+                             text: '社保申报',
+                             iconCls: 'icon-add',
+                             handler: function () {
+                                 return Declaration();
+                             }
+                         }],
+                    columns: [[
+                        { field: 'Name', title: '@Html.DisplayNameFor(model => model.Name)', align: 'center', width: 100 }
+                        , { field: 'CertificateNumber', title: '@Html.DisplayNameFor(model => model.CertificateNumber)', align: 'center', width: 200 }
+                    ]],
+                    pagination: true,
+                    rownumbers: true
+                });
+                var parent = window.dialogArguments; //获取父页面
+                if (parent == "undefined" || parent == null) {
+                    //    不是在iframe中打开的
+                } else {
+                    //隐藏所有的按钮和分隔符
+                    $(".l-btn.l-btn-plain").hide();
+                    $(".datagrid-btn-separator").hide();
+                    //添加选择按钮
+                    $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+                }
+            });
+            function cleanSpelChar(th) {
+                if (/["'<>%;)(&+]/.test(th.value)) {
+                    $(th).val(th.value.replace(/["'<>%;)(&+]/, ""));
+                }
+            }
+            //“查询”按钮，弹出查询框
+            function flexiQuery() {
+                //将查询条件按照分隔符拼接成字符串
+                var search = "";
+                $('#divQuery').find(":text,:selected,select,textarea,:checked,:password").each(function () {
+                    if (this.id)
+                        search = search + this.id + "&" + this.value + "^";
+                    else
+                        search = search + this.name + "&" + this.value + "^";
+                });
+                //执行查询
+                $('#flexigridData').datagrid('load', { search: search });
+            };
+
+            //“选择”按钮，在其他（与此页面有关联）的页面中，此页面以弹出框的形式出现，选择页面中的数据
+            function flexiSelect() {
+
+                var rows = $('#flexigridData').datagrid('getSelections');
+                if (rows.length == 0) {
+                    $.messager.alert('操作提示', '请选择数据!', 'warning');
+                    return false;
+                }
+
+                var arr = [];
+                for (var i = 0; i < rows.length; i++) {
+                    arr.push(rows[i].Id);
+                }
+                arr.push("^");
+                for (var i = 0; i < rows.length; i++) {
+                    arr.push(rows[i].Name);
+                }
+                //主键列和显示列之间用 ^ 分割   每一项用 , 分割
+                if (arr.length > 0) {//一条数据和多于一条
+                    returnParent(arr.join("&")); //每一项用 & 分割
+                }
+            }
+            //社保申报
+            function Declaration() {
+
+                var arr = $('#flexigridData').datagrid('getSelections');
+
+                if (arr.length == 1) {
+                    window.location.href = "../EmployeeAdd/Create/" + arr[0].Id;
+
+                } else {
+                    $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+                }
+                return false;
+            }
+
+        </script>
+

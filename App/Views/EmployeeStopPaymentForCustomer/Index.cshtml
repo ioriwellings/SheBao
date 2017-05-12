@@ -1,0 +1,369 @@
+﻿@model Langben.DAL.SingleStopPaymentView
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:80px">
+
+
+
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.EmployeeName):
+        </div>
+        <div class="input_search-field">
+            <input type="text" id="EmployeeName" class="easyui-textbox" style="height:26px" />
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CompanyName):
+        </div>
+        <div class="input_search-field">
+            <select id="CompanyID" style="height:26px"></select>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CertificateNumber):
+        </div>
+        <div class="input_search-field">
+            <p class="cerNo">
+                <textarea rows="2" id="CardIDs" class="CertificateNumber"></textarea>
+            </p>
+        </div>
+    </div>
+    <div class="input_search input_search_btn">
+
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+
+
+
+
+</div>
+
+<br style="clear: both;" />
+            <script type="text/javascript" language="javascript">
+                function getCompany() {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/EmployeeStopPaymentForCustomerApi/PostYGCompanyData',
+                        //data: 'id=' + $("#ddlStyle").val(),
+                        dataType: 'json',
+                        async: false, //同步
+                        success: function (data) {
+                            $("#CompanyID").html("<option value='0'>--请选择--</option>");
+                            $.each(data, function (i, itemValue) {
+                                $("#CompanyID").append("<option value = '" + itemValue.ID + "'>" + itemValue.CompanyName + "</option>");
+                            });
+                        },
+                        error: function () {
+                            $("#CompanyID").html("<option value='0'>--请选择--</option>");
+                        }
+                    });
+                }
+
+
+                function formatter2(date) {
+                    if (!date) { return ''; }
+                    var y = date.getFullYear();
+                    var m = date.getMonth() + 1;
+                    return y + '-' + (m < 10 ? ('0' + m) : m);
+                };
+                function parser2(s) {
+                    if (!s) { return null; }
+                    var ss = s.split('-');
+                    var y = parseInt(ss[0], 10);
+                    var m = parseInt(ss[1], 10);
+                    if (!isNaN(y) && !isNaN(m)) {
+                        return new Date(y, m - 1, 1);
+                    } else {
+                        return new Date();
+                    }
+                };
+
+                $(function () {
+                    getCompany();
+                    $('#flexigridData').datagrid({
+                        title: '员工客服审核平台数据', //列表的标题
+                        iconCls: 'icon-site',
+                        width: 'auto',
+                        height: 'auto',
+                        //nowrap: false,
+                        striped: true,
+                        fit:true,
+                        collapsible: false,
+                        url: '/api/EmployeeStopPaymentForCustomerApi/PostData', //获取数据的url
+                        sortName: 'Id',
+                        sortOrder: 'desc',
+                        idField: 'Id',
+
+                        toolbar: [
+
+                             {
+                                 text: '确认通过',
+                                 iconCls: 'icon-ok',
+                                 handler: function () {
+                                     return flexiPassYes();
+                                 }
+                             }, {
+                                 text: '审核终止',
+                                 iconCls: 'icon-cancel',
+                                 handler: function () {
+                                     return flexiPassNo();
+                                 }
+                             },
+                         {
+                             text: '详细',
+                             iconCls: 'icon-search',
+                             handler: function () {
+                                 return getView();
+                             }
+                         },
+                         {
+                             text: '修改',
+                             iconCls: 'icon-edit',
+                             handler: function () {
+                                 return getView1();
+                             }
+                         }],
+                        columns: [[
+
+
+                            { field: 'CompanyName', title: '企业名称', align: 'center', width: 300 },
+                        { field: 'EmployeeName', title: '姓名', align: 'center', width: 80 }
+                            , { field: 'CertificateNumber', title: '证件号码', align: 'center', width: 160 }
+                            , { field: 'CityName', title: '社保缴纳地', align: 'center', width: 80 }
+                            , { field: 'CanSotpInsuranceKindName', title: '险种', align: 'center', width: 220 }
+
+
+
+                        ]],
+                        pagination: true,
+                        rownumbers: true
+
+                    });
+
+                    var parent = window.dialogArguments; //获取父页面
+                    if (parent == "undefined" || parent == null) {
+                        //    不是在iframe中打开的
+                    } else {
+                        //隐藏所有的按钮和分隔符
+                        $(".l-btn.l-btn-plain").hide();
+                        $(".datagrid-btn-separator").hide();
+                        //添加选择按钮
+                        $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+                    }
+                });
+
+                //“查询”按钮，弹出查询框
+                function flexiQuery() {
+
+                    //将查询条件按照分隔符拼接成字符串
+                    var search = "";
+                    $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+                        if (this.id)
+                            search = search + this.id + "&" + this.value + "^";
+                        else
+                            search = search + this.name + "&" + this.value + "^";
+                    });
+
+                    //执行查询
+                    $('#flexigridData').datagrid('load', { search: search });
+                };
+                //“导出”按钮     在6.0版本中修改
+                function flexiExport() {
+
+                    //将查询条件按照分隔符拼接成字符串
+                    var search = "";
+                    $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+                        search = search + this.id + "&" + this.value + "^";
+                    });
+
+                    var p = $('#flexigridData').datagrid('options').columns[0];
+                    var field = [];//所有的列名
+                    var title = [];//所有的标题名称
+                    $(p).each(function () {
+                        field.push(this.field);
+                        title.push(this.title);
+                    });
+
+                    $.post("api/EmployeeStopPaymentApi/PostExport",
+                        {
+                            title: title.join(","),
+                            field: field.join(","),
+                            sortName: $('#flexigridData').datagrid('options').sortName,
+                            sortOrder: $('#flexigridData').datagrid('options').sortOrder,
+                            search: search
+                        }, function (res) {
+                            if (res.Code == 1) {
+                                window.location.href = res.Message;
+                            }
+                            else $.messager.alert('操作提示', res.Message, 'info');
+
+                        });
+                };
+                //“选择”按钮，在其他（与此页面有关联）的页面中，此页面以弹出框的形式出现，选择页面中的数据
+                function flexiSelect() {
+
+                    var rows = $('#flexigridData').datagrid('getSelections');
+                    if (rows.length == 0) {
+                        $.messager.alert('操作提示', '请选择数据!', 'warning');
+                        return false;
+                    }
+
+                    var arr = [];
+                    for (var i = 0; i < rows.length; i++) {
+                        arr.push(rows[i].Id);
+                    }
+                    arr.push("^");
+                    for (var i = 0; i < rows.length; i++) {
+                        arr.push(rows[i].EmployeeAddId);
+                    }
+                    //主键列和显示列之间用 ^ 分割   每一项用 , 分割
+                    if (arr.length > 0) {//一条数据和多于一条
+                        returnParent(arr.join("&")); //每一项用 & 分割
+                    }
+                }
+                //导航到查看详细的按钮
+                function getView() {
+
+                    var arr = $('#flexigridData').datagrid('getSelections');
+
+                    if (arr.length == 1) {
+                        var row = $("#flexigridData").datagrid("getSelected");
+                        window.location.href = "/EmployeeStopPaymentForCustomer/Update?id=" + row.CompanyEmployeeRelationId + "&state=待员工客服确认";
+
+
+                    } else {
+                        $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+                    }
+                    return false;
+                }
+                //导航到修改的按钮
+
+                function getView1() {
+
+                    var arr = $('#flexigridData').datagrid('getSelections');
+
+                    if (arr.length == 1) {
+                        var row = $("#flexigridData").datagrid("getSelected");
+                        window.location.href = "/EmployeeStopPaymentForCustomer/Edit?id=" + row.CompanyEmployeeRelationId + "&state=待员工客服确认";
+
+
+                    } else {
+                        $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+                    }
+                    return false;
+                }
+
+
+                //通过的按钮
+                function flexiPassYes() {
+
+
+                    var rows = $('#flexigridData').datagrid('getSelections');
+                    if (rows.length == 0) {
+                        $.messager.alert('操作提示', '请选择数据!', 'warning');
+                        return false;
+                    }
+
+                    var arr = [];
+
+                    for (var i = 0; i < rows.length; i++) {
+
+                        arr.push(rows[i].CanSotpInsuranceKindIDs);
+
+                    }
+
+                    $.messager.confirm('操作提示', "确认审核通过 " + arr.length + " 项吗？", function (r) {
+                        if (r) {
+                            $.ajax({
+                                url: "/api/EmployeeStopPaymentForCustomerApi/PassYes?IDs=" + arr.join(","),
+                                type: "Get",
+                                success: function (res) {
+                                    if (res.Code == 1) {
+                                        //移除删除的数据
+
+                                        $.messager.alert('操作提示', res.Message, 'info');
+                                        $("#flexigridData").datagrid("reload");
+                                        $("#flexigridData").datagrid("clearSelections");
+                                    }
+                                    else {
+                                        $.messager.alert('操作提示', res.Message, 'info');
+                                    }
+
+                                }
+                            })
+                        }
+                    });
+
+                };
+                //终止按钮
+                function flexiPassNo() {
+
+                    var arr = $('#flexigridData').datagrid('getSelections');
+                    
+                    if (arr.length == 1) {
+                        window.location.href = "../EmployeeStopPaymentForCustomer/SetStop?stopIds=" + arr[0].CanSotpInsuranceKindIDs + "&stopName=" + arr[0].CanSotpInsuranceKindName + "&empName=" + arr[0].EmployeeName;
+
+                    } else {
+                        $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+                    }
+
+
+                    //原代码，直接终止，不填写终止原因
+                    //var rows = $('#flexigridData').datagrid('getSelections');
+                    //if (rows.length == 0) {
+                    //    $.messager.alert('操作提示', '请选择数据!', 'warning');
+                    //    return false;
+                    //}
+
+                    //var arr = [];
+
+                    //for (var i = 0; i < rows.length; i++) {
+
+                    //    arr.push(rows[i].CanSotpInsuranceKindIDs);
+
+                    //}
+
+                    //$.messager.confirm('操作提示', "确认审核通过 " + arr.length + " 项吗？", function (r) {
+                    //    if (r) {
+                    //        $.ajax({
+                    //            url: "/api/EmployeeStopPaymentForCustomerApi/PassNo?IDs=" + arr.join(","),
+                    //            type: "Get",
+                    //            success: function (res) {
+                    //                if (res.Code == 1) {
+                    //                    //移除删除的数据
+
+                    //                    $.messager.alert('操作提示', res.Message, 'info');
+                    //                    $("#flexigridData").datagrid("reload");
+                    //                    $("#flexigridData").datagrid("clearSelections");
+                    //                }
+                    //                else {
+                    //                    $.messager.alert('操作提示', res.Message, 'info');
+                    //                }
+
+                    //            }
+                    //        })
+                    //    }
+                    //});
+                    //原代码结束
+                };
+
+                //导航到查看详细的按钮
+
+                function openStopPage(index) {
+
+                    $('#flexigridData').datagrid("selectRow", index);
+                    var row = $("#flexigridData").datagrid("getSelected");
+                    window.location.href = "../EmployeeStopPaymentForCustomer/Update?id=" + row.CompanyEmployeeRelationId + "&state=待员工客服确认";
+
+                    //parent.addTab("单人报减","wwww.baodu.com");
+
+                }
+
+            </script>

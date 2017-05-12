@@ -1,0 +1,439 @@
+﻿@model Langben.DAL.COST_CostTable
+
+@{
+    Layout = "~/Views/Shared/Details.cshtml";
+}
+@using Common
+@section CurentPlace {
+    详细
+}
+
+<style type="text/css">
+    .subtotal {
+        font-weight: bold;
+    }
+    /*合计单元格样式*/
+</style>
+
+<legend>
+    <input class="a2 f2" type="button" onclick="window.location.href = 'javascript:history.go(-1)';" value="返回" />
+    <input class="a2 f2" type="button" onclick="Print1(@ViewBag.Id)" value="打印" />
+    <input class="a2 f2" type="button" onclick="Export(@ViewBag.Id)" value="导出" />
+</legend>
+<form id="form1">
+    <table id="flexigridData">
+        <thead>
+            <tr>
+                <th data-options="field:'No',width:37" rowspan="2">序号</th>
+                <th data-options="field:'EmployName',width:70" rowspan="2">姓名</th>
+                <th data-options="field:'CertificateNumber',width:150" rowspan="2">身份证号</th>
+
+                <th data-options="field:'Supplier',width:185" rowspan="2">供应商</th>
+                <th data-options="field:'PaymentStyle',width:80" rowspan="2">缴费类型</th>
+                <th data-options="field:'CityName',width:100" rowspan="2">保险缴纳地</th>
+                <th data-options="field:'CreateFrom',width:100" rowspan="2">费用来源</th>
+                <th colspan="6">养老保险</th>
+                <th colspan="6">失业保险</th>
+                <th colspan="3">工伤保险</th>
+                <th colspan="6">医疗保险</th>
+                <th colspan="2">大病</th>
+                <th colspan="1">生育保险</th>
+                <th colspan="6">公积金</th>
+                <th colspan="2">补充公积金</th>
+
+                <th data-options="field:'OtherInsuranceCost',width:80" rowspan="2">其他社保费用</th>
+                <th data-options="field:'OtherCost',width:100" rowspan="2">其他费用</th>
+                <th data-options="field:'CompanyInsuranceSum',width:80" rowspan="2">单位保险小计</th>
+                <th data-options="field:'PersonInsuranceSum',width:100" rowspan="2">个人保险小计</th>
+                <th data-options="field:'InsuranceSum',width:80" rowspan="2">保险合计</th>
+                <th data-options="field:'ProductionCost',width:100" rowspan="2">工本费</th>
+                <th data-options="field:'ServiceCost',width:80" rowspan="2">服务费</th>
+                <th data-options="field:'Sum',width:100" rowspan="2">费用合计</th>
+            </tr>
+            <tr>
+                <th data-options="field:'YanglaoPaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'YanglaoPaymentMonth',width:80,align:'right'">缴纳月数</th>
+                <th data-options="field:'YanglaoCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'YanglaoCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'YanglaoPersonCost',width:60,align:'center'">个人</th>
+                <th data-options="field:'YanglaoSum',width:60,align:'center'">小计</th>
+
+                <th data-options="field:'ShiyePaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'ShiyePaymentMonth',width:80,align:'right'">缴纳月数</th>
+                <th data-options="field:'ShiyeCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'ShiyeCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'ShiyePersonCost',width:60,align:'center'">个人</th>
+                <th data-options="field:'ShiyeSum',width:60,align:'center'">小计</th>
+
+                <th data-options="field:'GongshangPaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'GongshangCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'GongshangCompanyCost',width:60,align:'center'">企业</th>
+
+                <th data-options="field:'YiliaoPaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'YiliaoPaymentMonth',width:80,align:'right'">缴纳月数</th>
+                <th data-options="field:'YiliaoCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'YiliaoCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'YiliaoPersonCost',width:60,align:'center'">个人</th>
+                <th data-options="field:'YiliaoSum',width:60,align:'center'">小计</th>
+
+                <th data-options="field:'DaeCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'DaePersonCost',width:60,align:'center'">个人</th>
+
+                <th data-options="field:'ShengyuCompanyCost',width:60,align:'center'">企业</th>
+
+                <th data-options="field:'GongjijinPaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'GongjijinPaymentMonth',width:80,align:'right'">缴纳月数</th>
+                <th data-options="field:'GongjijinCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'GongjijinCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'GongjijinPersonCost',width:60,align:'center'">个人</th>
+                <th data-options="field:'GongjijinSum',width:60,align:'center'">小计</th>
+
+                <th data-options="field:'GongjijinBCCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'GongjijinBCPersonCost',width:60,align:'center'">个人</th>
+            </tr>
+        </thead>
+    </table>
+</form>
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $('#flexigridData').datagrid({
+            title: '费用明细表', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            url: '/api/SupplierApi/PostCostDetailData?id=@ViewBag.Id', //获取数据的url
+            onLoadSuccess: function (data) { //加载完毕后获取所有的checkbox遍历
+                //添加“合计”列
+                $('#flexigridData').datagrid('appendRow', {
+                    EmployName: '<span class="subtotal">合计</span>',
+                    YanglaoCompanyCost: '<span class="subtotal">' + compute("YanglaoCompanyCost").toFixed(2) + '</span>',
+                    YanglaoPersonCost: '<span class="subtotal">' + compute("YanglaoPersonCost").toFixed(2) + '</span>',
+                    YanglaoSum: '<span class="subtotal">' + compute("YanglaoSum").toFixed(2) + '</span>',
+                    ShiyeCompanyCost: '<span class="subtotal">' + compute("ShiyeCompanyCost").toFixed(2) + '</span>',
+                    ShiyePersonCost: '<span class="subtotal">' + compute("ShiyePersonCost").toFixed(2) + '</span>',
+                    ShiyeSum: '<span class="subtotal">' + compute("ShiyeSum").toFixed(2) + '</span>',
+                    GongshangCompanyCost: '<span class="subtotal">' + compute("GongshangCompanyCost").toFixed(2) + '</span>',
+                    YiliaoCompanyCost: '<span class="subtotal">' + compute("YiliaoCompanyCost").toFixed(2) + '</span>',
+                    YiliaoPersonCost: '<span class="subtotal">' + compute("YiliaoPersonCost").toFixed(2) + '</span>',
+                    YiliaoSum: '<span class="subtotal">' + compute("YiliaoSum").toFixed(2) + '</span>',
+                    DaeCompanyCost: '<span class="subtotal">' + compute("DaeCompanyCost").toFixed(2) + '</span>',
+                    DaePersonCost: '<span class="subtotal">' + compute("DaePersonCost").toFixed(2) + '</span>',
+                    ShengyuCompanyCost: '<span class="subtotal">' + compute("ShengyuCompanyCost").toFixed(2) + '</span>',
+                    GongjijinCompanyCost: '<span class="subtotal">' + compute("GongjijinCompanyCost").toFixed(2) + '</span>',
+                    GongjijinPersonCost: '<span class="subtotal">' + compute("GongjijinPersonCost").toFixed(2) + '</span>',
+                    GongjijinSum: '<span class="subtotal">' + compute("GongjijinSum").toFixed(2) + '</span>',
+                    GongjijinBCCompanyCost: '<span class="subtotal">' + compute("GongjijinBCCompanyCost").toFixed(2) + '</span>',
+                    GongjijinBCPersonCost: '<span class="subtotal">' + compute("GongjijinBCPersonCost").toFixed(2) + '</span>',
+
+                    OtherInsuranceCost: '<span class="subtotal">' + compute("OtherInsuranceCost").toFixed(2) + '</span>',
+                    OtherCost: '<span class="subtotal">' + compute("OtherCost").toFixed(2) + '</span>',
+                    CompanyInsuranceSum: '<span class="subtotal">' + compute("CompanyInsuranceSum").toFixed(2) + '</span>',
+                    PersonInsuranceSum: '<span class="subtotal">' + compute("PersonInsuranceSum").toFixed(2) + '</span>',
+                    InsuranceSum: '<span class="subtotal">' + compute("InsuranceSum").toFixed(2) + '</span>',
+                    ServiceCost: '<span class="subtotal">' + compute("ServiceCost").toFixed(2) + '</span>',
+                    Sum: '<span class="subtotal">' + compute("Sum").toFixed(2) + '</span>'
+                });
+            }
+
+        })
+        //指定列求和
+        function compute(colName) {
+            var rows = $('#flexigridData').datagrid('getRows');
+            var total = 0;
+            for (var i = 0; i < rows.length; i++) {
+
+                total += parseFloat(rows[i][colName]);
+            }
+            return total;
+        }
+    })
+    //var LODOP; //声明为全局变量
+    function prn1_preview(id) {
+
+
+    };
+    //function CreateOneFormPage() {
+
+    //    LODOP = getLodop();
+    //    LODOP.PRINT_INIT("打印控件功能演示_Lodop功能_全页");
+
+    //    LODOP.ADD_PRINT_HTM(88, 200, 350, 600, document.getElementById("form1").innerHTML);
+    //    LODOP.PREVIEW();
+    //};
+
+    var LODOP = null; //声明为全局变量
+    function Print1(id) {
+        var strCss = "<style type=\"text/css\">" +
+        "table, th {" +
+            "border: none;" +
+            "height: 18px;" +
+        "}" +
+        "td {" +
+            "border: 1px solid #000;" +
+            "height: 18px;" +
+" white-space: nowrap;" +
+" font-size:0.6em;" +
+        "}" +
+        "</style>";
+        var page = 1;
+        var rows = 100;
+        $.ajax({
+            //要用post方式
+            type: "get",
+            //方法所在页面和方法名
+            url: '/api/COST_CostTableApi/GetCost_Cost_Company?Cost_TableID=' + id,
+
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                var strTitle = "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"border:none\" class=\"toptbl\">";
+                //  strTitle += " <caption><b><font face=\"黑体\" size=\"4\">" + data.data[0].CompanyName + "</font></b><br>" + data.data[0].RateDate + " 费用明细表</caption>";
+                strTitle += "<thead>";
+                strTitle += "<tr>";
+                strTitle += "<th colspan=\"30\"><b><font face=\"黑体\" size=\"4\">" + data.rows[0].CompanyName + "</font></b><br>" + data.rows[0].YearMouth.toString().substring(0, 4) + '年' + data.rows[0].YearMouth.toString().substring(4, 6) + "月费用明细表</th>"
+                strTitle += "</tr>"
+                strTitle += "<tr>";
+                strTitle += "<th colspan=\"7\"  align=\"left\" style='font-size:0.8em;font-weight:100'>客户名称：" + data.rows[0].CompanyName + "</th>" +
+
+                            "<th colspan=\"6\" align=\"left\" style='font-size:0.8em;font-weight:100'>社保期间：" + data.rows[0].YearMouth + "</th>" +
+                            "<th colspan=\"6\" align=\"left\" style='font-size:0.8em;font-weight:100'>批次号：" + data.rows[0].SerialNumber + "</th>" +
+                            "<th  align=\"left\" colspan=\"8\"  style='font-size:0.8em;font-weight:100'>客户编号:" + data.rows[0].CompanyID + "</th>" +
+                       " </tr>";
+                strTitle += "<tr>";
+                strTitle += " <td rowspan=\"3\" align=\"center\">序号</td>" +
+                            "<td rowspan=\"3\" align=\"center\" style=\"font-size:0.5em\">姓名</td>" +
+                            "<td rowspan=\"3\" align=\"center\" style=\"font-size:0.5em\">身份证号</td>" +
+                            "<td rowspan=\"3\" align=\"center\">缴费<br>类型</td>" +
+                            "<td rowspan=\"3\" align=\"center\" style=\"font-size:0.6em\">保险<br>缴纳地</td>" +
+                            "<td colspan=\"5\" align=\"center\">养老保险</td>" +
+                            "<td colspan=\"3\" align=\"center\">失业保险</td>" +
+                            "<td align=\"center\">工伤<br>保险</td>" +
+                            "<td colspan=\"4\" align=\"center\">医疗保险</td>" +
+                            "<td  colspan=\"2\"  align=\"center\">医疗大额</td>" +
+                            //"<td align=\"center\">&nbsp;</td>" +
+                            "<td align=\"center\">生育<br>保险</td>" +
+                            "<td colspan=\"3\" align=\"center\">公积金</td>" +
+                            //"<td rowspan=\"3\" align=\"center\">单位保险<br>合计</td>" +
+                            //"<td rowspan=\"3\" align=\"center\">个人保险<br>合计</td>" +
+                               "<td rowspan=\"3\" align=\"center\">其他</br>社保</td>" +
+                            "<td rowspan=\"3\" align=\"center\">保险合计</td>" +
+                            "<td rowspan=\"3\" align=\"center\">服</br>务</br>费</td>" +
+                            "<td rowspan=\"3\" align=\"center\">其他</br>费用</td>" +
+                            "<td rowspan=\"3\" align=\"center\">工</br>本</br>费</td>" +
+                            "<td rowspan=\"3\" align=\"center\">费用合计</td>" +
+                        "</tr>" +
+                        "<tr>" +
+                            "<td rowspan=\"2\" align=\"center\" style=\"font-size:0.6em\">缴费</br>区间</td>" +
+                            "<td rowspan=\"2\" align=\"center\" style=\"font-size:0.6em\">缴费<br>基数</td>" +
+                            "<td align=\"center\">单位</td>" +
+                            "<td align=\"center\">个人</td>" +
+                            "<td align=\"center\">小计</td>" +
+                            "<td align=\"center\">单位</td>" +
+                            "<td align=\"center\">个人</td>" +
+                            "<td align=\"center\">小计</td>" +
+                            "<td align=\"center\">单位</td>" +
+                            "<td rowspan=\"2\" align=\"center\">缴费<br>基数</td>" +
+                            "<td align=\"center\">单位</td>" +
+                            "<td align=\"center\">个人</td>" +
+                            "<td align=\"center\">小计</td>" +
+                           "<td align=\"center\">单位</td>" +
+                            "<td align=\"center\">个人</td>" +
+                            "<td align=\"center\">单位</td>" +
+                            //"<td rowspan=\"2\" align=\"center\">缴费<br>基数</td>" +
+                            "<td align=\"center\">单位</td>" +
+                            "<td align=\"center\">个人</td>" +
+                            "<td align=\"center\">小计</td>" +
+                        "</tr>" +
+                        //"<tr>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\" style=\"font-size:0.5em\">单位<br></td>" +
+                        //    "<td align=\"center\" style=\"font-size:0.5em\">个人<br></td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //    "<td align=\"center\">&nbsp;</td>" +
+                        //"</tr>" +
+        "</thead>";
+                $.ajax({
+                    //要用post方式
+                    type: "Post",
+                    //方法所在页面和方法名
+
+                    url: '/api/COST_CostTableApi/PostCostDetailData?id=' + id, //获取数据的url
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (info) {
+                        //info = eval("(" + info + ")");// JSON.parse();
+                        var strTr = "";
+                        var strHJTr = "<tr>";
+                        var td0 = "", td1 = "", td2 = '合计', td3 = "", td4 = "", td5 = "", td6 = "", td7 = 0, td8 = 0, td9 = 0, td10 = 0, td11 = 0, td12 = 0, td13 = 0, td14 = "", td15 = 0, td16 = 0, td17 = 0, td18 = 0, td19 = 0, td20 = 0, td21 = "", td22 = 0, td23 = 0, td24 = 0, td25 = 0, td26 = 0, td27 = 0, td28 = 0, td29 = 0, td30 = 0, td31 = 0;
+                        for (var i = 0; i < info.rows.length; i++) {
+
+                            //构造行
+                            strTr += "<tr><td style='font-size:0.5em'>" + info.rows[i].No + "</td>"
+                            strTr += "<td style=\"font-size:0.5em\">" + info.rows[i].EmployName + "</td>"
+                            strTr += "<td style=\"font-size:0.5em\">" + info.rows[i].CertificateNumber + "</td>"
+                            strTr += "<td style=\"font-size:0.5em\">" + info.rows[i].PaymentStyle + "</td>"
+                            strTr += "<td style=\"font-size:0.5em\">" + info.rows[i].CityName + "</td>"
+                            strTr += "<td>" + (info.rows[i].YanglaoPaymentInterval == null ? "" : info.rows[i].YanglaoPaymentInterval) + "</td>"
+                            strTr += "<td  align=\"right\">" + (info.rows[i].YanglaoCompanyRadix == null ? "" : info.rows[i].YanglaoCompanyRadix) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].YanglaoCompanyCost == null ? "" : info.rows[i].YanglaoCompanyCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].YanglaoPersonCost == null ? "" : info.rows[i].YanglaoPersonCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].YanglaoSum == null ? "" : info.rows[i].YanglaoSum) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].ShiyeCompanyCost == null ? "" : info.rows[i].ShiyeCompanyCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].ShiyePersonCost == null ? "" : info.rows[i].ShiyePersonCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].ShiyeSum == null ? "" : info.rows[i].ShiyeSum) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].GongshangCompanyCost == null ? "" : info.rows[i].GongshangCompanyCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].YiliaoCompanyRadix == null ? "" : info.rows[i].YiliaoCompanyRadix) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].YiliaoCompanyCost == null ? "" : info.rows[i].YiliaoCompanyCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].YiliaoPersonCost == null ? "" : info.rows[i].YiliaoPersonCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].YiliaoSum == null ? "" : info.rows[i].YiliaoSum) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].DaeCompanyCost == null ? "" : info.rows[i].DaeCompanyCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].DaePersonCost == null ? "" : info.rows[i].DaePersonCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].ShengyuCompanyCost == null ? "" : info.rows[i].ShengyuCompanyCost) + "</td>"
+                            //strTr += "<td>" + (info.rows[i].GongJiJinJiShu == null ? "" : info.rows[i].GongJiJinJiShu) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].GongjijinCompanyCost == null ? "" : info.rows[i].GongjijinCompanyCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].GongjijinPersonCost == null ? "" : info.rows[i].GongjijinPersonCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].GongjijinSum == null ? "" : info.rows[i].GongjijinSum) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].OtherInsuranceCost == null ? "" : info.rows[i].OtherInsuranceCost) + "</td>"
+                            //strTr += "<td align=\"right\">" + (info.rows[i].GeRenXiaoJi == null ? "" : info.rows[i].GeRenXiaoJi) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].InsuranceSum == null ? "" : info.rows[i].InsuranceSum) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].ServiceCost == null ? "" : info.rows[i].ServiceCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].OtherCost == null ? "" : info.rows[i].OtherCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].ProductionCost == null ? "" : info.rows[i].ProductionCost) + "</td>"
+                            strTr += "<td align=\"right\">" + (info.rows[i].Sum == null ? "" : info.rows[i].Sum) + "</td>"
+                            //计算合计
+
+                            td7 += parseFloat((info.rows[i].YanglaoCompanyCost == null ? "0" : info.rows[i].YanglaoCompanyCost));
+                            td8 += parseFloat((info.rows[i].YanglaoPersonCost == null ? "0" : info.rows[i].YanglaoPersonCost));
+                            td9 += parseFloat((info.rows[i].YanglaoSum == null ? "0" : info.rows[i].YanglaoSum));
+                            td10 += parseFloat((info.rows[i].ShiyeCompanyCost == null ? "0" : info.rows[i].ShiyeCompanyCost));
+                            td11 += parseFloat((info.rows[i].ShiyePersonCost == null ? "0" : info.rows[i].ShiyePersonCost));
+                            td12 += parseFloat((info.rows[i].ShiyeSum == null ? "0" : info.rows[i].ShiyeSum));
+                            td13 += parseFloat((info.rows[i].GongshangCompanyCost == null ? "0" : info.rows[i].GongshangCompanyCost));
+                            td15 += parseFloat((info.rows[i].YiliaoCompanyCost == null ? "0" : info.rows[i].YiliaoCompanyCost));
+                            td16 += parseFloat((info.rows[i].YiliaoPersonCost == null ? "0" : info.rows[i].YiliaoPersonCost));
+                            td17 += parseFloat((info.rows[i].YiliaoSum == null ? "0" : info.rows[i].YiliaoSum));
+                            td18 += parseFloat((info.rows[i].DaeCompanyCost == null ? "0" : info.rows[i].DaeCompanyCost));
+                            td19 += parseFloat((info.rows[i].DaePersonCost == null ? "0" : info.rows[i].DaePersonCost));
+                            td20 += parseFloat((info.rows[i].ShengyuCompanyCost == null ? "0" : info.rows[i].ShengyuCompanyCost));
+                            // td21 += parseFloat((info.rows[i].ShengYuDanWei == null ? "0" : info.rows[i].ShengYuDanWei));
+                            td22 += parseFloat((info.rows[i].GongjijinCompanyCost == null ? "0" : info.rows[i].GongjijinCompanyCost));
+                            td23 += parseFloat((info.rows[i].GongjijinPersonCost == null ? "0" : info.rows[i].GongjijinPersonCost));
+                            td24 += parseFloat((info.rows[i].GongjijinSum == null ? "0" : info.rows[i].GongjijinSum));
+                            td25 += parseFloat((info.rows[i].OtherInsuranceCost == null ? "0" : info.rows[i].OtherInsuranceCost));
+                            //td26 += parseFloat((info.rows[i].GeRenXiaoJi == null ? "0" : info.rows[i].GeRenXiaoJi));
+                            td26 += parseFloat((info.rows[i].InsuranceSum == null ? "0" : info.rows[i].InsuranceSum));
+                            td27 += parseFloat((info.rows[i].ServiceCost == null ? "0" : info.rows[i].ServiceCost));
+                            td28 += parseFloat((info.rows[i].OtherCost == null ? "0" : info.rows[i].OtherCost));
+                            td29 += parseFloat((info.rows[i].ProductionCost == null ? "0" : info.rows[i].ProductionCost));
+                            td30 += parseFloat((info.rows[i].Sum == null ? "0" : info.rows[i].Sum));
+                            strTr += "</tr>"
+                        }
+                        strHJTr += "<td style='font-size:0.5em'>" + td0 + "</td>";
+                        strHJTr += "<td style='font-size:0.5em'>" + td1 + "</td>";
+                        strHJTr += "<td style='font-size:0.5em'>" + td2 + "</td>";
+                        strHJTr += "<td style='font-size:0.5em'>" + td3 + "</td>";
+                        strHJTr += "<td style='font-size:0.5em'>" + td4 + "</td>";
+                        strHJTr += "<td style='font-size:0.5em'>" + td5 + "</td>";
+                        strHJTr += "<td style='font-size:0.5em'>" + td6 + "</td>";
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td7) + "</td>";//单位养老
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td8) + "</td>";//单位个人
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td9) + "</td>";//单位小计
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td10) + "</td>";//失业单位
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td11) + "</td>";//失业个人
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td12) + "</td>";//失业小计
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td13) + "</td>";//工伤单位
+                        strHJTr += "<td style='font-size:0.5em'>" + td14 + "</td>";//医疗基数
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td15) + "</td>";//医疗单位
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td16) + "</td>";//医疗个人
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td17) + "</td>";//医疗合计
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td18) + "</td>";//大额单位
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td19) + "</td>";//大额个人
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td20) + "</td>";//生育单位
+                        //strHJTr += "<td style='font-size:0.5em'>" + td21 + "</td>";
+                        //alert(td22)
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td22) + "</td>";//公积金单位
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td23) + "</td>";//公积金个人
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td24) + "</td>";//公积金小计
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td25) + "</td>";//其他社保
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td26) + "</td>";//保险合计
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td27) + "</td>";//服务费
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td28) + "</td>";//其它
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td29) + "</td>";//工本
+                        strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td30) + "</td>";//费用合计
+                        //strHJTr += "<td style='font-size:0.5em'>" + FormatVal(td31) + "</td>";
+                        var strFooter = "<tfoot>" +
+                           //"<tr><th colspan='18' align=\"left\" style='font-size:0.8em;'>制表人:" + data.data[0].CName + "</th>" +
+                           //"<th colspan='14' align=\"left\" style='font-size:0.8em;'>审核人:" + data.data[0].ShenHeName + "</th></tr>" +
+
+                          "<tr><th colspan='32' tdata=\"pageNO\" format=\"#\" align=\"center\" style='font-size:0.8em;'>第#页</th></tr>" +
+                           "</tfoot>";
+                        LODOP = getLodop();
+                        LODOP.SET_PRINT_PAGESIZE(0, 0, 0, "A4");
+                        LODOP.PRINT_INIT("打印费用表");
+                        LODOP.ADD_PRINT_TABLE("20px", "1px", 210, 580, strCss + strTitle + strTr + strHJTr + strFooter + "</table>");
+                        LODOP.PREVIEW();
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+
+                //LODOP.ADD_PRINT_TABLE(100, 5, 500, 280, document.getElementById("div1").innerHTML);
+                //LODOP.SET_PRINT_STYLEA(0, "TableHeightScope", iRadioValue);
+
+                //LODOP = getLodop();
+                //LODOP.SET_PRINT_PAGESIZE(2, 0, 0, "A4");
+                //LODOP.PRINT_INIT("打印费用表");
+                //LODOP.ADD_PRINT_TABLE("20px", "1px", 210, 580, strCss + strTitle +  "</table>");
+                //LODOP.PREVIEW();
+            },
+            error: function (err) {
+                alert(err);
+            }
+        });
+    }
+    //格式化显示数字
+    function FormatVal(val) {
+        if (val != null) {
+            var n = 2;
+            val = parseFloat((val + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";
+            var l = val.split(".")[0].split("").reverse(), r = val.split(".")[1];
+            t = "";
+            for (i = 0; i < l.length; i++) {
+                t += l[i] + ((i + 1) % 3 == 0 && (i + 1) != l.length && l[i + 1] != "-" ? "," : "");
+            }
+            return t.split("").reverse().join("") + "." + r;
+        }
+        else
+            return "";
+    }
+
+    function Export(id){
+        $.ajax({
+            url: "/api/SupplierApi/PostExportToExcel?id=" + id,
+            type: "POST",
+            success: function (res) {
+                if(res==''){
+                    $.messager.alert('操作提示', '费用表数据一致，无导出数据！', 'info');
+                }
+                else{
+                    window.location.href = res; 
+                }
+            }
+        })
+    }
+</script>

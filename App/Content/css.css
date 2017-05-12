@@ -1,0 +1,33 @@
+﻿@charset "utf-8";
+/* CSS Document */
+
+body, div, dl, dt, dd, ul, ol, li,h1, h2, h3, h4, h5, h6, pre, code,form, fieldset, legend, input, button,textarea, p, blockquote, th, td { margin: 0; padding: 0;}
+body{ font-size:14px;  font-family:Microsoft Yahei; background:url(../img/bg_01.png) repeat-x;  width:100%;}
+a:link{ text-decoration:none;color:#363636}
+a:visited{ text-decoration:none;color:#363636}
+a:hover{ text-decoration:underline; color:#02588B}
+.clearfix:after { content: ".";display: block;height: 0; clear: both;visibility: hidden;}
+.clearfix {display: inline-block;}
+.clear {clear: both;height: 0;line-height: 0;font-size: 0;}
+
+.bg{ background:url(../img/oabg_01_03.png) no-repeat 50% 50%; height:570px; width:100%; margin:0 auto; }
+.bg_zm{ background:url(../img/zmbg_03.png) no-repeat 50% 50%; height:570px; width:100%; margin:0 auto; }
+.bg_hx{ background:url(../img/hx_03.png) no-repeat 50% 50%; height:570px; width:100%; margin:0 auto; }
+.bg_wb{ background:url(../img/wb_01.png) no-repeat 50% 50%; height:570px; width:100%; margin:0 auto; }
+
+.wbbg{ width:550px;height:482px; position:fixed;_position:absolute;top:65px;left:50%; margin-left:-275px;z-index:10;}
+
+
+.yy{ margin-left:58px; margin-top:28px; color:#666666;}
+.fx{ background:#edebec; border:1px solid #aaa9a9; color:#666666;}
+.yy1{ margin-left:74px; margin-top:70px; color:#666666;}
+
+/*登录框*/
+.delu1{ margin-left:60px; margin-top:150px;}
+
+.jname {width: 302px;height: 52px;margin: 16px 0px 0px 0;display: block;border: 0px ;  }
+.jnameinput {width: 240px;height: 32px;line-height: 30px; color:#FFF;padding:10px 0 10px 30px; border:none; font-size:14px;background:#bd3880;-moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius:5px;font-family:Microsoft Yahei;}
+
+.jloginbtn {background:url(../img/ar.png) 180px center no-repeat #bd3880;width: 270px;height: 52px;border-radius:5px;text-align: center;margin: 15px 0 0 0; cursor:pointer; color:#FFF; border:none; font-size:16px;font-family:Microsoft Yahei;}
+.jloginbtn:hover{background:url(../img/ar.png) 180px center no-repeat #d84293;}
+.jloginbtn i{ display:inline-block; width:25px; height:25px; background:url(../img/arr.png);}

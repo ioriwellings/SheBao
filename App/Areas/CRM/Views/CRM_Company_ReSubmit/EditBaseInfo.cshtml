@@ -1,0 +1,171 @@
+﻿@model Langben.DAL.CRM_Company_Audit
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+
+
+@section CurentPlace {
+
+    创建
+
+}
+@using (Html.BeginForm("", "../api/CRM_Company_AuditApi/PutOnly"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" onclick="ModifyBase()" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('CRM_Company_ReSubmit')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.ID)            
+            @Html.HiddenFor(model => model.CRM_Company_ID)
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCode)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCode)
+                @Html.ValidationMessageFor(model => model.CompanyCode)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyName)
+                @Html.ValidationMessageFor(model => model.CompanyName)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Dict_HY_Code)：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownList("HY", (SelectList)ViewData["HY"], "请选择", new { onchange = "GetSonNode(this)", @style = "font-size:14px;" })
+                @*@Html.EditorFor(model => model.Dict_HY_Code)
+                    @Html.ValidationMessageFor(model => model.Dict_HY_Code)*@
+            </div>
+            <div class="editor-label">
+
+            </div>
+            <div class="editor-field">
+                <select id="ddlSonHY" onchange="GetSonValue(this)"></select>
+                <input type="hidden" id="Dict_HY_Code" name="Dict_HY_Code" />
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.OrganizationCode)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.OrganizationCode)
+                @Html.ValidationMessageFor(model => model.OrganizationCode)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.RegisterAddress)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.RegisterAddress)
+                @Html.ValidationMessageFor(model => model.RegisterAddress)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.OfficeAddress)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.OfficeAddress)
+                @Html.ValidationMessageFor(model => model.OfficeAddress)
+            </div>
+
+            @Html.HiddenFor(model => model.Source)
+            @Html.HiddenFor(model => model.CreateTime)
+            @Html.HiddenFor(model => model.CreateUserID)
+            @Html.HiddenFor(model => model.CreateUserName)
+            @Html.HiddenFor(model => model.BranchID)
+            @Html.HiddenFor(model => model.OperateStatus)
+            @Html.HiddenFor(model => model.OperateNode)
+
+        </div>
+    </fieldset>
+}
+
+
+<script type="text/javascript">
+
+    $(function () {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Id';
+        $.ajax({
+            url: "/api/CRM_Company_AuditApi/GetBaseInfo/" + id,
+            type: "Get",
+            // async: false,
+            success: function (data) {
+                var res = eval("(" + data + ")");
+                $("#ID").val(res.ID);
+                $("#CRM_Company_ID").val(res.CRM_Company_ID);
+                $("#CompanyCode").val(res.CompanyCode);
+                $("#CompanyName").val(res.CompanyName);
+                $("#OrganizationCode").val(res.OrganizationCode);
+                $("#RegisterAddress").val(res.RegisterAddress);
+                $("#OfficeAddress").val(res.OfficeAddress);
+
+                $("#HY").val(res.ParentCode).change();
+                $("#Dict_HY_Code").val(res.Dict_HY_Code);
+                $("#ddlSonHY").val(res.Dict_HY_Code);
+
+                $("#Source").val(res.Source);
+                $("#CreateTime").val(res.CreateTime);
+                $("#CreateUserID").val(res.CreateUserID);
+                $("#CreateUserName").val(res.CreateUserName);
+                $("#BranchID").val(res.BranchID);
+                $("#OperateStatus").val(res.OperateStatus);
+                $("#OperateNode").val(res.OperateNode);
+            }
+        })
+    });
+    //获得下级节点
+    function GetSonNode(obj) {
+        var parentID = obj.value;
+        var parentName = $("#" + obj.id).find("option:selected").text();
+        if (parentID != "") {
+            $.ajax({
+                type: 'Get',
+                url: '/api/CRM_ZD_HYApi/GetHYNode/' + parentID,
+                dataType: 'json',
+                async: false, //同步
+                success: function (data) {
+                    $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+                    var count = 0;
+                    var jsonArray = eval("(" + data + ")");
+                    $.each(jsonArray, function (i, itemValue) {
+                        count++;
+                        $("#ddlSonHY").append("<option value = '" + itemValue.Code + "'>" + itemValue.HYMC + "</option>");
+                        //$("<option><option>").val(itemValue.ID).html(itemValue.CPLXMC)
+                    })
+                    //if (count == 1) {
+                    //    $("#ddlPost").val(itemID);
+                    //}
+                },
+                error: function () {
+                    $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+                }
+            });
+        }
+        else {
+            $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+        }
+    }
+    //
+    function GetSonValue(obj) {
+        if (obj.value != "") {
+            $("#Dict_HY_Code").val(obj.value);
+        }
+        else {
+            $("#Dict_HY_Code").val('');
+        }
+    }
+    //提交
+    function ModifyBase() {
+        if ($("#Dict_HY_Code").val() == "") {
+            $.messager.alert('操作提示', "请选择所属行业", 'info');
+        }
+        else {
+            $("form").submit();
+        }
+    }
+</script>
+
+

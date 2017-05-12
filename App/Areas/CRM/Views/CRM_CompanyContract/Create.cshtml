@@ -1,0 +1,145 @@
+﻿@model Langben.DAL.CRM_CompanyContract
+
+@{
+    Layout = "~/Views/Shared/CRMCreate.cshtml";
+}
+@using Common
+@using Models
+ 
+@section CurentPlace {
+ 
+      创建  
+ 
+ }
+@using (Html.BeginForm("", "../api/CRM_CompanyContract_AuditApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="保存" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.CRM_Company_ID)
+            
+            @*<div class="editor-label">
+                @Html.LabelFor(model => model.CRM_Company_ID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CRM_Company_ID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CRM_Company_ID) 
+            </div>*@     
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BillDay) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BillDay, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.BillDay) 
+            </div>     
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.ReceivedDay) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.ReceivedDay, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.ReceivedDay) 
+            </div>     
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                结费周期：
+            </div>
+            <div class="editor-field">
+               
+                <select id="FeesCycle" name="FeesCycle">
+                    <option>月结</option>
+                    <option>年结</option>
+                    <option>季结</option>
+                    <option>半年结</option>
+                    <option>双月结</option>
+                </select>
+                @Html.ValidationMessageFor(model => model.FeesCycle)
+            </div>     
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.ChangeDay) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.ChangeDay, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.ChangeDay) 
+            </div>     
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.DatumDay) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.DatumDay, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.DatumDay) 
+            </div>     
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.ServceEndDay)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBox("ServceEndDay", ((Model != null && Model.ServceEndDay != null) ? Model.ServceEndDay.ToString().AsDateTime().ToString("yyyy-MM-dd") : ""), new { style = "width: 244px;", @class="easyui-datebox" })
+                @Html.ValidationMessageFor(model => model.ServceEndDay)
+            </div>     
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.SendBillDay) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.SendBillDay, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.SendBillDay) 
+            </div>     
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.ServiceBeginDay)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBox("ServiceBeginDay", ((Model != null && Model.ServiceBeginDay != null) ? Model.ServiceBeginDay.ToString().AsDateTime().ToString("yyyy-MM-dd") : ""), new { style = "width: 244px;", @class="easyui-datebox" })
+                @Html.ValidationMessageFor(model => model.ServiceBeginDay)
+            </div>     
+            @*<div class="editor-label">
+                @Html.LabelFor(model => model.Status) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Status, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.Status) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.BranchID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BranchID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.BranchID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CreateUserID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CreateUserID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CreateUserName)
+                @Html.ValidationMessageFor(model => model.CreateUserName)
+            </div>*@
+        </div>
+    </fieldset>
+
+}
+    
+    <script type="text/javascript">
+
+        $(function () {
+            $("#CRM_Company_ID").val(@ViewBag.CompanyID);
+
+        });
+              
+
+    </script>
+
+

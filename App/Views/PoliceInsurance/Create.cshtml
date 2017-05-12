@@ -1,0 +1,153 @@
+﻿@model Langben.DAL.PoliceInsurance
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+}
+@using Common
+@using Models
+ 
+@section CurentPlace {
+ 
+      创建  
+ 
+ }
+@using (Html.BeginForm("", "api/PoliceInsuranceApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="创建" />
+            <input class="a2 f2" type="button" onclick="BackList('PoliceInsurance')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                 
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Name)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+        <div class="editor-label">
+            <a class="anUnderLine" onclick="showModalOnly('InsuranceKindId','../../InsuranceKind');">
+                @Html.LabelFor(model => model.InsuranceKindId) 
+            </a>：
+        </div>
+        <div class="editor-field">
+            <div id="checkInsuranceKindId">            
+            </div>
+            @Html.HiddenFor(model => model.InsuranceKindId)
+        </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.StartTime)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBox("StartTime", ((Model != null && Model.StartTime != null) ? Model.StartTime.ToString().AsDateTime().ToString("yyyy-MM-dd") : ""), new { style = "width: 244px;", @class="easyui-datebox" })
+                @Html.ValidationMessageFor(model => model.StartTime)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EndTime)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBox("EndTime", ((Model != null && Model.EndTime != null) ? Model.EndTime.ToString().AsDateTime().ToString("yyyy-MM-dd") : ""), new { style = "width: 244px;", @class="easyui-datebox" })
+                @Html.ValidationMessageFor(model => model.EndTime)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.MaxPayMonth) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.MaxPayMonth, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.MaxPayMonth) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InsuranceAdd) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.InsuranceAdd, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.InsuranceAdd) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InsuranceReduce) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.InsuranceReduce, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.InsuranceReduce) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyPercent)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyPercent)
+                @Html.ValidationMessageFor(model => model.CompanyPercent)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyLowestNumber)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyLowestNumber)
+                @Html.ValidationMessageFor(model => model.CompanyLowestNumber)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EmployeeLowestNumber)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.EmployeeLowestNumber)
+                @Html.ValidationMessageFor(model => model.EmployeeLowestNumber)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyHighestNumber)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyHighestNumber)
+                @Html.ValidationMessageFor(model => model.CompanyHighestNumber)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EmployeeHighestNumber)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.EmployeeHighestNumber)
+                @Html.ValidationMessageFor(model => model.EmployeeHighestNumber)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EmployeePercent)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.EmployeePercent)
+                @Html.ValidationMessageFor(model => model.EmployeePercent)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.IsDefault)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.IsDefault)
+                @Html.ValidationMessageFor(model => model.IsDefault)
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>        
+            <div class="editor-label">
+                @Html.LabelFor(model => model.State)：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.State,Models.SysFieldModels.GetSysField("PoliceInsurance","State"),"请选择")
+            </div>
+        </div>
+    </fieldset>
+} 
+
+
+    
+    <script type="text/javascript">
+
+        $(function () {
+            
+        });
+              
+
+    </script>
+
+

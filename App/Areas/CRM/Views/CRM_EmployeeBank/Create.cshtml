@@ -1,0 +1,157 @@
+﻿@model Langben.DAL.EmployeeBank
+
+@{
+    Layout = null;
+}
+@using Common
+@using Models
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+<script type="text/javascript">
+    $(function () {
+        $("form").submit(function (form) {
+            if (form.result) {
+                ajaxForm(this, this.action);
+            }
+            return false;
+        });
+    });
+    function Check() {
+        var i = 0;
+        var companyId = $("#AccountName").val();//开户名称
+        if (companyId == '') {
+            $("#spAccountName").show();
+            $("#AccountName").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spAccountName").hide();
+            $("#AccountName").attr("class", "valid");
+        }
+        var certificateType = $("#Bank").val();//开户银行
+        if (certificateType == '') {
+            $("#spBank").show();
+            $("#Bank").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spBank").hide();
+            $("#Bank").attr("class", "valid");
+        }
+        var sex = $("#BranchBank").val();//支行名称
+        if (sex == '') {
+            $("#spBranchBank").show();
+            $("#BranchBank").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spBranchBank").hide();
+            $("#BranchBank").attr("class", "valid");
+        }
+        var accountType = $("#Account").val();//帐号
+        if (accountType == '') {
+            $("#spAccount").show();
+            $("#Account").attr("class", "input-validation-error");
+            i++;
+        }
+        else {
+            $("#spAccount").hide();
+            $("#Account").attr("class", "valid");
+        }
+        if (i != 0) {
+            return false;
+        }
+        else { return true;}
+    }
+    function ajaxForm(form, url) {
+        if (Check()) {
+            $.ajax({
+                url: url,
+                type: "Post",
+                data: $(form).serialize(),
+                dataType: "json",
+                success: function (data) {
+                    if (data.Code == 1) {
+                        if ($.messager) {
+                            $.messager.defaults.ok = '确定';
+                            $.messager.alert('', '提交成功！', 'info', function (r) {
+                                window.parent.$("#flexigridData").datagrid("reload");
+                                window.parent.$("#window").dialog("close");//关闭弹出框
+                            });
+                        }
+                    }
+                    else {
+                        $.messager.alert('操作提示', data.Message, 'warning');
+                    }
+                }
+            });
+        }
+    }
+
+    //返回
+    function Return() {
+        BackList('CRM_EmployeeBank/Index/@ViewBag.eId');
+    }
+</script>
+@section CurentPlace {
+    创建
+}
+@using (Html.BeginForm("", "../api/CRM_EmployeeBankApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="保存" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            <input name="EmployeeId" type="hidden" value="@ViewBag.eId" />
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.AccountName)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.AccountName, new { @onblur = "Check()" })
+                @Html.ValidationMessageFor(model => model.AccountName)
+                <span id="spAccountName" style="display:none;color:red" class="">开户名称不能为空</span>
+            </div>
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.Bank)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Bank, new { @onblur = "Check()" })
+                @Html.ValidationMessageFor(model => model.Bank)
+                <span id="spBank" style="display:none;color:red" class="">开户银行不能为空</span>
+            </div>
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BranchBank)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BranchBank, new { @onblur = "Check()" })
+                @Html.ValidationMessageFor(model => model.BranchBank)
+                <span id="spBranchBank" style="display:none;color:red" class="">支行名称不能为空</span>
+            </div>
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.Account)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Account, new { @onblur = "Check()" })
+                @Html.ValidationMessageFor(model => model.Account)
+                <span id="spAccount" style="display:none;color:red" class="">帐号不能为空</span>
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark)
+                @Html.ValidationMessageFor(model => model.Remark)
+            </div>
+        </div>
+    </fieldset>
+}
+
+

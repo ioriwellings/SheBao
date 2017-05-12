@@ -1,0 +1,53 @@
+﻿@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+<script type="text/javascript">
+    function UploadFeedBackExcel() {
+        $("#formFeedBackExcel").ajaxSubmit({
+            url: "EmployeeAddSetFailByExcel/SetFailByExcel",
+            type: "Post",
+            dataType: "JSON",
+            //async: false,
+            beforeSend: function (request) {
+            },
+            success: function (data) {
+                if (data.code == 1) {
+                    $('#errorlist').hide();
+                    $.messager.alert('操作提示', data.msg, 'info');
+                }
+                else {
+                    //$.messager.alert('操作提示', data.msg, 'warning');
+                    $('#errorlist').html(data.msg);
+                    $('#errorlist').show();
+                }
+            }
+        });
+
+    }
+
+</script>
+<script src="~/Scripts/jquery.form.js"></script>
+<form id="formFeedBackExcel">
+    <table>
+        <tr>
+            <td>
+                <fieldset id="downmyfieldset">
+                    <legend>Excel模版</legend><font color="red">报增失败原因的模板在此下载，若模板格式不正确，则不能导入!</font>
+                    <a href="~/Template/Excel/导入社保失败人员.xlsx" style="color:red;text-align:center;">点此处下载模板</a>
+                </fieldset>
+            </td>
+        </tr>
+        <tr width="400px">
+            <td width="200px">
+                <input type="file" id="files" name="files" accept=".xlsx,.xls,.csv" />
+            </td>
+            <td width="200px"><button id="uploadfile" onclick="UploadFeedBackExcel()" type="button" class="btn green-haze">开始导入</button></td>
+
+        </tr>
+    </table>
+    <div class="errorlist" id="errorlist" style=" display:none;">第一行<b>身份证</b>号不对<br />第二行<b>身份</b>不对<br />第一行<b>身份证</b>号不对<br />第二行<b>身份</b>不对<br /></div>
+</form>
+
+
+
+

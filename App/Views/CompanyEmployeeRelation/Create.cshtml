@@ -1,0 +1,73 @@
+﻿@model Langben.DAL.CompanyEmployeeRelation
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+}
+@using Common
+@using Models
+ 
+@section CurentPlace {
+ 
+      创建  
+ 
+ }
+@using (Html.BeginForm("", "api/CompanyEmployeeRelationApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="创建" />
+            <input class="a2 f2" type="button" onclick="BackList('CompanyEmployeeRelation')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                 
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EmployeeId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.EmployeeId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.EmployeeId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CompanyId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CompanyId) 
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>        
+            <div class="editor-label">
+                @Html.LabelFor(model => model.State)：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.State,Models.SysFieldModels.GetSysField("CompanyEmployeeRelation","State"),"请选择")
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CityId)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CityId)
+                @Html.ValidationMessageFor(model => model.CityId)
+            </div>
+        </div>
+    </fieldset>
+} 
+
+
+    
+    <script type="text/javascript">
+
+        $(function () {
+            
+        });
+              
+
+    </script>
+
+

@@ -1,0 +1,1015 @@
+﻿@model Langben.DAL.Model.CRM_CompanyInfo
+
+@{
+    Layout = null;
+}
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        Citylist();
+    });
+    ///缴纳地初始绑定
+    function Citylist() {
+        myAjax("/api/EmployeeAddApi/getCitylist", '', function (data) {
+            $("#Citylist").append("<option value=>请选择</option>");
+            $.each(data, function (i, item1) {
+                $("#Citylist").append("<option value='" + item1["Cityid"] + "'>" + item1["Name"] + "</option>");
+            });
+            $("#Citylist").combobox({});
+        });
+    }
+
+    function getData() {
+        var Cityid = $('#Citylist').combobox('getValue');
+        myAjax("/api/CRM_Company_InsuranceApi/getInsuranceKindList", 'ID=' + Cityid, function (data) {
+            $("#tabaleCompanySBbase  tr:not(:first)").remove();
+            var TR = ""
+            var tr1 = "<tr name='account'>"
+            var strzcHtml = "";
+
+            $.each(data, function (i, item1) {
+                if (item1["Name"] == "工伤" || item1["Name"] == "公积金")//后期如果需要动态去掉判断即可
+                {
+                    //根据社保种类ID，缴纳地获取政策
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/CRM_CompanyApi/GetZCByID?InsuranceKindId=' + item1["ID"] + "&CityID=" + Cityid,
+                        dataType: 'Json',
+                        async: false,
+                        success: function (data) {
+                            strzcHtml = "";
+                            for (var i = 0; i < data.rows.length; i++) {
+                                strzcHtml += "<input type='checkbox' zcname='" + data.rows[i].Name + "' name='" + item1["Name"] + "'  id='" + data.rows[i].ID + "'/>" + data.rows[i].Name + "";
+                            }
+
+                            TR += "<tr name=" + item1["Name"] + " type='zc' id='" + item1["ID"] + "'>"
+                            TR += "<td>" + item1["Name"] + "政策:<td><td colspan=\"2\" algin='left'>" + strzcHtml + "<td>"
+                            TR += "</tr>";
+                        }
+                    })
+                }
+                if (i == 0) {
+                    tr1 = "<tr name='" + item1["Name"] + "' type='account'>"
+                    tr1 += "<td rowspan=" + data.length + ">企业社保账号</td>";
+                }
+                else {
+                    tr1 += "<tr name='" + item1["Name"] + "'  type='account'>"
+                }
+                tr1 += "<td style='width:50px'>" + item1["Name"] + "</td><td  algin='left'><input type='text' name='" + item1["Name"] + "' ID='txt_" + item1["ID"] + "'/></td></tr>"
+            });
+
+            tr1 += "<tr name='状态' type='state' ><td style='width:50px'>状态</td><td colspan='3' algin='left'><input type='radio' name='state' rname='启用'  checked='checked' />启用<input type='radio' name='state' rname='停用'  />停用</td></tr>"
+
+            $("#tabaleCompanySBbase").append(tr1);
+            $("#tabaleCompanySBbase").append(TR);
+        });
+    }
+
+    ///移除
+    function RemoveTableRow()
+    {
+        $("#tabaleCompanySBbase tr:not(:first)").each(function (i) {
+            $(this).remove();
+        });
+    }
+
+    ///添加社保
+    function addSB() {
+        var accountStr = "";//账号
+        var accountName = "";//账号名称
+        var account = "";//单独账号隔开
+        var gjjaccount = "";//公积金账号
+        var gjj = "";//公积金账号
+        var ZC = "";//政策
+        var gszc = "";//工伤政策
+        var gjjzc = "";//公积金政策
+        var gjjid = "";//公积政策id
+        var gszcid = "";//工伤政策ID
+        var cityid = $('#Citylist').combobox('getValue');
+        var city = $('#Citylist').combobox('getText');
+        var isAdd = true;
+        $("#tableCompanySBinfo tr").each(function () {
+            if ($(this).children('td').eq(0).attr("cityid") == cityid) {
+                isAdd = false;
+            }
+        });
+        if (!isAdd) {
+            $.messager.alert('操作提示', "已经存在当前缴纳地，请核实", 'info'); return false;
+        }
+        $("#tabaleCompanySBbase tr:not(:first)").each(function (i) {
+            if ($(this).attr("type") == "account") {
+                if (i == 0) {
+                    if ($(this).children('td').eq(2).find("input").attr("name") != "公积金") {
+                        accountName += $(this).children('td').eq(2).find("input").attr("name") + ",";
+                        account += $(this).children('td').eq(2).find("input").val() + ",";
+                        accountStr += $(this).children('td').eq(2).find("input").attr("name") + ":" + $(this).children('td').eq(2).find("input").val() + ",";
+                    }
+                    else {
+                        gjj += $(this).children('td').eq(2).find("input").val();
+                        gjjaccount += $(this).children('td').eq(2).find("input").attr("name") + ":" + $(this).children('td').eq(2).find("input").val() + ",";
+                    }
+                }
+                else {
+                    if ($(this).children('td').eq(1).find("input").attr("name") != "公积金") {
+                        account += $(this).children('td').eq(1).find("input").val() + ",";
+                        accountName += $(this).children('td').eq(1).find("input").attr("name") + ",";
+                        accountStr += $(this).children('td').eq(1).find("input").attr("name") + ":" + $(this).children('td').eq(1).find("input").val() + ",";
+                    }
+                    else {
+                        gjj += $(this).children('td').eq(1).find("input").val();
+                        gjjaccount += $(this).children('td').eq(1).find("input").attr("name") + ":" + $(this).children('td').eq(1).find("input").val() + ",";
+                    }
+                }
+
+            }
+            if ($(this).attr("type") == "zc") {
+                var name = $(this).attr("name");
+                if (name == "公积金") {
+                    $("input[name='公积金']:checked").each(function () {
+                        gjjid += $(this).attr("id") + ",";
+                        gjjzc += $(this).attr("zcname") + ";";
+                    });
+
+
+                }
+                if (name == "工伤") {
+                    $("input[name='工伤']:checked").each(function () {
+                        gszcid += $(this).attr("id") + ",";
+                        gszc += $(this).attr("zcname") + ";";
+                    });
+                    //gszcid += $(this).children('td').eq(2).find("input:checked").attr("id") + ",";
+                    //gszc += $(this).children('td').eq(2).find("input:checked").attr("zcname") + ";";
+                }
+
+            }
+        });
+        var tr = "<tr>";
+        tr += "<td cityid='" + cityid + "'>" + city + "</td><td name='工伤' id='" + gszcid + "'>" + gszc + "</td><td name='公积金' id='" + gjjid + "'>" + gjjzc + "</td><td name='" + accountName + "' account='" + account + "'>" + accountStr + "</td><td name='公积金' account='" + gjj + "'>" + gjjaccount + "</td><td name='" + $("input[type='radio']:checked").attr("rname") + "'>" + $("input[type='radio']:checked").attr("rname") + "</td><td><a href=\"#\" onclick='delsb(this)'>删除</a></td></tr>"
+        $("#tableCompanySBinfo").append(tr);
+        RemoveTableRow();
+    }
+
+    ///删除
+    function delsb(obj) {
+        $(obj).parent().parent().remove();
+    }
+    //社保
+    function GetSheBao() {
+        var array = [];
+        $.each($("#tableCompanySBinfo tr:not(:first)"), function () {
+            array.push({
+                'JiaoNaDi': $(this).children('td').eq(0).attr("cityid"),
+                'GongShangZhengCeName': $(this).children('td').eq(1).attr("name"),
+                'GongShangZhengCe': $(this).children('td').eq(1).attr("id"),
+                'GongJiJinZhengCeName': $(this).children('td').eq(2).attr("name"),
+                'GongJiJinZhengCe': $(this).children('td').eq(2).attr("id"),
+                'QiYeSheBaoName': $(this).children('td').eq(3).attr("name"),
+                'QiYeSheBaoAccount': $(this).children('td').eq(3).attr("account"),
+                'GongJiJinName': $(this).children('td').eq(4).attr("name"),
+                'GongJiJinAccount': $(this).children('td').eq(4).attr("account"),
+                'State': $(this).children('td').eq(5).attr("name")
+            });
+        });
+        return array;
+    }
+</script>
+<div class="easyui-panel" style="height:auto;padding:5px;">
+    <form id="form1" action="/api/CRM_CompanyApi/PostNewCompany" method="post">
+        <span>基本信息</span>
+        <table>
+            <tr>   
+                <td style="width:120px"><span style="color: red; float:none">*</span>@Html.LabelFor(model => model.BasicInfo.CompanyName)：</td>
+                <td style="width:300px">
+                    @Html.TextBoxFor(model => model.BasicInfo.CompanyName, new { @onblur = "CheckCompanyName(this)" })
+                    @Html.ValidationMessageFor(model => model.BasicInfo.CompanyName)
+                    <span id="spCompanyName" style="display:none;color:red" class="">该公司名已存在</span>
+                </td>
+                <td>组织机构代码：</td>
+                <td>
+                    @Html.TextBoxFor(model => model.BasicInfo.OrganizationCode)
+                    @Html.ValidationMessageFor(model => model.BasicInfo.OrganizationCode)
+                </td>
+            </tr>
+            <tr>
+                <td><span style="color: red; float:none">*</span>@Html.LabelFor(model => model.BasicInfo.Dict_HY_Code)：</td>
+                <td>
+                    @Html.DropDownList("HY", (SelectList)ViewData["HY"], "--请选择--", new { onchange = "GetSonNode(this)", style = "width:135px" })
+                </td>
+                <td></td>
+               <td>
+                    @Html.DropDownListFor(model => model.BasicInfo.Dict_HY_Code, (SelectList)ViewBag.HYSon, "--请选择--", new { @id = "ddlSonHY", @style = "width:135px" })
+                    @Html.ValidationMessageFor(model => model.BasicInfo.Dict_HY_Code)
+                </td>
+            </tr>
+            <tr>
+                <td><span style="color: red; float:none">*</span>@Html.LabelFor(model => model.BasicInfo.RegisterAddress)：</td>
+                <td>
+                    @Html.TextBoxFor(model => model.BasicInfo.RegisterAddress)
+                    @Html.ValidationMessageFor(model => model.BasicInfo.RegisterAddress)
+                </td>
+                <td><span style="color: red; float:none">*</span>@Html.LabelFor(model => model.BasicInfo.OfficeAddress)：</td>
+                <td>
+                    @Html.TextBoxFor(model => model.BasicInfo.OfficeAddress)
+                    @Html.ValidationMessageFor(model => model.BasicInfo.OfficeAddress)
+                </td>
+            </tr>
+            <tr>
+                <td style="width:120px">@Html.LabelFor(model => model.BasicInfo.CompanyCode)：</td>
+                <td style="width:300px">
+                    @Html.HiddenFor(model => model.BasicInfo.CompanyCode)
+                </td>
+                <td></td>
+                <td><input type="hidden" name="BasicInfo.Source" value="2" /></td>
+            </tr>
+        </table>
+        <span>合同信息</span>
+        <table>
+            <tr>
+                <td style="width:120px">
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Contract.BillDay)：
+                </td>
+                <td style="width:300px">
+                    @Html.TextBoxFor(model => model.Contract.BillDay, new { onkeyup = "isInt(this)" })
+                    @Html.ValidationMessageFor(model => model.Contract.BillDay)
+                </td>
+                <td style="width:120px">
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Contract.ReceivedDay)：
+                </td>
+                <td style="width:300px">
+                    @Html.TextBoxFor(model => model.Contract.ReceivedDay, new { onkeyup = "isInt(this)" })
+                    @Html.ValidationMessageFor(model => model.Contract.ReceivedDay)
+                </td>
+            </tr>
+            <tr>
+                <td> <span style="color: red; float:none">*</span>结费周期： </td>
+                <td>
+                    <select id="FeesCycle" name="Contract.FeesCycle" style="width:135px">
+                        <option>月结</option>
+                        <option>年结</option>
+                        <option>季结</option>
+                        <option>半年结</option>
+                        <option>双月结</option>
+                    </select>
+                    @Html.ValidationMessageFor(model => model.Contract.FeesCycle)
+                </td>
+                <td>
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Contract.ChangeDay)：
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Contract.ChangeDay, new { onkeyup = "isInt(this)" })
+                    @Html.ValidationMessageFor(model => model.Contract.ChangeDay)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Contract.DatumDay)：
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Contract.DatumDay, new { onkeyup = "isInt(this)" })
+                    @Html.ValidationMessageFor(model => model.Contract.DatumDay)
+                </td>
+                <td>
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Contract.ServiceBeginDay)：
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Contract.ServiceBeginDay, new { style = "width: 135px;", @class = "easyui-datebox", @Editable = "false", @id = "ServiceBeginDay" })
+                    @Html.ValidationMessageFor(model => model.Contract.ServiceBeginDay)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Contract.SendBillDay)：
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Contract.SendBillDay, new { onkeyup = "isInt(this)" })
+                    @Html.ValidationMessageFor(model => model.Contract.SendBillDay)
+                </td>
+                <td>
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Contract.ServceEndDay)：
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Contract.ServceEndDay, new { style = "width: 135px;", @class = "easyui-datebox", @Editable = "false", @id = "ServiceEndDay" })
+                    @Html.ValidationMessageFor(model => model.Contract.ServceEndDay)
+                </td>
+            </tr>
+        </table>
+        <span>开票信息</span>
+        <table>
+            <tr>
+                <td style="width:120px">
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Bill.BillName)：
+                </td>
+                <td style="width:300px">
+                    @Html.TextBoxFor(model => model.Bill.BillName)
+                    @Html.ValidationMessageFor(model => model.Bill.BillName)
+                </td>
+                <td style="width:120px">
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Bill.TaxRegistryNumber)：
+                </td>
+                <td style="width:300px">
+                    @Html.TextBoxFor(model => model.Bill.TaxRegistryNumber, new { @onblur = "CheckTaxNumber()" })
+                    @Html.ValidationMessageFor(model => model.Bill.TaxRegistryNumber)
+                    <span id="spTax" style="display:none;color:red" class="">该税务登记证号已存在</span>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" id="LinkMan" name="LinkMan" />
+        <input type="hidden" id="Bank" name="Bank" />
+
+        <input type="hidden" id="Payment" name="Payment" />
+        <input type="hidden" id="Price" name="Price" />
+        <input type="hidden" id="LadderPrice" name="LadderPrice" />
+        <input type="hidden" id="SheBaoInfo" name="SheBaoInfo" />
+    </form>
+
+    <div id="pLink" class="easyui-panel" title="联系人信息" style="width:100%;height:250px;padding:10px;"
+         data-options="collapsible:true,collapsed:true,minimizable:false,maximizable:false,closable:false">
+        <table id="tbLink" width="700">
+            <tr style="background-color:gray">
+                <td>姓名</td>
+                <td>职务</td>
+                <td>地址</td>
+                <td>手机号</td>
+                <td>固话</td>
+                <td>邮箱</td>
+                <td>默认联系人</td>
+                <td>操作</td>
+            </tr>
+        </table>
+        <table id="tbLinkBase">
+            <tr>
+                <td style="width:120px;"> <span style="color: red; float:none">*</span>姓名：</td>
+                <td style="width:200px"> <input type="text" id="LinkManName" maxlength="20" /></td>
+                <td style="width:120px"> 职务： </td>
+                <td style="width:200px"><input type="text" id="LinkManPosition" maxlength="20" /> </td>
+            </tr>
+            <tr>
+                <td> 地址：</td>
+                <td>   <input type="text" id="LinkManAddress" maxlength="20" class="ignore" /> </td>
+                <td> 手机号： </td>
+                <td>      <input type="text" id="LinkManMobile" maxlength="11" class="ignore" />  </td>
+            </tr>
+            <tr>
+                <td> 固话： </td>
+                <td> <input type="text" id="LinkManTelephone" maxlength="25" class="ignore" onkeyup="isInt(this)" /> </td>
+                <td> 邮箱：</td>
+                <td> <input type="text" id="LinkManEmail" maxlength="25" class="ignore" /> </td>
+            </tr>
+            @*<tr>
+                    <td> 备注：</td>
+                    <td colspan="3">  <textarea cols="5" maxlength="100" id="LinkManRemark" rows="2"></textarea>  </td>
+                </tr>*@
+            <tr>
+                <td><a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="AddLink()">添加联系人</a></td>
+                <td colspan="3"><span id="spLink" style="display: none; color: red"></span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="pBank" class="easyui-panel" title="银行信息" style="width:100%;height:200px;padding:10px;"
+         data-options="collapsible:true,collapsed:true,minimizable:false,maximizable:false,closable:false">
+        <table id="tbBank" width="700">
+            <tr style="background-color:gray">
+                <td>开户行名称</td>
+                <td>银行账号</td>
+                <td>操作</td>
+            </tr>
+        </table>
+        <table id="tbBankBase">
+            <tr>
+                <td style="width:120px;"><span style="color: red; float:none">*</span>开户行名称：</td>
+                <td style="width:200px;"><input type="text" id="BankName" maxlength="30" class="ignore" /> </td>
+                <td style="width:120px;"><span style="color: red; float:none">*</span>银行账号：</td>
+                <td style="width:200px;"> <input type="text" id="BankAccount" maxlength="20" class="ignore" /> </td>
+            </tr>
+            <tr>
+                <td><a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="AddBank()">添加银行信息</a></td>
+                <td colspan="3"><span id="spBank" style="display: none; color: red"></span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="pPay" class="easyui-panel" title="付款信息" style="width:100%;height:200px;padding:10px;"
+         data-options="collapsible:true,collapsed:true,minimizable:false,maximizable:false,closable:false">
+        <table id="tbPay" width="700">
+            <tr style="background-color:gray">
+                <td>付款名称</td>
+                <td>操作</td>
+            </tr>
+        </table>
+        <table id="tbPayBase">
+            <tr>
+                <td style="width:120px;"><span style="color: red; float:none">*</span>付款名称：</td>
+                <td style="width:200px;"><input type="text" id="PaymentName" maxlength="30" class="ignore" /> </td>
+            </tr>
+            <tr>
+                <td><a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="AddPay()">添加付款信息</a></td>
+                <td colspan="3"><span id="spPay" style="display: none; color: red"></span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="pPrice" class="easyui-panel" title="企业报价" style="width:100%;height:200px;padding:10px;"
+         data-options="collapsible:true,collapsed:true,minimizable:false,maximizable:false,closable:false">
+        <table id="tbPrice" width="700">
+            <tr style="background-color:gray">
+                <td style="display:none">ID</td>
+                <td>产品</td>
+                <td>整户服务费</td>
+                <td>补缴服务费</td>
+                <td>操作</td>
+            </tr>
+        </table>
+        <table id="tbPriceBase">
+            <tr>
+                <td style="width:120px;"><span style="color: red; float:none">*</span>产品：</td>
+                <td style="width:200px;" colspan="3">
+                    @Html.DropDownList("ddlProductID1", (SelectList)ViewData["listPrd"], "--请选择--", new { @style = "font-size:14px;width:136px;", @onchange = "GetProductID(this)" })
+                    <input type="hidden" id="ProductID1" name="ProductID1" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width:120px;"><span style="color: red; float:none">*</span>整户服务费：</td>
+                <td style="width:200px;"><input type="text" id="LowestPrice" maxlength="30" class="ignore" onkeyup="isMoney(this)" /> </td>
+                <td style="width:120px;"><span style="color: red; float:none">*</span>补缴服务费：</td>
+                <td style="width:200px;"><input type="text" id="AddPrice" maxlength="30" class="ignore" onkeyup="isMoney(this)" /> </td>
+            </tr>
+            <tr>
+                <td><a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="AddPrice()">添加企业报价</a></td>
+                <td colspan="3"><span id="spPrice" style="display: none; color: red"></span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="pLadder" class="easyui-panel" title="企业阶梯报价" style="width:100%;height:200px;padding:10px;"
+         data-options="collapsible:true,collapsed:true,minimizable:false,maximizable:false,closable:false">
+        @*<span>企业阶梯报价</span>*@
+        <table id="tbLadderPrice" width="700">
+            <tr style="background-color:gray">
+                <td style="display:none">ID</td>
+                <td>产品</td>
+                <td>单人服务费</td>
+                <td>起始阶梯</td>
+                <td>终止阶梯</td>
+                <td>操作</td>
+            </tr>
+        </table>
+        <table id="tbLadderPriceBase">
+            <tr>
+                <td style="width:120px;"><span style="color: red; float:none">*</span>产品：</td>
+                <td style="width:200px;">
+                    @Html.DropDownList("ddlProductID2", (SelectList)ViewData["listPrd"], "--请选择--", new { @style = "font-size:14px;width:136px;", @disabled = "disabled", @onchange = "GetProductID(this)" })
+                    <input type="hidden" id="ProductID2" name="ProductID2" />
+                </td>
+                <td style="width:120px;"><span style="color: red; float:none">*</span>单人服务费：</td>
+                <td style="width:200px;"><input type="text" id="SinglePrice" name="clear" maxlength="30" class="ignore" onkeyup="isMoney(this)" /> </td>
+            </tr>
+            <tr>
+                <td><span style="color: red; float:none">*</span>起始阶梯：</td>
+                <td><input type="text" id="BeginLadder" name="clear" maxlength="30" class="ignore" onkeyup="isInt(this)" /> </td>
+                <td><span style="color: red; float:none">*</span>终止阶梯：</td>
+                <td><input type="text" id="EndLadder" name="clear" maxlength="30" class="ignore" onkeyup="isInt(this)" /> </td>
+            </tr>
+            <tr>
+                <td><a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="AddLadderPrice()">添加阶梯报价</a></td>
+                <td colspan="3"><span id="spLadderPrice" style="display: none; color: red"></span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="companySBInfo" class="easyui-panel" title="企业社保信息" style="width:100%;height:400px;padding:10px;"
+         data-options="collapsible:true,collapsed:true,minimizable:false,maximizable:false,closable:false">
+        @*<span>企业阶梯报价</span>*@
+        <table id="tableCompanySBinfo" width="700">
+            <tr style="background-color:gray">
+                <td style="display:none">ID</td>
+                <td>缴纳地</td>
+                <td>工伤政策</td>
+                <td>公积金政策</td>
+                <td>企业社保账号</td>
+                <td>公积金社保账号</td>
+                <td>状态</td>
+                <td>操作</td>
+            </tr>
+        </table>
+        <table id="tabaleCompanySBbase">
+            <tr>
+                <td style="width:120px;"><span style="color: red; float:none">*</span>缴纳地：</td>
+                <td style="width:200px;" colspan="3">
+                    <select id="Citylist" class="easyui-combobox" style="width:100px" data-options="onSelect:getData"></select>
+                    <input type="hidden" id="ddlCtiy" name="ddlCtiy" />
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="addSB()">添加社保信息</a></td>
+                <td colspan="3"><span id="spLadderPrice" style="display: none; color: red"></span></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<br />
+<div style="text-align:center">
+    <input type="button" class="a2 f2" id="btnSubmit" value="保存" onclick="CreateCompany();" />
+    <input type="button" class="a2 f2" value="返回" onclick="GoBack();" />
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#ServiceEndDay").datebox("setValue", "@DateTime.Now.ToShortDateString()");
+        $("#ServiceBeginDay").datebox("setValue", "@DateTime.Now.ToShortDateString()");
+        $("form").submit(function (form) {
+            if (form.result) {
+                ajaxForm(this, this.action);
+            }
+            return false;
+        });
+        //用于查找指定的元素在数组中的位置
+        Array.prototype.indexOf = function (val) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] == val) return i;
+            }
+            return -1;
+        }
+        //使用js数组自己固有的函数去删除这个元素
+        Array.prototype.remove = function (val) {
+            var index = this.indexOf(val);
+            if (index > -1)
+                this.splice(index, 1);
+        }
+        //给div绑定onclick事件
+        $(".panel-header").bind("click", function () { Expand(this); });
+    });
+    function ajaxForm(form, url) {
+        $("#btnSubmit").attr({ "disabled": "disabled" });
+        $.ajax({
+            url: url,
+            type: "Post",
+            data: $(form).serialize(),
+            dataType: "json",
+            success: function (data) {
+                $("#btnSubmit").removeAttr("disabled");
+                if (data.Code == 0) {//失败
+                    $.messager.alert('操作提示', data.Message, 'info');
+                    $("#LinkMan").val('');
+                    $("#Bank").val('');
+                    $("#Bill").val('');
+                    $("#Payment").val('');
+                    $("#Price").val('');
+                    $("#LadderPrice").val('');
+                }
+                else {
+                    if ($.messager) {
+                        $.messager.defaults.ok = '确定';
+                        //$.messager.defaults.cancel = '返回';
+
+                        $.messager.alert('', data.Message, 'info', function (r) {
+                            //window.location.href = 'javascript:history.go(-1)';
+                            GoBack();
+                        });
+                    }
+                }
+            }
+        });
+    }
+    //获得下级节点
+    function GetSonNode(obj) {
+        var parentID = obj.value;
+        var parentName = $("#" + obj.id).find("option:selected").text();
+        if (parentID != "") {
+            $.ajax({
+                type: 'Get',
+                url: '/api/CRM_ZD_HYApi/GetHYNode/' + parentID,
+                dataType: 'json',
+                async: false, //同步
+                success: function (data) {
+                    $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+                    var count = 0;
+                    var jsonArray = eval("(" + data + ")");
+                    $.each(jsonArray, function (i, itemValue) {
+                        count++;
+                        $("#ddlSonHY").append("<option value = '" + itemValue.Code + "'>" + itemValue.HYMC + "</option>");
+                        //$("<option><option>").val(itemValue.ID).html(itemValue.CPLXMC)
+                    })
+                    //if (count == 1) {
+                    //    $("#ddlPost").val(itemID);
+                    //}
+                },
+                error: function () {
+                    $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+                }
+            });
+        }
+        else {
+            $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+        }
+    }
+
+    //添加联系人
+    var linkCount = 0;
+    function AddLink() {
+        var name = $.trim($("#LinkManName").val());
+        if (name == "") {
+            $("#spLink").html("请填写联系人姓名！");
+            $("#spLink").show();
+            //$("#LinkManName").attr("class", "input-validation-error");
+            $("#LinkManName").focus();
+            return false;
+        }
+        var post = $.trim($("#LinkManPosition").val());
+        var address = $.trim($("#LinkManAddress").val());
+        var mobile = $.trim($("#LinkManMobile").val());
+        var telephone = $.trim($("#LinkManTelephone").val());
+        var email = $.trim($("#LinkManEmail").val());
+        if (email != "" && !CheckEmail(email)) {
+            $("#spLink").html("请检查邮箱格式！");
+            $("#spLink").show();
+            $("#LinkManEmail").focus();
+            return false;
+        }
+        if (mobile != "" && !CheckMobile(mobile)) {
+            $("#spLink").html("请正确填写手机号！");
+            $("#spLink").show();
+            $("#LinkManMobile").focus();
+            return false;
+        }
+        //var remark = $.trim($("#LinkManRemark").val());
+        var tr = "<tr id='row" + linkCount + "'><td>" + name + "</td><td>" + post + "</td><td>" + address + "</td><td>" + mobile + "</td><td>" + telephone + "</td><td>" + email + "</td><td><input type='checkbox' name='cbLink' onchange='CheckOne(this)'></input></td><td><a href='###' onclick='Del(\"row" + linkCount + "\",\"tbLink\");'>删除</a></td></tr>";
+        $("#tbLink").append(tr);
+        linkCount++;
+        $("#tbLinkBase input[type='text']").val('');
+        $("#spLink").hide();
+    }
+    //添加银行
+    var bankCount = 0;
+    function AddBank() {
+        var bankName = $.trim($("#BankName").val());
+        var bankAccount = $.trim($("#BankAccount").val());
+        if (bankName == "") {
+            $("#spBank").html("请填写开户行名称！");
+            $("#spBank").show();
+            $("#BankName").focus();
+            return false;
+        }
+        if (bankAccount == "") {
+            $("#spBank").html("请填写银行账号！");
+            $("#spBank").show();
+            $("#BankAccount").focus();
+            return false;
+        }
+        var tr = "<tr id='row" + bankCount + "'><td>" + bankName + "</td><td>" + bankAccount + "</td><td><a href='###' onclick='Del(\"row" + bankCount + "\",\"tbBank\");;'>删除</a></td></tr>";
+        $("#tbBank").append(tr);
+        bankCount++;
+        $("#tbBankBase input[type='text']").val('');
+        $("#spBank").hide();
+    }
+
+    //添加回款
+    var payCount = 0;
+    function AddPay() {
+        var paymentName = $.trim($("#PaymentName").val());
+
+        if (paymentName == "") {
+            $("#spPay").html("请填写付款名称！");
+            $("#spPay").show();
+            $("#PaymentName").focus();
+            return false;
+        }
+
+        var tr = "<tr id='row" + payCount + "'><td>" + paymentName + "</td><td><a href='###' onclick='Del(\"row" + payCount + "\",\"tbPay\");'>删除</a></td></tr>";
+        $("#tbPay").append(tr);
+        payCount++;
+        $("#tbPayBase input[type='text']").val('');
+        $("#spPay").hide();
+    }
+    //添加企业报价
+    var priceCount = 0;
+    var arrProductID = new Array();
+    function AddPrice() {
+        var productID = $.trim($("#ProductID1").val());
+        var productName = $("#ddlProductID1").find("option:selected").text();
+        var lowestPrice = $.trim($("#LowestPrice").val());
+        var addPrice = $.trim($("#AddPrice").val());
+        if (arrProductID.length > 0) {//只只添加一种产品
+            $("#spPrice").html("只能添加一条产品数据！");
+            $("#spPrice").show();
+            return false;
+        }
+        if (productID == "") {
+            $("#spPrice").html("请选择产品！");
+            $("#spPrice").show();
+            $("#ddlProductID1").focus();
+            return false;
+        }
+        if (!CheckNumber(lowestPrice)) {
+            $("#spPrice").html("整户服务费不能为空且必需是数字！");
+            $("#spPrice").show();
+            $("#LowestPrice").focus();
+            return false;
+        }
+        if (!CheckNumber(addPrice)) {
+            $("#spPrice").html("补缴服务费不能为空且必需是数字！");
+            $("#spPrice").show();
+            $("#AddPrice").focus();
+            return false;
+        }
+
+        var tr = "<tr id='row" + priceCount + "'><td style='display:none'>" + productID + "</td><td>" + productName + "</td><td>" + lowestPrice + "</td><td>" + addPrice + "</td><td><a href='###' onclick='DelPrice(\"row" + priceCount + "\",\"" + productID + "\");'>删除</a></td></tr>";
+        $("#tbPrice").append(tr);
+        arrProductID.push(productID);
+        priceCount++;
+        $("#tbPriceBase input[type='text']").val('');
+        $("#ddlProductID2").val(productID);//给阶梯报价产品赋值
+        $("#ProductID2").val(productID);
+        $("#spPrice").hide();
+        $('#pLadder').panel('expand', true);
+    }
+    //添加企业阶梯报价
+    var ladderCount = 0;
+    function AddLadderPrice() {
+        var productID = $.trim($("#ProductID2").val());
+        var productName = $("#ddlProductID2").find("option:selected").text();
+        var singlePrice = $.trim($("#SinglePrice").val());
+        var beginLadder = $.trim($("#BeginLadder").val());
+        var endLadder = $.trim($("#EndLadder").val());
+        if (productID == "") {
+            $("#spLadderPrice").html("请选择产品！");
+            $("#spLadderPrice").show();
+            $("#ddlProductID2").focus();
+            return false;
+        }
+        if (!CheckNumber(singlePrice)) {
+            $("#spLadderPrice").html("单人服务费不能为空且必需是数字！");
+            $("#spLadderPrice").show();
+            $("#SinglePrice").focus();
+            return false;
+        }
+        if (!CheckNumber(beginLadder)) {
+            $("#spLadderPrice").html("起始阶梯不能为空且必需是数字！");
+            $("#spLadderPrice").show();
+            $("#BeginLadder").focus();
+            return false;
+        }
+        if (!CheckNumber(endLadder)) {
+            $("#spLadderPrice").html("终止阶梯不能为空且必需是数字！");
+            $("#spLadderPrice").show();
+            $("#EndLadder").focus();
+            return false;
+        }
+        if (parseInt(beginLadder) >= parseInt(endLadder)) {
+            $("#spLadderPrice").html("起始阶梯必须小于终止阶梯！");
+            $("#spLadderPrice").show();
+            $("#BeginLadder").focus();
+            return false;
+        }
+        // 校验阶梯范围合法性
+        if ($("#tbLadderPrice tr:gt(0)").length > 0) {
+            var rangePrice = 0;
+            $("#tbLadderPrice tr:gt(0)").each(function (i) {
+                if (productID == $(this).find("td:eq(0)").html()) {
+                    if ($(this).find("td:eq(3)").html() == beginLadder) {//两个不同范围的开始人数不能相同
+                        rangePrice++;
+                        return false;
+                    }
+                    // 如果范围1的开始人数小于范围2的开始人数，则范围1的结束人数也必须小于范围2的开始人数
+                    if (parseInt($(this).find("td:eq(3)").html()) < parseInt(beginLadder) && parseInt($(this).find("td:eq(4)").html()) >= parseInt(beginLadder)) {
+                        rangePrice++;
+                        return false;
+                    }
+                    // 如果范围1的开始人数大于范围2的开始人数，则其必需大于范围2的结束人数
+                    if (parseInt($(this).find("td:eq(3)").html()) > parseInt(beginLadder) && parseInt($(this).find("td:eq(3)").html()) <= parseInt(endLadder)) {
+                        rangePrice++;
+                        return false;
+                    }
+                }
+                else {
+                    return true;//跳出当前循环
+                }
+            });
+            if (rangePrice > 0) {
+                $("#spLadderPrice").html("请检查阶梯报价范围！");
+                $("#spLadderPrice").show();
+                return false;
+            }
+        }
+
+        var tr = "<tr id='row" + ladderCount + "'><td style='display:none'>" + productID + "</td><td>" + productName + "</td><td>" + singlePrice + "</td><td>" + beginLadder + "</td><td>" + endLadder + "</td><td><a href='###' onclick='Del(\"row" + ladderCount + "\",\"tbLadderPrice\");'>删除</a></td></tr>";
+        $("#tbLadderPrice").append(tr);
+        ladderCount++;
+        $("#tbLadderPriceBase input[name='clear']").val('');
+        $("#spLadderPrice").hide();
+    }
+
+    //移除联系人//移除银行信息 //移除开票信息//移除回款信息//移除企业阶梯报价
+    function Del(rowID, tableName) {
+        $("#" + tableName).find("tr[id=" + rowID + "]").remove();
+    }
+    //移除企业报价
+    function DelPrice(rowID, productID) {
+        $("#tbPrice").find("tr[id=" + rowID + "]").remove();
+        $("#tbLadderPrice").find("tr").not(":first").remove();
+        arrProductID.remove(productID);
+        $("#ddlProductID2").val('');//取消阶梯报价产品赋值
+        $("#ProductID2").val('');
+    }
+
+    // 创建公司
+    var checkCompany = checkBill = null;
+    function CreateCompany() {
+        if (checkCompany == 1) {
+            $("#spCompanyName").show();
+            $("#BasicInfo_CompanyName").attr("class", "input-validation-error");
+            $("#BasicInfo_CompanyName").focus();
+            return false;
+        }
+        if (checkBill > 0) {
+            $("#spTax").show();
+            $("#Bill_TaxRegistryNumber").removeClass("valid");
+            $("#Bill_TaxRegistryNumber").addClass("input-validation-error");
+            return false;
+        }
+        if ($("#form1").valid()) {
+            //联系人
+            var singleLink, linkMan = "";
+            $("#tbLink tr:gt(0)").each(function (i) {
+                singleLink = "";
+                $(this).find("td:not(:last)").each(function () {
+                    if ($(this).index() == 6) {
+                        if ($(this).find(':checkbox[name=cbLink]').is(":checked"))
+                            singleLink += "Y" + "&";
+                        else
+                            singleLink += "N" + "&";
+                    }
+                    else {
+                        var tdItem = $(this).html().replace(/\&amp;/g, '*').replace(/\^/g, '*') + "&";
+                        singleLink += tdItem;
+                    }
+                });
+                linkMan += singleLink.substring(0, singleLink.length - 1) + "^";
+            });
+            if (linkMan != "")
+                $("#LinkMan").val(linkMan.substring(0, linkMan.length - 1));
+            //银行
+            var singleBank, bankInfo = "";
+            $("#tbBank tr:gt(0)").each(function (i) {
+                singleBank = "";
+                $(this).find("td:not(:last)").each(function () {
+                    singleBank += $(this).html() + "&";
+                });
+                bankInfo += singleBank.substring(0, singleBank.length - 1) + "^";
+            });
+            if (bankInfo != "")
+                $("#Bank").val(bankInfo.substring(0, bankInfo.length - 1));
+            //开票
+          
+            //回款
+            var singlePay, payInfo = "";
+            $("#tbPay tr:gt(0)").each(function (i) {
+                singlePay = "";
+                $(this).find("td:not(:last)").each(function () {
+                    singlePay += $(this).html() + "&";
+                });
+                payInfo += singlePay.substring(0, singlePay.length - 1) + "^";
+            });
+            if (payInfo != "")
+                $("#Payment").val(payInfo.substring(0, payInfo.length - 1));
+            //企业报价
+            var singlePrice, priceInfo = "";
+            $("#tbPrice tr:gt(0)").each(function (i) {
+                singlePrice = "";
+                $(this).find("td:not(:last)").each(function () {
+                    singlePrice += $(this).html() + "&";
+                });
+                priceInfo += singlePrice.substring(0, singlePrice.length - 1) + "^";
+            });
+            if (priceInfo != "")
+                $("#Price").val(priceInfo.substring(0, priceInfo.length - 1));
+            //企业阶梯报价
+            var singleLadderPrice, ladderPriceInfo = "";
+            $("#tbLadderPrice tr:gt(0)").each(function (i) {
+                singleLadderPrice = "";
+                $(this).find("td:not(:last)").each(function () {
+                    singleLadderPrice += $(this).html() + "&";
+                });
+                ladderPriceInfo += singleLadderPrice.substring(0, singleLadderPrice.length - 1) + "^";
+            });
+            if (ladderPriceInfo != "")
+                $("#LadderPrice").val(ladderPriceInfo.substring(0, ladderPriceInfo.length - 1));
+            var submitData = { 'data': GetSheBao() }; 
+            $("#SheBaoInfo").val(JSON.stringify(submitData));
+            $("form").submit();
+        }
+        return false;
+    }
+
+    //得到产品id
+    function GetProductID(obj) {
+        var ddlName = obj.name;
+        ddlName = ddlName.replace('ddl', '');
+        var productID = obj.value;
+        $("#" + ddlName).val(productID);
+        //$("#ddlProductID2").val(obj.value);
+    }
+    // 验证公司名唯一
+   
+    function CheckCompanyName(obj) {
+        if (obj.value != "") {
+            var companyName = obj.value;
+            $.ajax({
+                type: 'Post',
+                url: '/api/CRM_CompanyApi/CheckCompanyName?companyID=&companyName=' + companyName,
+                dataType: 'json',
+                async: false, //同步
+                success: function (data) {
+                    checkCompany = data.Code;
+                    if (checkCompany == 1) {
+                        $("#spCompanyName").show();
+                        $("#BasicInfo_CompanyName").attr("class", "input-validation-error");
+                    }
+                    else {
+                        $("#spCompanyName").hide();
+                        $("#BasicInfo_CompanyName").attr("class", "valid");
+                    }
+                },
+                error: function () {
+                    $.messager.alert('提示', "系统异常，请稍后再试！", 'info');
+                }
+            });
+        }
+    }
+    //验证税务登记证号
+    function CheckTaxNumber() {
+        var taxNumber = $.trim($("#Bill_TaxRegistryNumber").val());
+        $.ajax({
+            type: 'Post',
+            url: '/api/CRM_CompanyFinance_BillApi/CheckTaxNumber?companyID=&taxNumber=' + taxNumber,
+            dataType: 'json',
+            async: false, //同步
+            success: function (data) {
+                checkBill = data.Code;
+                if (checkBill != 0) {
+                    $("#spTax").show();
+                    $("#Bill_TaxRegistryNumber").removeClass("valid");
+                    $("#Bill_TaxRegistryNumber").addClass("input-validation-error");
+                    //$("#BillName").focus();
+                }
+                else {
+                    $("#spTax").hide();
+                    $("#Bill_TaxRegistryNumber").removeClass("input-validation-error");
+                    $("#Bill_TaxRegistryNumber").addClass("valid");
+                }
+            },
+            error: function () {
+                $.messager.alert('提示', "系统异常，请稍后再试！", 'info');
+            }
+        });
+    }
+    //验证手机
+    function CheckMobile(str) {
+        var reg = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0-9]|170)\d{8}$/;
+        if (!reg.test(str)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    //验证邮箱
+    function CheckEmail(str) {
+        var reg = /^([\.a-zA-Z0-9_-])+@@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+        if (!reg.test(str)) {
+            return false;
+        }
+        return true;
+    }
+    //验证数字
+    function CheckNumber(str) {
+        var reg = /^[0-9]+.?[0-9]*$/;
+        if (!reg.test(str)) {
+            return false;
+        }
+        return true;
+    }
+    //单选
+    function CheckOne(obj) {
+        //$(':checkbox[name=cbLink]').each(function () {
+        if ($(obj).prop('checked')) {
+            $(':checkbox[name=cbLink]').removeAttr('checked');
+            $(obj).prop('checked', 'checked');
+        }
+    }
+
+    function GoBack() {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/CRM_Company/Index/?tmp=" + tmp;
+    }
+    //展开panel
+    function Expand(obj) {
+        $(obj).find(".panel-tool").find("a").click();
+    }
+</script>
+

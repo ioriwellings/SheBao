@@ -1,0 +1,44 @@
+﻿@model Langben.DAL.SupplierBankAccount
+
+@{
+    Layout = "~/Views/Shared/CRMCreate.cshtml";
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+    创建
+}
+@using (Html.BeginForm("", "../api/SupplierBankAccountApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="创建" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.SupplierId)
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>开户行名称：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Bank)
+                @Html.ValidationMessageFor(model => model.Bank)
+            </div>
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>银行账号：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Account)
+                @Html.ValidationMessageFor(model => model.Account)
+            </div>
+        </div>
+    </fieldset>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#SupplierId").val(@ViewBag.SupplierID);
+    });
+</script>

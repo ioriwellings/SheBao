@@ -1,0 +1,264 @@
+﻿@model Langben.DAL.LadderLowestPrice
+@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<script src="~/Scripts/Myl.js"></script>
+<div id="divQuery">
+
+    <div class='input_search' style="padding-top:10px;">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="GoBack('@Request.QueryString["path"]')">
+            返回
+        </a>
+    </div>
+</div>
+<br style="clear: both;" />
+
+<table width="99%" class="table table-bordered">
+    <tr>
+        <td width="100px">供应商编号:</td>
+        <td align="left"><label id="Code"></label></td>
+        <td width="100px">供应商名称：</td>
+        <td><label id="Name"></label></td>
+    </tr>
+    <tr>
+        <td>组织机构代码:</td>
+        <td><label id="OrganizationCode"></label></td>
+        <td>注册地址:</td>
+        <td><label id="RegisterAddress"></label></td>
+    </tr>
+    <tr>
+        <td>办公地址:</td>
+        <td><label id="OfficeAddress"></label></td>
+        <td>缴纳地:</td>
+        <td>
+            <div class="editor-field" id="divCity" style="width:480px">
+                <span id="spCity" style="display:none;color:red" class="">请选择缴纳地</span>
+            </div>
+        </td>
+    </tr>
+</table>
+
+@*<table id="girdBaseInfo"></table>*@
+<table id="linkManTable"></table>
+<table id="gridFinanceBill"></table>
+<table id="girdBackInfo"></table>
+<table id="gridPrice"></table>
+<table id="flexigridData"></table>
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        Citylist();
+        BindBaseInfo();
+        BindLinkMan();
+        BindBackInfo();
+        BindSupplierBill();
+        BindPrice();
+    });
+    //获取缴纳地
+    function Citylist() {
+        myAjax("/api/EmployeeAddApi/getCitylist", '', function (data) {
+            for (var i = data.length - 1; i >= 0; i--) {
+                $("#divCity").prepend("<input type='checkbox' id='ckCity" + i + "' name='ckCity' value='" + data[i]["Cityid"] + "' disabled='disabled' /><label for='ckCity" + i + "'>" + data[i]["Name"] + "</label>");
+            }
+        });
+    }
+    function BindBaseInfo() {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Supplier_ID';
+        $.ajax({
+            url: "/api/SupplierApi/Get/" + id,
+            type: "Get",
+            // async: false,
+            success: function (data) {
+                var res = eval("(" + data + ")");
+                $("#ID").val(res.Id);
+                $("#Code").text(res.Code == null ? "" : res.Code);
+                $("#Name").text(res.Name);
+                $("#OrganizationCode").text(res.OrganizationCode == null ? "" : res.OrganizationCode);
+                $("#RegisterAddress").text(res.RegisterAddress);
+                $("#OfficeAddress").text(res.OfficeAddress);
+                var cityIDList = res.NatureCityId.split(',');
+                $.each(cityIDList, function (key, val) {
+                    $("input[name ='ckCity']").each(function (i) {
+                        if (this.value == val) {
+                            this.checked = true;
+                        }
+                    });
+                })
+            }
+        })
+        
+    }
+    ///绑定联系人信息
+    function BindLinkMan() {
+        $('#linkManTable').datagrid({
+            title: '供应商_联系人信息', //列表的标题
+            iconCls: 'icon-site',
+            width: '98%',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: '/api/SupplierLinkManApi/PostData', //获取数据的url
+            queryParams: { search: "SupplierIdDDL_Int&@ViewBag.Supplier_ID" },
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            columns: [[
+                { field: 'SupplierId', title: '', hidden: true, width: 111 }
+                , { field: 'Name', title: '姓名', width: 111 }
+                , { field: 'Position', title: '职务', width: 111 }
+                , { field: 'Address', title: '联系人地址', width: 111 }
+                , { field: 'Mobile', title: '手机号', width: 111 }
+                , { field: 'Telephone', title: '固话', width: 111 }
+                , { field: 'Email', title: '邮箱', width: 111 }
+                , { field: 'CreateTime', title: '创建时间', width: 111, formatter: formatDatebox }
+                , { field: 'CreateUserName', title: '创建人名称', width: 111 }
+                , { field: 'Status', title: '状态', width: 111 }
+                , { field: 'Remark', title: '备注', width: 111 }
+            ]],
+            pagination: true,
+            rownumbers: true
+        });
+    }
+
+    ///绑定企业财务开票信息
+    function BindSupplierBill() {
+        $('#gridFinanceBill').datagrid({
+            title: '供应商_财务信息', //列表的标题
+            iconCls: 'icon-site',
+            width: '98%',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: '/api/SupplierBillApi/PostData', //获取数据的url
+            queryParams: { search: "SupplierIdDDL_Int&@ViewBag.Supplier_ID" },
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            columns: [[
+                  { field: 'SupplierId', title: '企业ID', width: 111, hidden: true }
+                , { field: 'PayName', title: '付款方名称', width: 111 }
+                , { field: 'BillName', title: '开票名称', width: 111 }
+                , { field: 'TaxRegistryNumber', title: '税务登记证号', width: 111 }
+                , { field: 'CreateTime', title: '创建时间', width: 111, formatter: formatDatebox }
+                , { field: 'CreateUserName', title: '创建人', width: 111 }
+                , { field: 'Status', title: '状态', width: 111 }
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            //$('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    }
+
+    function BindBackInfo() {
+        $('#girdBackInfo').datagrid({
+            title: '供应商_银行账户', //列表的标题
+            iconCls: 'icon-site',
+            width: '98%',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: '/api/SupplierBankAccountApi/PostData', //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            queryParams: { search: "SupplierIdDDL_Int&@ViewBag.Supplier_ID" },
+            columns: [[
+                  { field: 'SupplierId', title: '', width: 111, hidden: true }
+                , { field: 'Bank', title: '开户行名称', width: 111 }
+                , { field: 'Account', title: '银行账号', width: 111 }
+                , { field: 'CreateTime', title: '创建时间', width: 111, formatter: formatDatebox }
+                , { field: 'CreateUserName', title: '创建人名称', width: 111 }
+                , { field: 'Status', title: '状态', width: 111 }
+            ]],
+            pagination: true,
+            rownumbers: true
+        });
+    }
+
+    ///绑定报价信息
+    function BindPrice() {
+        $(function () {
+            $('#gridPrice').datagrid({
+                title: '阶梯报价-最低价格', //列表的标题
+                iconCls: 'icon-site',
+                width: 'auto',
+                height: 'auto',
+                //nowrap: false,
+                striped: true,
+                collapsible: false,
+                url: '/api/LadderLowestPriceApi/PostData', //获取数据的url
+                queryParams: {
+                    search: '@ViewBag.Supplier_ID'
+                },
+                sortName: 'ID',
+                sortOrder: 'desc',
+                idField: 'ID',
+                columns: [[
+                    { field: 'SupplierID', title: '', width: 129, align: 'center', hidden: true }
+                    , { field: 'ProductID', title: '产品', align: 'center', width: 129 }
+                    , { field: 'LowestPrice', title: '整户服务费', align: 'center', width: 129 }
+                    , { field: 'AddPrice', title: '补缴服务费', align: 'center', width: 129 }
+                    , { field: 'Status', title: '状态', align: 'center', width: 129 }
+                    , { field: 'BranchID', title: '@Html.DisplayNameFor(model => model.BranchID)', width: 129, hidden: true }
+                ]],
+                pagination: true,
+                rownumbers: true
+            });
+            $('#flexigridData').datagrid({
+                title: '阶梯报价-阶梯价格', //列表的标题
+                iconCls: 'icon-site',
+                width: 'auto',
+                height: 'auto',
+                //nowrap: false,
+                striped: true,
+                collapsible: true,
+                url: '/api/LadderPriceApi/PostData', //获取数据的url
+                queryParams: {
+                    search: '@ViewBag.Supplier_ID'
+                },
+                sortName: 'BeginLadder',
+                sortOrder: 'Asc',
+                idField: 'ID',
+                columns: [[
+                    { field: 'SupplierID', title: '产品', width: 129, align: 'center', hidden: true }
+                    , { field: 'LadderLowestPriceId', title: '最低报价', width: 129, align: 'center', hidden: true }
+                    , { field: 'SinglePrice', title: '单人服务费', align: 'center', width: 129 }
+                    , { field: 'BeginLadder', title: '起始阶梯', align: 'center', width: 129 }
+                    , { field: 'EndLadder', title: '终止阶梯', align: 'center', width: 129 }
+                    , { field: 'Status', title: '状态', align: 'center', width: 129 }
+                    , { field: 'BranchID', title: '@Html.DisplayNameFor(model => model.BranchID)', width: 129, hidden: true }
+                ]],
+                pagination: true,
+                rownumbers: true
+            });
+        });
+    }
+
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        //if (path == 'ServiceIndex') {//责任客服分配新企业时跳转的页面
+        //    window.location.href = "/CRM/CRM_Company_ServiceManager/" + path + "/?tmp=" + tmp;
+        //}
+        //else if (path == 'AlreadyIndex') {//责任客服重新分配企业时跳转的页面
+        //    window.location.href = "/CRM/CRM_Company_ServiceManager/" + path + "/?tmp=" + tmp;
+        //}
+        //else {
+        window.location.href = "/Suppliers/" + path + "/Index/?tmp=" + tmp;
+        //}
+    }
+</script>

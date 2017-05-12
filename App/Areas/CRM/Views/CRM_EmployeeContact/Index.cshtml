@@ -1,0 +1,72 @@
+﻿@model Langben.DAL.EmployeeContact
+
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+<br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        $('#flexigridData').datagrid({
+            title: '员工联系信息', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: '/api/CRM_EmployeeContactApi/PostData', //获取数据的url
+            sortName: 'Id',
+            sortOrder: 'desc',
+            idField: 'Id',
+            queryParams: { search: "EmployeeIdDDL_Int&@ViewBag.Id" },
+            toolbar: [
+                  {
+                      text: '增加联系方式',
+                      iconCls: 'icon-add',
+                      handler: function () {
+                          return flexiCreate();
+                      }
+                  }, {
+                      text: '返回',
+                      iconCls: 'icon-back',
+                      handler: function () {
+                          return BackList('CRM_Employee/Index');
+                      }
+                  }],
+            columns: [[
+                @*{ field: 'Id', title: '@Html.DisplayNameFor(model => model.Id)', width: 55 },*@
+                { field: 'Telephone', title: '@Html.DisplayNameFor(model => model.Telephone)', width: 150 },
+                { field: 'MobilePhone', title: '@Html.DisplayNameFor(model => model.MobilePhone)', width: 150 },
+                { field: 'State', title: '@Html.DisplayNameFor(model => model.State)', width: 100 },
+                {
+                    field: 'action', title: '操作', width: 200, align: 'center',
+                    formatter: function (value, row, index) {
+                        @*if(@ViewBag.uType== 1){*@
+                            return '<a href="#" onclick="flexiModify(' + row.Id + ')" >修改信息</a> ';
+                        //}
+                    }
+                }
+            ]],
+            pagination: true,
+            rownumbers: true
+        });
+
+    });
+
+    //导航到创建的按钮
+    function flexiCreate() {
+        return CommonSelect('/CRM/CRM_EmployeeContact/Create/@ViewBag.Id', '创建', 920, 500);
+        return false;
+    }
+    //导航到修改的按钮
+    function flexiModify(id) {
+            return CommonSelect("/CRM/CRM_EmployeeContact/Edit/?id=" +id + "&eid="+@ViewBag.Id, '修改', 920, 500);
+        return false;
+    };
+</script>

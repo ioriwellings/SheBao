@@ -1,0 +1,258 @@
+﻿@model Langben.DAL.EmployeeApprove
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:100px">
+
+
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CompanyName):
+        </div>
+        <div class="input_search-field">
+            @Html.TextBox("CompanyName", "", new { @class = "easyui-textbox", @style = "height:26px" })
+        </div>
+    </div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.Name):
+        </div>
+        <div class='input_search-field'>
+            @Html.TextBox("Name", "", new { @class = "easyui-textbox", @style = "height:26px" })
+        </div>
+    </div>
+
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.YearMonth):
+        </div>
+        <div class='input_search-field'>
+            <input type="text" class="Wdate" id="YearMonth" onclick="WdatePicker({dateFmt:'yyyyMM',realDateFmt:'yyyyMM'})" />
+        </div>
+    </div>
+
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CertificateNumber):
+        </div>
+        <div class="input_search-field">
+            <p class="cerNo">
+                @Html.TextArea("CertificateNumber", new { @class = "CertificateNumber" })
+            </p>
+        </div>
+    </div>
+
+
+    <div class="input_search input_search_btn">
+
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+
+</div>
+<br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        var search = "";
+        $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+            if (this.id)
+                search = search + this.id + "&" + this.value + "^";
+            else
+                search = search + this.name + "&" + this.value + "^";
+        });
+        $('#flexigridData').datagrid({
+            title: '待责任客服审核', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            fit:true,
+            collapsible: true,
+            url: '../api/EmployeeGoonPaymentApi/PostApproveList', //获取数据的url
+            queryParams: { search: search },
+            toolbar: [
+                {
+                    text: '详情',
+                    iconCls: 'icon-search',
+                    handler: function () {
+                        return GetDetailView();
+                    }
+                },
+                 {
+                     text: '通过',
+                     iconCls: 'icon-ok',
+                     handler: function () {
+                         return DoApproved();
+                     }
+                 }, {
+                     text: '退回',
+                     iconCls: 'icon-remove',
+                     handler: function () {
+                         return GoBack();
+                     }
+                 }],
+            columns: [[
+                { field: 'CompanyName', title: '@Html.DisplayNameFor(model => model.CompanyName)', width: 200,align:'center' }
+                , { field: 'Name', title: '@Html.DisplayNameFor(model => model.Name)', width: 80, align: 'center' }
+                , { field: 'CertificateNumber', title: '@Html.DisplayNameFor(model => model.CertificateNumber)', width: 160, align: 'center' }
+                , { field: 'City', title: '@Html.DisplayNameFor(model => model.City)', width: 80, align: 'center' }
+                , { field: 'PoliceAccountNature', title: '@Html.DisplayNameFor(model => model.PoliceAccountNature)', width: 100, align: 'center' }
+                , { field: 'InsuranceKinds', title: '@Html.DisplayNameFor(model => model.InsuranceKinds)', width: 160, align: 'center' }
+                , { field: 'YearMonth', title: '@Html.DisplayNameFor(model => model.YearMonth)', width: 160, align: 'center' }
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+
+        //将查询条件按照分隔符拼接成字符串
+        var search = "";
+        $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+            if (this.id)
+                search = search + this.id + "&" + this.value + "^";
+            else
+                search = search + this.name + "&" + this.value + "^";
+        });
+        //执行查询
+        $('#flexigridData').datagrid('load', { search: search });
+    };
+
+    //“选择”按钮，在其他（与此页面有关联）的页面中，此页面以弹出框的形式出现，选择页面中的数据
+    function flexiSelect() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Id);
+        }
+        arr.push("^");
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Wage);
+        }
+        //主键列和显示列之间用 ^ 分割   每一项用 , 分割
+        if (arr.length > 0) {//一条数据和多于一条
+            returnParent(arr.join("&")); //每一项用 & 分割
+        }
+    }
+
+    //审核通过的按钮
+    function DoApproved() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].AddIds);
+        }
+
+        $.messager.confirm('操作提示', "确认审核通过这 " + arr.length + " 项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "../api/EmployeeGoonPaymentApi/Approved?query=" + arr.join(""),
+                    type: "POST",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //移除审核通过的数据
+
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+
+    //退回按钮
+    function GoBack() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].AddIds);
+        }
+
+        $.messager.confirm('操作提示', "确认回退这 " + arr.length + " 项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "../api/EmployeeGoonPaymentApi/GoBack?query=" + arr.join(""),
+                    type: "POST",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //移除审核通过的数据
+
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+    //导航到查看详细的按钮
+    function GetDetailView() {
+
+        var arr = $('#flexigridData').datagrid('getSelections');
+
+        if (arr.length == 1) {
+            window.location.href = "../EmployeeGoonPayment/Details?id=" + arr[0].CompanyEmployeeRelationId + "&YearMonth=" + arr[0].YearMonth + "&Parameter=";
+
+        } else {
+            $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+        }
+        return false;
+    }
+
+
+
+
+</script>
+

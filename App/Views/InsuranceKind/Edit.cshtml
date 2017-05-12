@@ -1,0 +1,134 @@
+﻿@model Langben.DAL.InsuranceKind
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+ @section CurentPlace {
+    修改  
+}
+
+@using (Html.BeginForm("", "api/InsuranceKindApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('InsuranceKind')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.Id )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Name)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>      
+            <div class="editor-label">
+                <a class="anUnderLine" onclick="showModalOnly('City','../../City');">
+                    @Html.LabelFor(model => model.City) 
+                </a>：
+            </div>
+            <div class="editor-field">
+                <div id="checkCity">
+                        @if(Model!=null)
+                        {
+                        if (null != Model.City)                      
+                        { 
+                    <table id="@Model.City"
+                        class="deleteStyle">
+                        <tr>
+                            <td>
+                                <img alt="删除"  title="点击删除" onclick="deleteTable('@Model.City ','City');" src="../../../Images/deleteimge.png" />
+                            </td>
+                            <td>
+                                @Model.City.Name
+                            </td>
+                        </tr>
+                    </table>
+                    }} 
+                </div>
+                @Html.HiddenFor(model => model.City)
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>        
+            <div class="editor-label">
+                @Html.LabelFor(model => model.State)：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.State,Models.SysFieldModels.GetSysField("InsuranceKind","State"),"请选择")
+            </div>@Html.HiddenFor(model => model.CreateTime ) @Html.HiddenFor(model => model.CreatePerson )   
+        <div class="editor-label">
+            <a class="anUnderLine" onclick="showModalMany('PoliceOperationId','../../PoliceOperation');">
+                @Html.LabelFor(model => model.PoliceOperationId) 
+            </a>：
+        </div>
+        <div class="editor-field">
+            <div id="checkPoliceOperationId">
+                @{string ids10 = string.Empty;
+                if(Model!=null)
+                {
+                   foreach (var item10 in Model.PoliceOperation)
+                   {
+                       string item101 = string.Empty;
+                       item101 += item10.Id + "&" + item10.Name;
+                       if (ids10.Length > 0)
+                       {
+                           ids10 += "^" + item101;
+                       }
+                       else
+                       {
+                           ids10 += item101;
+                       }
+               
+                <table id="@item101"
+                    class="deleteStyle">
+                    <tr>
+                        <td>
+                            <img  alt="删除" title="点击删除" onclick="deleteTable('@item101','PoliceOperationId');"  src="../../../Images/deleteimge.png" />
+                        </td>
+                        <td>
+                            @item10.Name
+                        </td>
+                    </tr>
+                </table>
+                }} }
+                <input type="hidden" value="@ids10" name="PoliceOperationIdOld" id="PoliceOperationIdOld" />
+                <input type="hidden" value="@ids10" name="PoliceOperationId" id="PoliceOperationId" />
+            </div>
+        </div>
+        </div>
+    </fieldset>
+}
+
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            
+
+            // 获取待编辑内容并显示
+            var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/InsuranceKindApi/" + id,
+                type: "POST",
+                // async: false,
+                success: function (res) {
+                    $("#Id").val(res.Id);$("#Name").val(res.Name);$("#Remark").val(res.Remark);$("#State").val(res.State);$("#CreateTime").val(res.CreateTime);$("#CreatePerson").val(res.CreatePerson);
+                }
+            })
+        });
+        
+
+    </script>
+
+
+

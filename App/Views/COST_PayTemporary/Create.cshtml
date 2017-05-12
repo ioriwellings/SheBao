@@ -1,0 +1,316 @@
+﻿@model Langben.DAL.COST_PayTemporary
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+}
+@using Common
+@using Models
+ 
+@section CurentPlace {
+ 
+      创建  
+ 
+ }
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="创建" />
+            <input class="a2 f2" type="button" onclick="BackList('COST_PayTemporary')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                 
+            <div class="editor-label">
+                @Html.LabelFor(model => model.YearMonth) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.YearMonth, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.YearMonth) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CreateUserID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CreateUserID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CreateUserName)
+                @Html.ValidationMessageFor(model => model.CreateUserName)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.BranchID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BranchID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.BranchID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PersonName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PersonName)
+                @Html.ValidationMessageFor(model => model.PersonName)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CardId)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CardId)
+                @Html.ValidationMessageFor(model => model.CardId)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PersonId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.PersonId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.PersonId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CompanyId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CompanyId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyName)
+                @Html.ValidationMessageFor(model => model.CompanyName)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Suppliers)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Suppliers)
+                @Html.ValidationMessageFor(model => model.Suppliers)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CityId)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CityId)
+                @Html.ValidationMessageFor(model => model.CityId)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PaymentSocialMonthYL)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PaymentSocialMonthYL)
+                @Html.ValidationMessageFor(model => model.PaymentSocialMonthYL)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.RadixYL)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.RadixYL)
+                @Html.ValidationMessageFor(model => model.RadixYL)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCosYL)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCosYL)
+                @Html.ValidationMessageFor(model => model.CompanyCosYL)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PersonCostYL)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PersonCostYL)
+                @Html.ValidationMessageFor(model => model.PersonCostYL)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PaymentSocialMonthSY)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PaymentSocialMonthSY)
+                @Html.ValidationMessageFor(model => model.PaymentSocialMonthSY)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.RadixSY)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.RadixSY)
+                @Html.ValidationMessageFor(model => model.RadixSY)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCostSY)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCostSY)
+                @Html.ValidationMessageFor(model => model.CompanyCostSY)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PersonCostSY)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PersonCostSY)
+                @Html.ValidationMessageFor(model => model.PersonCostSY)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PaymentSocialMonthGS)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PaymentSocialMonthGS)
+                @Html.ValidationMessageFor(model => model.PaymentSocialMonthGS)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.RadixGS)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.RadixGS)
+                @Html.ValidationMessageFor(model => model.RadixGS)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCostGS)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCostGS)
+                @Html.ValidationMessageFor(model => model.CompanyCostGS)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PaymentSocialMonthYiL)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PaymentSocialMonthYiL)
+                @Html.ValidationMessageFor(model => model.PaymentSocialMonthYiL)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.RadixYil)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.RadixYil)
+                @Html.ValidationMessageFor(model => model.RadixYil)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCostYil)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCostYil)
+                @Html.ValidationMessageFor(model => model.CompanyCostYil)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PersonCostYil)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PersonCostYil)
+                @Html.ValidationMessageFor(model => model.PersonCostYil)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCostYilMax)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCostYilMax)
+                @Html.ValidationMessageFor(model => model.CompanyCostYilMax)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PersonCostYilMax)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PersonCostYilMax)
+                @Html.ValidationMessageFor(model => model.PersonCostYilMax)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCostShengY)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCostShengY)
+                @Html.ValidationMessageFor(model => model.CompanyCostShengY)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PaymentSocialMonthGJJ)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PaymentSocialMonthGJJ)
+                @Html.ValidationMessageFor(model => model.PaymentSocialMonthGJJ)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.RadixGJJ)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.RadixGJJ)
+                @Html.ValidationMessageFor(model => model.RadixGJJ)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCostGJJ)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCostGJJ)
+                @Html.ValidationMessageFor(model => model.CompanyCostGJJ)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PersonCostGJJ)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PersonCostGJJ)
+                @Html.ValidationMessageFor(model => model.PersonCostGJJ)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PaymentSocialMonthBCGJJ)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PaymentSocialMonthBCGJJ)
+                @Html.ValidationMessageFor(model => model.PaymentSocialMonthBCGJJ)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.RadixBCGJJ)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.RadixBCGJJ)
+                @Html.ValidationMessageFor(model => model.RadixBCGJJ)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCostBCGJJ)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCostBCGJJ)
+                @Html.ValidationMessageFor(model => model.CompanyCostBCGJJ)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PersonCostBCGJJ)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PersonCostBCGJJ)
+                @Html.ValidationMessageFor(model => model.PersonCostBCGJJ)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PayOtherSocial)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PayOtherSocial)
+                @Html.ValidationMessageFor(model => model.PayOtherSocial)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PayOther)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PayOther)
+                @Html.ValidationMessageFor(model => model.PayOther)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PayFee)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PayFee)
+                @Html.ValidationMessageFor(model => model.PayFee)
+            </div>
+        </div>
+    </fieldset>
+ 
+
+    
+    <script type="text/javascript">
+
+        $(function () {
+            
+
+        });
+              
+
+    </script>
+
+

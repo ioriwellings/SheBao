@@ -1,0 +1,126 @@
+﻿@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        $('#flexigridData').datagrid({
+            //title: '待审核数据', //列表的标题
+            //iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            @*queryParams: { id: '@ViewBag.CompanyID', city: '@ViewBag.CityID' },*@
+            url: '/api/CRM_Company_InsuranceApi/PostAddData/@ViewBag.CompanyID?city=@ViewBag.CityID', //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            columns: [[
+                 { field: 'CityName', title: '缴纳地', width: 100 }
+                , { field: 'Police1', title: '工伤政策'}
+                , { field: 'Police2', title: '公积金政策' }
+                , { field: 'Account1', title: '社保账号'}
+                , { field: 'Account2', title: '公积金账号' }
+            ]],
+            onClickRow: function (rowIndex, rowData) {
+                $(this).datagrid('unselectRow', rowIndex);
+            }
+
+        });
+
+        @*// 获取内容并显示
+        $.ajax({
+            url: "/api/CRM_CompanyBankAccount_AuditApi/Get/@ViewBag.ID",
+            type: "Get",
+            async: false,
+            success: function (res) {
+                $("#Audit_Bank").text(res.Bank);
+                $("#Audit_Account").text(res.Account);
+
+            }
+        })
+
+        $('#BasicGrid').datagrid()*@
+
+    });
+
+    function PassAdd() {
+        $.ajax({
+            url: "/api/CRM_Company_InsuranceApi/PassAdd/@ViewBag.CompanyID?city=@ViewBag.CityID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function ReturnAdd() {
+        $.ajax({
+            url: "/api/CRM_Company_InsuranceApi/ReturnAdd/@ViewBag.CompanyID?city=@ViewBag.CityID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function GoBack() {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/CRM_Company_Audit/Index/?tmp=" + tmp;
+    }
+
+</script>
+
+<div id="divQuery">
+    <div class='input_search' style="padding-top:10px;">
+        @if (ViewBag.State == 1)
+        {
+            <input class="a2 f2" type="button" onclick="PassAdd()" value="通过" />
+            <input class="a2 f2" type="button" onclick="ReturnAdd()" value="退回" />
+        }
+        <input class="a2 f2" type="button" onclick="GoBack()" value="返回列表" />
+
+    </div>
+</div>
+
+<br style="clear: both;" />
+
+<input type="hidden" id="CityID" value="@ViewBag.CityID" />
+<input type="hidden" id="CompanyID" value="@ViewBag.CompanyID" />
+
+@*<table id="BasicGrid" style="width: auto; height: auto; border: 1px solid #ccc;">
+        <thead>
+            <tr>
+                <th data-options="field:'Bank',width:100">开户行名称</th>
+                <th data-options="field:'Account',width:150">银行账号</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span id="Audit_Bank"></span></td>
+                <td><span id="Audit_Account"></span></td>
+            </tr>
+        </tbody>
+    </table>*@
+
+
+

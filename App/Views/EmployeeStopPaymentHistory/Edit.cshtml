@@ -1,0 +1,83 @@
+﻿@model Langben.DAL.EmployeeStopPaymentHistory
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+ @section CurentPlace {
+    修改  
+}
+
+@using (Html.BeginForm("", "api/EmployeeStopPaymentHistoryApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('EmployeeStopPaymentHistory')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.Id )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EmployeeAddId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.EmployeeAddId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.EmployeeAddId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InsuranceMonth)：
+            </div>
+            <div class="editor-field">
+                @Html.TextBox("InsuranceMonth", ((Model != null && Model.InsuranceMonth != null) ? Model.InsuranceMonth.ToString().AsDateTime().ToString("yyyy-MM-dd") : ""), new { style = "width: 244px;", @class="easyui-datebox" })
+                @Html.ValidationMessageFor(model => model.InsuranceMonth)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PoliceOperationId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.PoliceOperationId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.PoliceOperationId) 
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>        
+            <div class="editor-label">
+                @Html.LabelFor(model => model.State)：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.State,Models.SysFieldModels.GetSysField("EmployeeStopPaymentHistory","State"),"请选择")
+            </div>@Html.HiddenFor(model => model.CreateTime ) @Html.HiddenFor(model => model.CreatePerson ) 
+        </div>
+    </fieldset>
+}
+
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            
+
+            // 获取待编辑内容并显示
+            var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/EmployeeStopPaymentHistoryApi/" + id,
+                type: "POST",
+                // async: false,
+                success: function (res) {
+                    $("#Id").val(res.Id);$("#EmployeeAddId").val(res.EmployeeAddId);$("#InsuranceMonth").val(res.InsuranceMonth);$("#PoliceOperationId").val(res.PoliceOperationId);$("#Remark").val(res.Remark);$("#State").val(res.State);$("#CreateTime").val(res.CreateTime);$("#CreatePerson").val(res.CreatePerson);
+                }
+            })
+        });
+        
+
+    </script>
+
+
+

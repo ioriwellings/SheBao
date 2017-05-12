@@ -1,0 +1,129 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>创建菜单</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+
+    <script src="~/Scripts/validform/Validform_v5.3.2_min.js"></script>
+    <link href="~/Scripts/validform/validform.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+        var subForm;
+        $(document).ready(function () {
+            subForm = $("#form1").Validform({
+                //tiptype: 1, //tiptype为1是，使用check()方法进行验证表单，无法显示错误信息，
+                tiptype: function (msg, o, cssctl) {
+                    //msg：提示信息;
+                    //o:{obj:*,type:*,curform:*}, obj指向的是当前验证的表单元素（或表单对象），
+                    //type指示提示的状态，值为1、2、3、4， 1：正在检测/提交数据，2：通过验证，3：验证失败，4：提示ignore状态,
+                    //curform为当前form对象;
+                    //cssctl:内置的提示信息样式控制函数，该函数需传入两个参数：显示提示信息的对象 和 当前提示的状态（既形参o中的type）;
+                    if (!o.obj.is("form")) {//验证表单元素时o.obj为该表单元素，全部验证通过提交表单时o.obj为该表单对象;
+                        if (o.type == 3) {
+                            window.parent.$.messager.alert("警告", msg, "warning");
+                        }
+                    } else {
+
+                    }
+                },
+                tipSweep: true,//默认为false，当true时提示信息将只会在表单提交时触发显示，各表单元素blur时不会被触发显示。
+                postonce: true,//防止表单重复提交
+                ajaxPost: true,//true:使用Ajax提交方式提交表单,这里是异步提交
+                callback: function (data) {
+                    if (data.Code == "ok") {
+                        if ($.messager) {
+                            $.messager.defaults.ok = '继续';
+                            $.messager.defaults.cancel = '返回';
+
+                            $.messager.confirm('操作提示', data.Message, function (r) {
+                                if (!r) {
+                                    window.location.href = '../../Authority/Menu';
+                                }
+                            });
+                        }
+                    } else {
+                        $.messager.alert('操作提示', data.Message, 'info');
+                    }
+
+                }
+            });
+            //subForm.tipmsg.r = " ";//控件验证通过，默认显示的信息
+            subForm.addRule([
+                {
+                    ele: "#ID",
+                    datatype: "n1-5",
+                    @*ajaxurl: '@Url.Action("ChkID", "Menu", new { area = "Org_Sys" })',*@
+                    nullmsg: "请输入菜单编码！",
+                    errormsg: "请输入正整数！"
+                },
+                {
+                    ele: "#MenuName",
+                    datatype: "*1-50"
+                }
+            ]);
+        });
+
+        function saveForm() {
+            subForm.submitForm();//提交表单
+        }
+
+    </script>
+
+</head>
+<body>
+        <fieldset>
+            <legend>
+                <input class="a2 f2" type="button" onclick="saveForm()" value="创建" />
+                <input class="a2 f2" type="button" onclick="BackList('Authority/Menu')" value="返回" />
+            </legend>
+            <form id="form1" name="form1" method="post">
+                <div class="bigdiv">
+                    <div class="editor-label">
+                        菜单名称 ：
+                    </div>
+                    <div class="editor-field">
+                        <input id="MenuName" name="MenuName" />
+                    </div>
+                    <div class="editor-label">
+                        上级菜单 ：
+                    </div>
+                    <div class="editor-field">
+                        @Html.DropDownList("ParentID", (SelectList)ViewData["ddlMenu"], "--请选择--", new { style = "width:204px" })
+                    </div>
+                    <div class="editor-label">
+                        菜单地址：
+                    </div>
+                    <div class="editor-field">
+                        <input id="MenuUrl" name="MenuUrl" />
+                    </div>
+                    <div class="editor-label">
+                        权限配置：
+                    </div>
+                    <div class="editor-field">
+                        <input id="DepartmentScopeAuthority" name="DepartmentScopeAuthority" type="checkbox" />部门范围权限配置功能
+                        <input id="DepartmentAuthority" name="DepartmentAuthority" type="checkbox" />部门业务权限配置功能
+                    </div>
+                    <div class="editor-label">
+                        导航链接 ：
+                    </div>
+                    <div class="editor-field">
+                        <input id="IsDisplay" name="IsDisplay" type="checkbox" />在导航链接中显示
+                    </div>
+                </div>
+            </form>
+</fieldset>
+
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,83 @@
+﻿@model Langben.DAL.COST_ExpenditureInsurance
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+ @section CurentPlace {
+    修改  
+}
+
+@using (Html.BeginForm("", "api/COST_ExpenditureInsuranceApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('COST_ExpenditureInsurance')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.ID )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Status) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Status, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.Status) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CRM_Company_ID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CRM_Company_ID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CRM_Company_ID) 
+            </div>@Html.HiddenFor(model => model.CreateTime )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CreateUserID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CreateUserID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CreateUserName)
+                @Html.ValidationMessageFor(model => model.CreateUserName)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.BranchID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BranchID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.BranchID) 
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            
+
+            // 获取待编辑内容并显示
+            var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/COST_ExpenditureInsuranceApi/" + id,
+                type: "POST",
+                // async: false,
+                success: function (res) {
+                    $("#ID").val(res.ID);$("#姓名").val(res.姓名);$("#IDCard").val(res.IDCard);$("#缴费社保月").val(res.缴费社保月);$("#缴费基数").val(res.缴费基数);$("#单位承担").val(res.单位承担);$("#个人承担").val(res.个人承担);$("#社保月").val(res.社保月);$("#Status").val(res.Status);$("#CRM_Company_ID").val(res.CRM_Company_ID);$("#CreateTime").val(res.CreateTime);$("#CreateUserID").val(res.CreateUserID);$("#CreateUserName").val(res.CreateUserName);$("#BranchID").val(res.BranchID);
+                }
+            })
+        });
+        
+
+    </script>
+
+
+

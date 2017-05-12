@@ -1,0 +1,86 @@
+﻿@model Langben.DAL.COST_CostTable
+
+@{
+    Layout = "~/Views/Shared/Details.cshtml";
+}
+@using Common
+ @section CurentPlace {
+    详细  
+}
+<legend>
+    <input class="a2 f2" type="button" onclick="window.location.href = 'javascript:history.go(-1)';" value="返回" />
+    </legend>
+    <table id="flexigridData" class="easyui-datagrid" title="费用明细表"
+           data-options="rownumbers:true,singleSelect:true,url:'../../api/COST_CostTableApi/PostCostDetailData?id=@ViewBag.Id',method:'post'">
+        <thead>  @*data-options="frozen:true"*@
+            <tr>
+                <th data-options="field:'No',width:37" rowspan="2">序号</th>
+                <th data-options="field:'EmployName',width:70" rowspan="2">姓名</th>
+                <th data-options="field:'CertificateNumber',width:150" rowspan="2">省份证号</th>
+
+                <th data-options="field:'Supplier',width:185" rowspan="2">供应商</th>
+                <th data-options="field:'PaymentStyle',width:80" rowspan="2">缴费类型</th>
+                <th data-options="field:'CityName',width:100" rowspan="2">保险缴纳地</th>
+                <th colspan="6">养老保险</th>
+                <th colspan="6">失业保险</th>
+                <th colspan="3">工伤保险</th>
+                <th colspan="6">医疗保险</th>
+                <th colspan="2">大病</th>
+                <th colspan="1">生育保险</th>
+                <th colspan="6">公积金</th>
+                <th colspan="2">补充公积金</th>
+
+                <th data-options="field:'OtherInsuranceCost',width:80" rowspan="2">其他社保费用</th>
+                <th data-options="field:'OtherCost',width:100" rowspan="2">其他费用</th>
+                <th data-options="field:'CompanyInsuranceSum',width:80" rowspan="2">单位保险小计</th>
+                <th data-options="field:'PersonInsuranceSum',width:100" rowspan="2">个人保险小计</th>
+                <th data-options="field:'InsuranceSum',width:80" rowspan="2">保险合计</th>
+                <th data-options="field:'ProductionCost',width:100" rowspan="2">工本费</th>
+                <th data-options="field:'ServiceCost',width:80" rowspan="2">服务费</th>
+                <th data-options="field:'Sum',width:100" rowspan="2">费用合计</th>
+            </tr>
+            <tr>
+                <th data-options="field:'YanglaoPaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'YanglaoPaymentMonth',width:80,align:'right'">缴纳月数</th>
+                <th data-options="field:'YanglaoCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'YanglaoCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'YanglaoPersonCost',width:60,align:'center'">个人</th>
+                <th data-options="field:'YanglaoSum',width:60,align:'center'">小计</th>
+
+                <th data-options="field:'ShiyePaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'ShiyePaymentMonth',width:80,align:'right'">缴纳月数</th>
+                <th data-options="field:'ShiyeCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'ShiyeCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'ShiyePersonCost',width:60,align:'center'">个人</th>
+                <th data-options="field:'ShiyeSum',width:60,align:'center'">小计</th>
+
+                <th data-options="field:'GongshangPaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'GongshangCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'GongshangCompanyCost',width:60,align:'center'">企业</th>
+
+                <th data-options="field:'YiliaoPaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'YiliaoPaymentMonth',width:80,align:'right'">缴纳月数</th>
+                <th data-options="field:'YiliaoCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'YiliaoCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'YiliaoPersonCost',width:60,align:'center'">个人</th>
+                <th data-options="field:'YiliaoSum',width:60,align:'center'">小计</th>
+
+                <th data-options="field:'DaeCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'DaePersonCost',width:60,align:'center'">个人</th>
+
+                <th data-options="field:'ShengyuCompanyCost',width:60,align:'center'">企业</th>
+
+                <th data-options="field:'GongjijinPaymentInterval',width:80,align:'right'">缴费区间</th>
+                <th data-options="field:'GongjijinPaymentMonth',width:80,align:'right'">缴纳月数</th>
+                <th data-options="field:'GongjijinCompanyRadix',width:80">缴费基数</th>
+                <th data-options="field:'GongjijinCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'GongjijinPersonCost',width:60,align:'center'">个人</th>
+                <th data-options="field:'GongjijinSum',width:60,align:'center'">小计</th>
+
+                <th data-options="field:'GongjijinBCCompanyCost',width:60,align:'center'">企业</th>
+                <th data-options="field:'GongjijinBCPersonCost',width:60,align:'center'">个人</th>
+            </tr>
+        </thead>
+    </table>
+
+

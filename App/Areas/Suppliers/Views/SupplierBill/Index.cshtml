@@ -1,0 +1,131 @@
+﻿@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+<br style="clear: both;" />
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        $('#flexigridData').datagrid({
+            title: '供应商_财务信息', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            url: '/api/SupplierBillApi/PostData', //获取数据的url
+            queryParams: { search: "SupplierIdDDL_Int&@ViewBag.SupplierID" },
+            sortName: 'Id',
+            sortOrder: 'desc',
+            idField: 'Id',
+            toolbar: [{
+                    text: '创建',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        return flexiCreate();
+                    }
+                },
+                  {
+                      text: '返回',
+                      iconCls: 'icon-back',
+                      handler: function () {
+                          return GoBack('@ViewBag.Path');
+                      }
+                  }
+            ],
+            columns: [[
+                 { field: 'SupplierId', title: '供应商ID', align: 'center', width: 100, hidden: true }
+                , { field: 'BillName', title: '开票名称', align: 'center', width: 211 }
+                , { field: 'TaxRegistryNumber', title: '税务登记证号', align: 'center', width: 211 }
+                , { field: 'CreateTime', title: '创建时间', align: 'center', width: 111, formatter: formatDatebox }
+                , { field: 'CreateUserName', title: '创建人', align: 'center', width: 111 }
+                , { field: 'Status', title: '状态', align: 'center', width: 111 }
+                , {
+                    field: 'Id', title: '操作', align: 'center', width: 111,
+                    formatter: function (value, row, index) {
+                        var a = '';
+                        if (row.Status == "启用") {
+                            a += '<a href="#" onclick="flexiModify(\'' + row.ID + '\')">修改</a> ';
+                            a += '<a href="#" onclick="flexiStop(\'' + row.ID + '\')">停用</a> ';
+                        }
+                        else if (row.Status == "停用") {
+                            a += '<a href="#" onclick="flexiStart(\'' + row.ID + '\')">启用</a> ';
+                        }
+                        return a;
+                    }
+                }
+            ]],
+            pagination: true,
+            rownumbers: true
+        });
+
+    });
+    //创建
+    function flexiCreate(id) {
+        return CommonSelect('/Suppliers/SupplierBill/Create/@ViewBag.SupplierID', '创建', 920, 500);
+    }
+
+    //修改付款信息
+    function flexiModify(id) {
+        $("#flexigridData").val("gridPrice");
+        return CommonSelect('/Suppliers/SupplierBill/Edit/' + id, '修改', 920, 500);
+    }
+
+    //停用付款信息
+    function flexiStop(id) {
+        $.messager.confirm('操作提示', "确认停用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/SupplierBillApi/Stop/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+                    }
+                })
+            }
+        });
+    }
+
+    //启用付款信息
+    function flexiStart(id) {
+        $.messager.confirm('操作提示', "确认启用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/SupplierBillApi/Start/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        })
+    }
+
+
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/Suppliers/" + path + "/Index/?tmp=" + tmp;
+    }
+</script>

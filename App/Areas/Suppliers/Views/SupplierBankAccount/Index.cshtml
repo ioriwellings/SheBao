@@ -1,0 +1,140 @@
+﻿@model Langben.DAL.SupplierBankAccount
+
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@*@using Common
+@using Models*@
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+<br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        $('#flexigridData').datagrid({
+            title: '银行帐户列表', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: '/api/SupplierBankAccountApi/PostData', //获取数据的url
+            sortName: 'Id',
+            sortOrder: 'desc',
+            idField: 'Id',
+            queryParams: { search: "SupplierIdDDL_Int&@ViewBag.SupplierID" },
+            toolbar: [
+                  {
+                      text: '创建',
+                      iconCls: 'icon-add',
+                      handler: function () {
+                          return flexiCreate();
+                      }
+                  },
+                  {
+                      text: '返回',
+                      iconCls: 'icon-back',
+                      handler: function () {
+                          return GoBack('@ViewBag.Path');
+                      }
+                  }],
+            columns: [[
+                //{ field: 'Id', title: 'ID', width: 55 },
+                { field: 'Bank', title: '开户行名称', width: 100 },
+                { field: 'Account', title: '银行账号', width: 130 },
+                { field: 'CreateTime', title: '创建时间', width: 111, formatter: formatDatebox },
+                { field: 'CreateUserName', title: '创建人名称', width: 111 },
+                { field: 'Status', title: '状态', width: 100 },
+                {
+                    field: 'action', title: '操作', width: 200, align: 'center',
+                    formatter: function (value, row, index) {
+                        var a = '';
+                        if (row.Status == "启用") {
+                            a += '<a href="#" onclick="flexiModify(\''+ row.ID + '\')">修改</a> ';
+                            a += '<a href="#" onclick="flexiStop(\'' + row.ID + '\')">停用</a> ';
+                        }
+                        else if (row.Status == "停用") {
+                            a += '<a href="#" onclick="flexiStart(\'' + row.ID + '\')">启用</a> ';
+                        }
+                        return a;
+                    }
+                }
+            ]],
+            pagination: true,
+            rownumbers: true
+        });
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+        }
+
+    });
+
+
+    //导航到创建的按钮
+    function flexiCreate() {
+        return CommonSelect("/Suppliers/SupplierBankAccount/Create/@ViewBag.SupplierID", '创建', 920, 500);
+        return false;
+    }
+    //导航到修改的按钮
+    function flexiModify(id) {
+        return CommonSelect("/Suppliers/SupplierBankAccount/Edit/" + id, '修改', 920, 500);
+        return false;
+    };
+    //停用按钮
+    function flexiStop(id) {
+        $.messager.confirm('操作提示', "确认停用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/SupplierBankAccountApi/Stop/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+    //启用按钮
+    function flexiStart(id) {
+        $.messager.confirm('操作提示', "确认启用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/SupplierBankAccountApi/Start/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+                    }
+                })
+            }
+        });
+    };
+
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/Suppliers/" + path + "/Index/?tmp=" + tmp;
+    }
+</script>

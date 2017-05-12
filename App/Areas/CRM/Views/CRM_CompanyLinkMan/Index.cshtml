@@ -1,0 +1,181 @@
+﻿@model Langben.DAL.CRM_CompanyLinkMan
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+<br style="clear: both;" />
+<script>
+    $(function () {
+
+        $('#flexigridData').datagrid({
+            title: '客户_企业联系人信息', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            queryParams: { search: "CRM_Company_IDDDL_Int&@ViewBag.Id" },
+            url: '/api/CRM_CompanyLinkManApi/PostData', //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            toolbar: [{
+                text: '创建',
+                iconCls: 'icon-add',
+                handler: function () {
+                    return CommonSelect('/CRM/CRM_CompanyLinkMan/Create/@ViewBag.Id', '创建', 920, 500);
+                }
+            }, {
+                text: '返回',
+                iconCls: 'icon-back',
+                handler: function () {
+                    return GoBack('@ViewBag.Path');
+                }
+            }],
+            columns: [[
+                { field: 'CRM_Company_ID', title: '@Html.DisplayNameFor(model => model.CRM_Company_ID)', hidden: true, align: 'center', width: 80 }
+                , { field: 'LinkManName', title: '@Html.DisplayNameFor(model => model.LinkManName)', align: 'center', width: 80 }
+                , { field: 'Position', title: '@Html.DisplayNameFor(model => model.Position)', align: 'center', width: 100 }
+                , { field: 'Address', title: '@Html.DisplayNameFor(model => model.Address)', align: 'center', width: 111 }
+                , { field: 'Mobile', title: '@Html.DisplayNameFor(model => model.Mobile)', align: 'center', width: 111 }
+                 , { field: 'Telephone', title: '@Html.DisplayNameFor(model => model.Telephone)', align: 'center', width: 111 }
+                  , { field: 'Email', title: '@Html.DisplayNameFor(model => model.Email)', align: 'center', width: 111 }
+                   , { field: 'IsDefault', title: '@Html.DisplayNameFor(model => model.IsDefault)', align: 'center', width: 80 }
+                , {
+                    field: 'CreateTime', title: '@Html.DisplayNameFor(model => model.CreateTime)', align: 'center', width: 111
+                , formatter: formatDatebox
+                }
+                , { field: 'CreateUserID', title: '@Html.DisplayNameFor(model => model.CreateUserID)', align: 'center', hidden: true, width: 111 }
+                , { field: 'CreateUserName', title: '@Html.DisplayNameFor(model => model.CreateUserName)', align: 'center', width: 81 }
+                , { field: 'Status', title: '状态', formatter: FormatterStatus, align: 'center', width: 81 }
+                @*, { field: 'BranchID', title: '@Html.DisplayNameFor(model => model.BranchID)', width: 111 }*@
+                   , { field: 'Remark', title: '@Html.DisplayNameFor(model => model.Remark)', align: 'center', width: 111 }
+                    , {
+                        field: 'ID', title: '操作', width: 200, align: 'center', formatter: function (value, row, index) {
+                            var a = '';
+                            if (row.Status == 1) {
+                                a += '<a href="#" onclick="Modify(' + row.ID + ')">修改</a> ';
+                                a += '<a href="#" onclick="flexiStop(' + row.ID + ')">停用</a> ';
+                                if (row.IsDefault == "否") {
+                                    a += '<a href="#" onclick="SetDefault(' + row.ID + ')">默认联系人</a> ';
+                                }
+                            }
+                            else if (row.Status == 0) {
+                                a += '<a href="#" onclick="flexiStart(' + row.ID + ')">启用</a> ';
+                            }
+
+                            return a;
+                        }
+                    }
+            ]],
+
+            rownumbers: true
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+    //修改
+    function Modify(id) {
+        return CommonSelect('/CRM/CRM_CompanyLinkMan/Edit/' + id, '修改', 920, 500);
+    }
+    //停用按钮
+    function flexiStop(id) {
+        $.messager.confirm('操作提示', "确认停用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyLinkManApi/Stop/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+                    }
+                })
+            }
+        });
+    };
+    //启用按钮
+    function flexiStart(id) {
+        $.messager.confirm('操作提示', "确认启用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyLinkManApi/Start/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+                    }
+                })
+            }
+        });
+    };
+    //设为默认联系人
+    function SetDefault(id) {
+        if (id != "" && id != undefined) {
+            $.messager.confirm('操作提示', "确认设为默认联系人？", function (r) {
+                if (r) {
+                    $.ajax({
+                        url: "/api/CRM_CompanyLinkManApi/SetDefault/" + id + "?companyID=@ViewBag.Id",
+                        type: "Post",
+                        success: function (res) {
+                            if (res.Code == 1) {
+                                //刷新列表
+                                $.messager.alert('操作提示', res.Message, 'info');
+                                $("#flexigridData").datagrid("reload");
+                                $("#flexigridData").datagrid("clearSelections");
+                            }
+                            else {
+                                $.messager.alert('操作提示', res.Message, 'info');
+                            }
+                        }
+                    })
+                }
+            });
+        }
+    }
+    // 状态
+    function FormatterStatus(value, row, index) {
+        var a = "";
+        if (value == 0) {
+            a = '停用';
+        }
+        else if (value == 1) {
+            a = '启用';
+        }
+        else if (value == 2) {
+            a = '修改中';
+        }
+        return a;
+    }
+
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/" + path + "/Index/?tmp=" + tmp;
+    }
+</script>

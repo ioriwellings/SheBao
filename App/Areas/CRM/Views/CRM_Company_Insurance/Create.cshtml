@@ -1,0 +1,232 @@
+﻿@model Langben.DAL.CRM_CompanyContract
+
+@{
+    Layout = "~/Views/Shared/CRMCreate.cshtml";
+}
+@*@using Common
+    @using Models*@
+
+@section CurentPlace {
+    创建
+}
+
+<script src="~/Scripts/Myl.js"></script>
+@using (Html.BeginForm("", "../api/CRM_Company_InsuranceApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" value="保存" onclick="addSB()" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.CRM_Company_ID)
+
+            <div id="companySBInfo" title="企业社保信息">
+                @*<span>企业阶梯报价</span>*@
+                @*<table id="tableCompanySBinfo" width="700">
+                        <tr style="background-color:gray">
+                            <td style="display:none">ID</td>
+                            <td>缴纳地</td>
+                            <td>工伤政策</td>
+                            <td>公积金政策</td>
+                            <td>企业社保账号</td>
+                            <td>公积金社保账号</td>
+                            <td>状态</td>
+                            <td>操作</td>
+                        </tr>
+                    </table>*@
+                <table id="tabaleCompanySBbase">
+                    <tr>
+                        <td style="width:120px;"><span style="color: red; float:none">*</span>缴纳地：</td>
+                        <td style="width:200px;" colspan="3">
+                            <select id="Citylist" class="easyui-combobox" style="width:100px"></select>
+                            <input type="hidden" id="ddlCtiy" name="ddlCtiy" />
+                        </td>
+                    </tr>
+                </table>
+                @*<table>
+                        <tr>
+                            <td><a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="addSB()">添加社保信息</a></td>
+                            <td colspan="3"><span id="spLadderPrice" style="display: none; color: red"></span></td>
+                        </tr>
+                    </table>*@
+            </div>
+
+        </div>
+    </fieldset>
+
+}
+
+<script type="text/javascript">
+
+    $(function () {
+        Citylist();
+    });
+
+    ///缴纳地初始绑定
+    function Citylist() {
+        myAjax("/api/EmployeeAddApi/getCitylist", '', function (data) {
+            $("#Citylist").append("<option value=>请选择</option>");
+            $.each(data, function (i, item1) {
+                $("#Citylist").append("<option value='" + item1["Cityid"] + "'>" + item1["Name"] + "</option>");
+            });
+            $("#Citylist").combobox({ onSelect: getData });
+        });
+    }
+
+    function getData() {
+        var Cityid = $('#Citylist').combobox('getValue');
+        myAjax("/api/CRM_Company_InsuranceApi/getInsuranceKindList", 'ID=' + Cityid, function (data) {
+            $("#tabaleCompanySBbase  tr:not(:first)").remove();
+            var TR = ""
+            var tr1 = "<tr name='account'>"
+            var strzcHtml = "";
+
+            $.each(data, function (i, item1) {
+                if (item1["Name"] == '@Common.EmployeeAdd_InsuranceKindId.工伤.ToString()' || item1["Name"] == '@Common.EmployeeAdd_InsuranceKindId.公积金.ToString()')//后期如果需要动态去掉判断即可
+                {
+                    //根据社保种类ID，缴纳地获取政策
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/CRM_CompanyApi/GetZCByID?InsuranceKindId=' + item1["ID"] + "&CityID=" + Cityid,
+                        dataType: 'Json',
+                        async: false,
+                        success: function (data) {
+                            strzcHtml = "";
+                            for (var i = 0; i < data.rows.length; i++) {
+                                strzcHtml += "<input type='checkbox' zcname='" + data.rows[i].Name + "' name='" + item1["Name"] + "'  id='" + data.rows[i].ID + "'/>" + data.rows[i].Name + "";
+                            }
+
+                            TR += "<tr name=" + item1["Name"] + " type='zc' id='" + item1["ID"] + "'>"
+                            TR += "<td>" + item1["Name"] + ":<td><td colspan=\"2\" algin='left'>" + strzcHtml + "<td>"
+                            TR += "</tr>";
+
+                        }
+                    })
+
+
+                }
+                if (i == 0) {
+                    tr1 = "<tr name='" + item1["Name"] + "' type='account'>"
+                    tr1 += "<td rowspan=" + data.length + ">企业社保账号</td>";
+                }
+                else {
+                    tr1 += "<tr name='" + item1["Name"] + "'  type='account'>"
+                }
+                tr1 += "<td style='width:50px'>" + item1["Name"] + "</td><td  algin='left'><input type='text' name='" + item1["Name"] + "' ID='txt_" + item1["ID"] + "'/></td></tr>"
+            });
+
+            //tr1 += "<tr name='状态' type='state' ><td style='width:50px'>状态</td><td colspan='3' algin='left'><input type='radio' name='state' rname='启用'  checked='checked' />启用<input type='radio' name='state' rname='停用'  />停用</td></tr>"
+
+            $("#tabaleCompanySBbase").append(tr1);
+            $("#tabaleCompanySBbase").append(TR);
+        });
+    }
+
+    ///添加社保
+    function addSB() {
+
+        var accountStr = "";//账号
+        var accountName = "";//账号名称
+        var account = "";//单独账号隔开
+        var gjjaccount = "";//公积金账号
+        var gjj = "";//公积金账号
+        var ZC = "";//政策
+        var gszc = "";//工伤政策
+        var gjjzc = "";//公积金政策
+        var gjjid = "";//公积政策id
+        var gszcid = "";//工伤政策ID
+        var cityid = $('#Citylist').combobox('getValue');
+        var city = $('#Citylist').combobox('getText');
+        var isAdd = true;
+
+        if (cityid == '') {
+            $.messager.alert('操作提示', "请选择缴纳地", 'info'); return false;
+        }
+
+        $("#tabaleCompanySBbase tr:not(:first)").each(function (i) {
+            if ($(this).attr("type") == "account") {
+                if (i == 0) {
+                    if ($(this).children('td').eq(2).find("input").val() != '') {
+                        if ($(this).children('td').eq(2).find("input").attr("name") != "公积金") {
+                            accountName += $(this).children('td').eq(2).find("input").attr("name") + ",";
+                            account += $(this).children('td').eq(2).find("input").val() + ",";
+                            accountStr += $(this).children('td').eq(2).find("input").attr("name") + ":" + $(this).children('td').eq(2).find("input").val() + ",";
+                        }
+                        else {
+                            gjj += $(this).children('td').eq(2).find("input").val();
+                            gjjaccount += $(this).children('td').eq(2).find("input").attr("name") + ":" + $(this).children('td').eq(2).find("input").val() + ",";
+                        }
+                    }
+                }
+                else {
+                    if ($(this).children('td').eq(1).find("input").val() != '') {
+                        if ($(this).children('td').eq(1).find("input").attr("name") != "公积金") {
+                            account += $(this).children('td').eq(1).find("input").val() + ",";
+                            accountName += $(this).children('td').eq(1).find("input").attr("name") + ",";
+                            accountStr += $(this).children('td').eq(1).find("input").attr("name") + ":" + $(this).children('td').eq(1).find("input").val() + ",";
+                        }
+                        else {
+                            gjj += $(this).children('td').eq(1).find("input").val();
+                            gjjaccount += $(this).children('td').eq(1).find("input").val();
+                        }
+                    }
+                }
+
+            }
+            if ($(this).attr("type") == "zc") {
+                var name = $(this).attr("name");
+                if (name == "公积金") {
+                    $("input[name='公积金']:checked").each(function () {
+                        gjjid += $(this).attr("id") + ";";
+                        gjjzc += $(this).attr("zcname") + ";";
+                    });
+
+
+                }
+                if (name == "工伤") {
+                    $("input[name='工伤']:checked").each(function () {
+                        gszcid += $(this).attr("id") + ";";
+                        gszc += $(this).attr("zcname") + ";";
+                    });
+                    //gszcid += $(this).children('td').eq(2).find("input:checked").attr("id") + ",";
+                    //gszc += $(this).children('td').eq(2).find("input:checked").attr("zcname") + ";";
+                }
+
+            }
+        });
+
+        if (gszcid == '' && gjjid == '' && accountStr == "" && gjjaccount == "") {
+            $.messager.alert('操作提示', "请至少填写一项信息", 'info'); return false;
+        }
+
+        $.ajax({
+            type: "Post",
+            dataType: "json",
+            url: "/api/CRM_Company_InsuranceApi/Post",
+            data: { CRM_Company_ID: '@ViewBag.CompanyID', CityId: cityid, PoliceID1: gszcid, PoliceID2: gjjid, Account1: accountStr, Account2: gjjaccount },
+            async: false,
+            success: function (data) {
+                if (data.Code == 1) {
+                    if ($.messager) {
+                        $.messager.defaults.ok = '确定';
+                        //$.messager.defaults.cancel = '返回';
+
+                        $.messager.alert('', '提交成功！', 'info', function (r) {
+                            window.parent.$("#flexigridData").datagrid("reload");
+                            window.parent.$("#window").dialog("close");//关闭弹出框
+                        });
+                    }
+                }
+                else {
+                    $.messager.alert('操作提示', data.Message, 'warning');
+                }
+            }
+        });
+
+
+    }
+
+
+
+</script>

@@ -1,0 +1,564 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>外包业务系统</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script type="text/javascript">
+
+        $(function() {
+
+            tabCloseEven();
+            addTab("我的工作台", "/Home/Welcome", "tu1112", false);
+            $('ul li a').click(function() {
+                var tabTitle = $(this).text();
+                var url = $(this).attr("rel"); //获取地址
+                var id = $(this).attr("id"); //获取id
+                var icon = $(this).attr("icon"); //获取图标
+                if (icon == "") {
+                    icon = "icon-save";
+                }
+                addTab(tabTitle, url, icon, true, id);
+
+            });
+            $('#loginOut').click(function() {
+
+                $.messager.confirm('系统提示', '您确定要退出本次登录吗?', function(r) {
+
+                    if (r) {
+                        location.href = 'http://www.schr.cn';
+                    }
+                });
+            });
+            $('#ChangePassword').click(function() {
+                showMyWindow("修改密码", "http://www.schr.cn");
+
+            });
+
+
+        });
+
+        function addTab(subtitle, url, icon, closable, id) {
+
+            if (!$('#tabs').tabs('exists', subtitle)) {
+                $('#tabs').tabs('add', {
+                    title: subtitle,
+                    content: createFrame(url, id),
+                    closable: closable
+                    , icon: icon
+                });
+            } else {
+                $('#tabs').tabs('select', subtitle);
+
+            }
+            tabClose();
+        }
+
+        function createFrame(url, id) {
+            var s = '<iframe id="' + id + '" scrolling="auto" frameborder="0"  src="' + url + '" style="width:100%;height:99%;overflow-y: auto; "></iframe>';
+            return s;
+        }
+        function tabClose() {
+            /*双击关闭TAB选项卡*/
+            $(".tabs-inner").dblclick(function () {
+                var subtitle = $(this).children(".tabs-closable").text();
+                $('#tabs').tabs('close', subtitle);
+            })
+            /*为选项卡绑定右键*/
+            $(".tabs-inner").bind('contextmenu', function (e) {
+                $('#mm').menu('show', {
+                    left: e.pageX,
+                    top: e.pageY
+                });
+
+                var subtitle = $(this).children(".tabs-closable").text();
+
+                $('#mm').data("currtab", subtitle);
+                $('#tabs').tabs('select', subtitle);
+                return false;
+            });
+        }
+        //绑定右键菜单事件
+        function tabCloseEven() {
+            //刷新
+            $('#mm-tabupdate').click(function () {
+                var currTab = $('#tabs').tabs('getSelected');
+                var url = $(currTab.panel('options').content).attr('src');
+                var id = $(currTab.panel('options').content).attr('id');; //获取id
+
+                $('#tabs').tabs('update', {
+                    tab: currTab,
+                    options: {
+                        content: createFrame(url, id)
+                    }
+                })
+            })
+            //关闭
+            $('#mm-tabclose').click(function () {
+                var currtab_title = $('#mm').data("currtab");
+                $('#tabs').tabs('close', currtab_title);
+            })
+            // 关闭其他
+            $('#closeother').click(function () {
+                //所有所有tab对象
+                var allTabs = $('#tabs').tabs('tabs');
+                var currentTab = $('#tabs').tabs('getSelected');
+                var currtab_title = currentTab.panel('options').title;
+
+                for (var i = (allTabs.length - 1) ; i >= 0; i--) {
+
+                    var tab = allTabs[i];
+                    var opt = tab.panel('options');
+                    //获取标题
+                    var title = opt.title;
+                    if (currtab_title == title) {
+                        continue;
+                    }
+                    //是否可关闭 ture:会显示一个关闭按钮，点击该按钮将关闭选项卡
+                    var closable = opt.closable;
+                    if (closable) {
+                        //alert('title' + title + '  curTabTitle:' + curTabTitle);
+                        $('#tabs').tabs('close', title);
+                    }
+
+                }
+            })
+            // 全部关闭
+            $('#mm-tabAllclose').click(function () {
+                //所有所有tab对象
+                var allTabs = $('#tabs').tabs('tabs');
+                for (var i = (allTabs.length - 1) ; i >= 0; i--) {
+                    var tab = allTabs[i];
+                    var opt = tab.panel('options');
+                    //获取标题
+                    var title = opt.title;
+                    //是否可关闭 ture:会显示一个关闭按钮，点击该按钮将关闭选项卡
+                    var closable = opt.closable;
+                    if (closable) {
+                        //alert('title' + title + '  curTabTitle:' + curTabTitle);
+                        $('#tabs').tabs('close', title);
+                    }
+
+                }
+            })
+
+            //退出
+            $("#mm-exit").click(function () {
+                $('#mm').menu('hide');
+            })
+        }
+        function showMyWindow(title, href, width, height, modal, minimizable, maximizable) {
+
+            $('#myWindow').window({
+                title: title,
+                width: width === undefined ? 600 : width,
+                height: height === undefined ? 450 : height,
+                content: '<iframe scrolling="yes" frameborder="0"  src="' + href + '" style="width:100%;height:98%;"></iframe>',
+                //        href: href === undefined ? null : href,
+                modal: modal === undefined ? true : modal,
+                minimizable: minimizable === undefined ? false : minimizable,
+                maximizable: maximizable === undefined ? false : maximizable,
+                shadow: false,
+                cache: false,
+                closed: false,
+                collapsible: false,
+                resizable: false,
+                loadingMessage: '正在加载数据，请稍等片刻...'
+            });
+
+        }
+       
+    </script>
+    <style type="text/css">
+        body {
+            font-family: 微软雅黑,新宋体;
+        }
+
+        a {
+            color: Black;
+            text-decoration: none;
+        }
+
+        .easyui-tree li {
+            margin: 0px;
+            padding: 1px;
+        }
+
+        #mainlogo {
+            position: absolute;
+            top: 0px;
+            left: 20px;
+            width: 575px;
+            height: 72px;
+        }
+        #mainlogo img{margin-top:15px;
+            
+        }
+
+        #center {
+            padding-left: 575px;
+            padding-right: 425px;
+        }
+
+        #mainctrl {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            height: 72px;
+            width: 425px;
+        }
+
+
+        .wel {
+            height: 30px;
+            line-height: 30px;
+            color: #FFFFFF;
+            font-size: 14px;
+            text-align: right;
+            padding-right: 15px;
+        }
+        .wel a{ color:#fff
+        }
+            .wel a:hover{
+                color: #fff; text-decoration:underline
+            }
+            .ctr {
+            vertical-align: middle;
+            margin-top: 18px;
+            height: 24px;
+            text-align: right;
+            background-image: url(../images/beijing.gif);
+            background-repeat: repeat-x;
+        }
+
+            .ctr li {
+                float: left;
+                list-style: none;
+            }
+
+        .zi {
+            padding-right: 16px;
+            padding-left: 3px;
+        }
+
+
+        a.v1:visited, a.v1:active, a.v1:link {
+            font-size: 14px;
+            color: #000;
+            text-decoration: none;
+        }
+
+        a.v1:hover {
+            font-size: 14px;
+            color: #005500;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="easyui-layout">
+    <noscript>
+        <div style="position: absolute; z-index: 100000; height: 2046px; top: 0px; left: 0px;
+            width: 100%; background: white; text-align: center;">
+            <img src="images/noscript.gif" alt='抱歉，请开启脚本支持！' />
+        </div>
+    </noscript>
+    <div region="north" split="true" border="false" style="overflow: hidden; height: 76px; line-height: 20px; background-color: #1D1F3D; font-family: 微软雅黑,黑体">
+        <div id="mainlogo">
+             外包业务系统
+        </div>
+        <div id="center">
+        </div>
+        <div id="mainctrl">
+            <div class="wel">
+                欢迎您：@ViewBag.BranchName /
+                @ViewBag.DepartmentName /
+                @ViewBag.RealName
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="@Url.Action("Logout", "Account")">退出</a>
+            </div>
+
+        </div>
+    </div>
+
+    <div region="west" hide="true" split="true" title="导航菜单" style="width: 180px;" id="west">
+        <div class="easyui-accordion" fit="true" border="false">
+            @Html.Raw(ViewBag.MenuTreeHtml)
+            @*<div data-options="iconCls:'tu2011'" title="所有表">
+                    <div class="easyui-panel" fit="true" border="false">
+                        <ul class="easyui-tree">
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="Employee">员工</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeContact">员工联系方式</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeBank">员工银行</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="PoliceInsurance">社保政策</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="PoliceRejectRelationship">政策互斥关系</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="InsuranceKind">社保种类</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="PoliceCascadeRelationship">政策联动关系</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="PoliceMasterRelationship">政策主从关系</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="PoliceOperation">政策手续</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="PoliceAccountNature">户口性质</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="City">缴纳地</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="Attachment">资料</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CompanyEmployeeRelation">企业员工关系</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd">增加员工</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd\EmployeeAddByExcel">社保模板报增列表</a></li>
+
+
+
+
+
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd\ApproveList">责任客服审核列表</a></li>
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd\CustomerModifyList">责任客服修改员工</a></li>
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd\AllotList">员工客服经理分配</a></li>
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd\EmployeeModifyList">员工客服修改员工</a></li>
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd\SupplierList">社保专员报增信息</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd\FeedbackList">社保专员报增反馈</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd\EmployeeAddViewList">社保报增查询列表</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPayment">员工停缴</a></li>
+                            
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPayment\FeedbackList">社保专员报减反馈</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="Suppliers">供应商</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment">员工补缴</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment2">员工调基</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeInsuranceAttachment">员工社保资料</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAddHistory">增加员工历史记录</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd\FeedbackList">社保专员报增反馈</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPaymentHistory">员工停缴历史记录</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPaymentHistory">员工调基历史记录</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment3adsa">员工补缴历史记录</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeMiddle">员工费用中间表</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="PoliceOperationPoliceInsurancePoliceAccountNature2">政策手续社保政策户口性质2</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Company">客户_企业信息</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyLinkMan">客户_企业联系人信息</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyFinance">客户_企业财务信息</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyToBranch">客户_企业归属机构</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyBankAccount">客户_企业银行账户</a></li>
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyContract">客户_合同信息</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="PRD_Product">产品_产品</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_CostTable_Create">费用表生成</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_CostTable">费用自检</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_PayRecord_Confirm">支出费用确认</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyPrice">客户_企业报价</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyLadderPrice">客户_企业阶梯报价</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_CostTableOther">费用_费用表其他费用</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_CostTableService">费用_费用表服务费</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_CostTableInsurance">费用_费用表社保明细</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_ExpenditureInsurance">费用_社保支出</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_Company_Audit">客户_企业信息_待审核</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyLinkMan_Audit">客户_企业联系人信息_待审核</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyFinance_Audit">客户_企业财务信息_待审核</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyBankAccount_Audit">客户_企业银行账户_待审核</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyPrice_Audit">客户_企业报价_待审批</a></li>
+
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CRM_CompanyLadderPrice_Audit">客户_企业阶梯报价_待审核</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div data-options="iconCls:'tu2012'" title="所有视图">
+                    <div class="easyui-panel" fit="true" border="false">
+                        <ul class="easyui-tree">   </ul>
+                    </div>
+                </div>
+
+                <div data-options="iconCls:'tu0625'" title="外包系统">
+                    <div class="easyui-panel" fit="true" border="false">
+                        <ul class="easyui-tree">
+                            <li data-options="iconCls:'langben'">
+                                <a href="#" icon="langben" rel="http://www.langben.com"
+                                   id="201207311605187265267d33f281df2">狼奔网站</a>
+                            </li>
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Company">企业列表</a></li>
+                            <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Company_Audit">企业审核</a></li>
+                        </ul>
+                    </div>
+                </div>*@
+            
+            
+
+            @*<div data-options="iconCls:'tu0625'" title="企业管理">
+        <div class="easyui-panel" fit="true" border="false">
+            <ul class="easyui-tree">
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Company">企业列表</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Company_Audit">企业审核</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Company_ServiceManager">企业信息维护</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Company_ServiceManager/ServiceIndex">责任客服分配新企业</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Company_ServiceManager/AlreadyIndex">责任客服重新分配</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Company_SaleManager">销售人员分配</a></li>
+            </ul>
+        </div>
+    </div>
+    <div data-options="iconCls:'tu0625'" title="员工管理">
+        <div class="easyui-panel" fit="true" border="false">
+            <ul class="easyui-tree">
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/CRM/CRM_Employee">员工信息维护</a></li>
+            </ul>
+        </div>
+    </div>
+    <div data-options="iconCls:'tu0625'" title="社保报增">
+        <div class="easyui-panel" fit="true" border="false">
+            <ul class="easyui-tree">
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd/ApproveList">责任客服确认平台报增数据</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd">责任客服添加报增信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd/EmployeeAddByExcel">责任客服模板报增</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd/CustomerModifyList">责任客服修改报增信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd/AllotList">员工客服经理分配员工客服</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd/EmployeeModifyList">员工客服确认报增信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd/SupplierList">社保客服提取报增信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd/FeedbackList">社保客服反馈报增信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeAdd/EmployeeAddViewList">报增信息查询</a></li>
+            </ul>
+        </div>
+    </div>
+    <div data-options="iconCls:'tu0625'" title="社保停缴">
+        <div class="easyui-panel" fit="true" border="false">
+            <ul class="easyui-tree">
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPaymentPlat\Index">责任客服确认平台停缴数据</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPaymentSingle">责任客服添加停缴信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPaymentExecl">责任客服模板停缴</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPayment\StopCustomerModifyList">责任客服修改停缴信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPaymentForCustomer\Index">员工客服确认停缴信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPayment\SupplierList">社保客服提取停缴信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPaymentFeedback">社保客服反馈停缴信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeStopPayment\EmployeeStopViewList">停缴信息查询</a></li>
+
+
+
+            </ul>
+        </div>
+    </div>
+    <div data-options="iconCls:'tu0625'" title="社保补缴">
+        <div class="easyui-panel" fit="true" border="false">
+            <ul class="easyui-tree">
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment/ApproveList">责任客服确认平台补缴数据</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment/CustomerModifyList">责任客服修改补缴信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment/CustomerList">员工客服确认补缴信息</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment/index">责任客服补缴列表</a></li>
+
+            </ul>
+        </div>
+    </div>
+    <div data-options="iconCls:'tu0625'" title="社保调基">
+        <div class="easyui-panel" fit="true" border="false">
+            <ul class="easyui-tree">
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment2/index">责任客服调基列表</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment2/ApproveIndex">员工客服确认列表</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment2/SupplierList">社保专员提取列表</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeGoonPayment2/EmployeeGoonPayment2ViewList">调基信息查询</a></li>
+            </ul>
+        </div>
+    </div>
+    <div data-options="iconCls:'tu0625'" title="社保测算">
+        <div class="easyui-panel" fit="true" border="false">
+            <ul class="easyui-tree">
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="EmployeeMiddle">费用中间表管理</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_CostTable_Create">社保测算</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_CostTable">责任客服费用审核</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_PayCreate">支出导入</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_PayRecord_Confirm">支出费用确认</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="COST_PayRecord_Contrasted">对比数据更新</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CostPayDuibi">企业社保收支对比</a></li>
+                <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="CostPayPersonContrasted">员工社保收支对比</a></li>
+            </ul>
+        </div>
+    </div>
+            <div data-options="iconCls:'tu0625'" title="权限管理">
+                <div class="easyui-panel" fit="true" border="false">
+                    <ul class="easyui-tree">
+                        <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/Authority/Role">角色权限</a></li>
+                        <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/Authority/User">人员权限</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div data-options="iconCls:'tu0625'" title="系统设置">
+                <div class="easyui-panel" fit="true" border="false">
+                    <ul class="easyui-tree">
+                        <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/Authority/Menu">菜单管理</a></li>
+                        <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/Authority/MenuOp">菜单功能管理</a></li>
+                        <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/Authority/Group">用户组管理</a></li>
+                        <li data-options="iconCls:'tu0202'"><a href="#" icon="tu0202" rel="/Authority/Role/List">角色管理</a></li>
+                    </ul>
+                </div>
+            </div>*@
+        </div>
+    </div>
+    <div id="mainPanle" region="center" style=" overflow-y: hidden; ">
+        <div id="tabs" class="easyui-tabs" fit="true" border="false" style="">
+        </div>
+    </div>
+   
+    <div id="mm" class="easyui-menu" style="width: 150px;">
+        <div id="mm-tabupdate">
+            刷新
+        </div>
+        <div class="menu-sep">
+        </div>
+        <div id="mm-tabclose">
+            关闭
+        </div>
+        <div id="closeother">关闭其他</div>
+        <div id="mm-tabAllclose">
+            全部关闭
+        </div>
+    </div>
+    <div id="myWindow">
+    </div>
+
+</body>
+</html>
+
+
+

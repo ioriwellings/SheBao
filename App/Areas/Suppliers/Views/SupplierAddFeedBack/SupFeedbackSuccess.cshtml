@@ -1,0 +1,101 @@
+﻿@{ Layout = null; }
+@using Common
+@using Models
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //默认加载的时候险种为全选
+        var datan = $("#divQuery").find(':checkbox');    
+        for (var i = 0; i < datan.length; i++) {       
+                datan[i].checked = true;
+        }
+    });
+</script>
+<div id="divQuery">
+    <div id="div1">
+        <table id="tabRateInfo" style="padding-left:100px;">
+            <tr>
+                <td><input type="checkbox" id='all' value="-1" name="ck" onclick="SetAll()" />全选</td>
+                <td><input type="checkbox" value="养老" name="ck" />养老</td>
+                <td><input type="checkbox" value="医疗" name="ck" />医疗</td>
+                <td><input type="checkbox" value="生育" name="ck" />生育</td>
+                <td><input type="checkbox" value="失业" name="ck" />失业</td>
+                <td><input type="checkbox" value="工伤" name="ck" />工伤</td>
+                <td><input type="checkbox" value="公积金" name="ck" />公积金</td>
+                <td><input type="checkbox" value="大病" name="ck" />大病</td>
+            </tr>
+            <tr>
+                <td><input type="button" value="通过" onclick="Passall()" /> </td>
+                <td><input type="button" value="返回" onclick="javascript: history.back(-1)" /> </td>
+            </tr>           
+        </table>
+</div>
+</div>
+<br style="clear: both;" />
+<script type="text/javascript" language="javascript">
+
+
+    //全选
+    function SetAll() {
+       
+        var datan = $("#divQuery").find(':checkbox');
+        var Flag = datan[0].checked;//全选按钮状态
+        for (var i = 0; i < datan.length; i++) {
+           
+            if (datan[i].id != "all") {             
+              
+                datan[i].checked = Flag;
+            }
+        }
+
+    }
+
+
+     //通过
+    function Passall() {
+        var datan = $("#divQuery").find("input[name='ck']:checked").length;
+        if (datan == 0) {
+            alert('请选择险种！');
+            return false;
+        }
+        var alltype = '';
+        var ids = '@ViewBag.ids';
+        var CompanyEmployeeRelationId = '@ViewBag.CompanyEmployeeRelationId';
+        var datan = $("#divQuery").find(':checkbox');
+        
+        for (var i = 0; i < datan.length; i++) {
+
+            if (datan[i].checked && datan[i].value!="-1") {
+                alltype = alltype + ',' + datan[i].value;
+            }
+        }
+     
+        alltype = escape(alltype);
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            //方法所在页面和方法名
+            url: "/api/SupplierAddFeedBackApi/FeedbackIndexPass1?query=" + ids + "&alltype=" + alltype + "&CompanyEmployeeRelationId=" + CompanyEmployeeRelationId,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                alert(data);
+                window.location.href = "/Suppliers/SupplierAddFeedBack/Index";
+
+            },
+            error: function (err) {
+
+            }
+        });
+
+
+    }
+
+
+
+</script>

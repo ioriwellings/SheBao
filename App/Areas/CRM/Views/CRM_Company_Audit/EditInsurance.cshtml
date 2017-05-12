@@ -1,0 +1,142 @@
+﻿@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        // 获取内容并显示
+
+        $.ajax({
+            url: "/api/CRM_Company_InsuranceApi/GetEditData/@ViewBag.CompanyID?city=@ViewBag.CityID",
+            type: "Get",
+            async: false,
+            success: function (data) {
+                if (data.total == 2) {
+                    var res = data.rows;
+                    $("#Audit_CityName").text(res[0].CityName);
+                    $("#Audit_Police1").text(res[0].Police1 == null ? '' : res[0].Police1);
+                    $("#Audit_Police2").text(res[0].Police2 == null ? '' : res[0].Police2);
+                    $("#Audit_Account1").text(res[0].Account1 == null ? '' : res[0].Account1);
+                    $("#Audit_Account2").text(res[0].Account2 == null ? '' : res[0].Account2);
+                    $("#CityName").text(res[1].CityName);
+                    $("#Police1").text(res[1].Police1 == null ? '' : res[1].Police1);
+                    $("#Police2").text(res[1].Police2 == null ? '' : res[1].Police2);
+                    $("#Account1").text(res[1].Account1 == null ? '' : res[1].Account1);
+                    $("#Account2").text(res[1].Account2 == null ? '' : res[1].Account2);
+                }
+            }
+        })
+
+        if ($('#Audit_Police1').text() != $('#Police1').text()) {
+            $('#Audit_Police1').css('color', 'red');
+        }
+        if ($('#Audit_Police2').text() != $('#Police2').text()) {
+            $('#Audit_Police2').css('color', 'red');
+        }
+        if ($('#Audit_Account1').text() != $('#Account1').text()) {
+            $('#Audit_Account1').css('color', 'red');
+        }
+        if ($('#Audit_Account2').text() != $('#Account2').text()) {
+            $('#Audit_Account2').css('color', 'red');
+        }
+
+        $('#BasicGrid').datagrid()
+
+    });
+
+    function PassEdit() {
+        $.ajax({
+            url: "/api/CRM_Company_InsuranceApi/PassEdit/@ViewBag.CompanyID?city=@ViewBag.CityID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function ReturnEdit() {
+        $.ajax({
+            url: "/api/CRM_Company_InsuranceApi/ReturnEdit/@ViewBag.CompanyID?city=@ViewBag.CityID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                if (data.Code == 1) {
+                    $.messager.alert('操作提示', data.Message, 'info', function () {
+                        if (data.Code == 1) {
+                            //window.location.href = 'javascript:history.go(-1)';
+                            GoBack();
+                        }
+                    });
+                }
+            }
+        })
+    }
+
+    function GoBack() {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/CRM_Company_Audit/Index/?tmp=" + tmp;
+    }
+</script>
+
+<div id="divQuery">
+    <div class='input_search' style="padding-top:10px;">
+        @if (ViewBag.State == (int)Common.AuditStatus.待处理)
+        {
+            <input class="a2 f2" type="button" onclick="PassEdit()" value="通过" />
+            <input class="a2 f2" type="button" onclick="ReturnEdit()" value="退回" />
+        }
+        <input class="a2 f2" type="button" onclick="GoBack()" value="返回列表" />
+
+    </div>
+</div>
+
+<br style="clear: both;" />
+
+<input type="hidden" id="CityID" value="@ViewBag.CityID" />
+<input type="hidden" id="CompanyID" value="@ViewBag.CompanyID" />
+
+<table id="BasicGrid" style="width: auto; height: auto; border: 1px solid #ccc;">
+    <thead>
+        <tr>
+            <th data-options="field:'ID',width:100">信息类别</th>
+            <th data-options="field:'CityName',width:100">缴纳地</th>
+            <th data-options="field:'Police1'">工伤政策</th>
+            <th data-options="field:'Police2'">公积金政策</th>
+            <th data-options="field:'Account1'">社保账号</th>
+            <th data-options="field:'Account2'">公积金账号</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>原信息</td>
+            <td><span id="CityName"></span></td>
+            <td><span id="Police1"></span></td>
+            <td><span id="Police2"></span></td>
+            <td><span id="Account1"></span></td>
+            <td><span id="Account2"></span></td>
+
+        </tr>
+        <tr>
+            <td>新信息</td>
+            <td><span id="Audit_CityName"></span></td>
+            <td><span id="Audit_Police1"></span></td>
+            <td><span id="Audit_Police2"></span></td>
+            <td><span id="Audit_Account1"></span></td>
+            <td><span id="Audit_Account2"></span></td>
+        </tr>
+    </tbody>
+</table>
+
+
+

@@ -1,0 +1,159 @@
+﻿@model Langben.DAL.SingleStopPaymentView
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:60px">
+
+
+    <div class="input_search">
+        <div class="input_search-label">
+            年月：
+        </div>
+        <div class="input_search-field">
+            <input id="YearMonth" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" />
+        </div>
+    </div>
+
+    <div class="input_search">
+        <div class="input_search-label">
+            公司名称：
+        </div>
+        <div class="input_search-field">
+            <select id="Company"></select>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            险种：
+        </div>
+        <div class="input_search-field">
+            <select id="Kinds">
+
+                <option value="1">养老</option>
+                <option value="2">医疗</option>
+                <option value="3">工伤</option>
+                <option value="4">失业</option>
+                <option value="5">公积金</option>
+                <option value="6">生育</option>
+                <option value="7">医疗大额</option>
+                <option value="8">补充公积金</option>
+
+            </select>
+        </div>
+    </div>
+    <div class="input_search input_search_btn">
+
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+
+
+
+
+</div>
+
+<br style="clear: both;" />
+<script type="text/javascript" language="javascript">
+    $(".yearMonth").simpleCanleder();
+    function getCompany() {
+
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/COST_CostTableApi/GetCompany",  // menuId为菜单编号，1043代表“责任客服费用审核”
+            async: true,
+            success: function (data) {
+                $("#Company").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+
+                    $("#Company").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+
+
+
+
+    $(function () {
+        getCompany();
+        LoadData();
+    })
+
+    function LoadData() {
+        var search = "";
+        search = "yearMonth$" + $("#YearMonth").val().replace('-', '') + "^Kinds$" + $("#Kinds").val() + "^companyId$" + $("#Company").val();
+
+        $('#flexigridData').datagrid({
+            title: '社保分割单', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            fit:true,
+            striped: true,
+            collapsible: true,
+            url: 'api/Cost_Pay_FenGeApi/PostData?search=' + search, //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            checkOnSelect: false,
+            toolbar: [
+
+                              {
+                                  text: '导出',
+                                  iconCls: 'icon-ok',
+                                  handler: function () {
+                                      return Export();
+                                  }
+                              }
+
+
+            ],
+            rowStyler: function (index, row) {
+                if (row.StatusName == "责任客服作废") {
+                    return 'background-color:#ffee00;color:red;font-weight:bold;';
+                }
+            },
+            columns: [[
+
+
+                { field: 'C_NAME', title: '公司名称', width: 150 }  // 数据库存储为ID，这里需要Name
+                , { field: 'QIJIAN', title: '期间', width: 86 }
+                , { field: 'CHARGE_P', title: '个人缴纳钱数', width: 86 }
+                , { field: 'CHARGE_C', title: '单位缴纳钱数', width: 120 }
+
+            , { field: '工本费', title: '工本费', width: 150 }
+                , { field: 'H_Sum', title: '费用合计', width: 100 }
+
+            ]],
+
+            pagination: true,
+            rownumbers: true
+
+        });
+
+
+    }
+
+
+    function flexiQuery() {
+        LoadData();
+    };
+    // 导出操作
+    function Export() {
+        var search = "";
+        search = "yearMonth$" + $("#YearMonth").val().replace('-', '') + "^Kinds$" + $("#Kinds").val() + "^companyId$" + $("#Company").val();
+        $.ajax({
+            url: 'api/Cost_Pay_FenGeApi/PostExportToExcel?search=' + search, //获取数据的url
+            type: "POST",
+            success: function (res) {
+                window.location.href = res;
+            }
+        })
+
+    };
+</script>

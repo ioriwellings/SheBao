@@ -1,0 +1,111 @@
+﻿@{ Layout = "~/Views/Shared/Index.cshtml"; }
+
+    <script src="~/Scripts/JScriptIndex.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#flexigridData").datagrid({
+                title: '人员列表',
+                iconCls: 'icon-site',
+                url: "/User/GetData",
+                width: 'auto',
+                height: 'auto',
+                //nowrap: false,
+                striped: true,
+                fit:true,
+                collapsible: true,
+                sortName: 'ID',
+                sortOrder: 'desc',
+                idField: 'ID',
+                columns: [[
+                { field: 'Code', title: '编码', width: 200 },
+                { field: 'LoginName', title: '登录名', width: 200 },
+                { field: 'RName', title: '真实姓名', width: 111 },
+                 { field: 'Sex', title: '性别', width: 111 },
+                 { field: 'DepartmentName', title: '所属部门', width: 111 },
+                 { field: 'PositionName', title: '所属岗位', width: 111 },
+                 { field: 'ID', title: '操作', width: 100, formatter: Operate },
+                ]],
+                pagination: true,
+                rownumbers: true,
+                singleSelect: false, //允许选择多行
+                selectOnCheck: true,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+                checkOnSelect: true, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+                onClickRow: function (rowIndex, rowData) {
+                    $(this).datagrid('unselectRow', rowIndex);
+                }
+            });
+        });
+
+        function OpenConfig(id, name) {
+            @*CommonSelect("@Url.Action("ConfigAuthority", "Config")?id=" + id + "&type=user", name + ' 权限配置', "1003px", "503px");*@
+            //window.activeWindow.push(window);//注册保存父窗体集合
+            window.$("#dialogFrame1").prop("src", "@Url.Action("ConfigAuthority", "Config")?id=" + id + "&type=user");
+            window.$("#dialogWin1").dialog({
+                title: name + ' 权限配置',
+                width: '1003px',
+                height: '503px',
+                iconCls: 'icon-save',
+                cache: false,
+                modal: true,
+                closed: false,
+                buttons: [{
+                    text: '保存', iconCls: 'icon-save',
+                    handler: function (evt) {
+                        //获取弹出框Window对象
+                        var wd = window.$("#dialogFrame1").prop('contentWindow')
+                        //获取弹出框dom对象
+                        var doc = window.$("#dialogFrame1").prop('contentWindow').document;
+
+                        var fruit = wd.saveForm();
+                        if (fruit) {//执行弹出框保存事件
+                            //window.$("#dialogWin1").dialog("close");//关闭弹出框
+                            window.$.messager.alert("提示", "权限配置成功！", "info", function () {
+                                wd.isEditOpt = false;
+                                wd.isEditDpt = false;
+                                wd.isEditData = false;
+                                window.$("#dialogWin1").dialog("close");//关闭弹出框
+                            });
+                        }
+                    }
+                }, {
+                    text: '关闭', iconCls: 'icon-cancel',
+                    handler: function () {
+                        window.$("#dialogWin1").dialog("close");//关闭弹出框
+                    }
+                }],
+                onResize: function () {
+                    window.$(this).dialog('center');//弹出框居中
+                },
+                onClose: function () {
+                    window.$("#dialogFrame1").prop("src", "");
+                    //window.activeWindow.pop();//关闭窗口，释放已注册的父窗体集合
+                }
+            });
+
+        }
+
+        function flexiQuery() {
+            var search = $.trim($("#txtName").val());
+            //$("#DataGrid").datagrid("options").pageNumber = 1;
+            //参数名为reload时，刷新的是当前页；为load时，刷新的是第一页
+            $("#flexigridData").datagrid("load", {
+                search: search
+            });
+        }
+
+        //返回操作列
+        function Operate(value, rowData, rowIndex) {
+                return "<a href='javascript:void(0)'  onclick='OpenConfig(\"" + value + "\",\"" + rowData["RName"] + "\")'>权限配置</a>";
+        }
+    </script>
+
+<div id="divQuery">
+    <div class='input_search' style="padding-top:10px;">
+        姓名：<input type="text" id="txtName" name="txtName" />
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+    </div>
+</div>
+<br style="clear: both;" />
+<div id="dialogWin1" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="dialogFrame1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>

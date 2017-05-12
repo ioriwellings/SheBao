@@ -1,0 +1,204 @@
+﻿@model Langben.DAL.EmployeeGoonPayment2View
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+}
+
+@section CurentPlace {
+    责任客服-单人调基
+}
+<link href="~/Res/easyui/themes/default/easyui.css" rel="stylesheet" />
+<link href="~/Res/easyui/themes/icon.css" rel="stylesheet" />
+<script src="~/Res/easyui/jquery.easyui.min.js"></script>
+@*<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>*@
+
+@using (Html.BeginForm("", "api/EmployeeGoonPayment2Api/Post"))
+{
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" onclick="CreatePost()" value="保存" />
+        <input class="a2 f2" type="button" onclick="BackList('/EmployeeGoonPayment2/Index')" value="返回列表" />
+    </legend>
+    <p>人员基本信息</p>
+    <table>
+        <tr>
+            <td>@Html.LabelFor(model => model.Name)</td>
+            <td>@Html.TextBoxFor(model => model.Name, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.CertificateNumber)</td>
+            <td>@Html.TextBoxFor(model => model.CertificateNumber, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.CompanyName)</td>
+            <td>@Html.TextBoxFor(model => model.CompanyName, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.Station)</td>
+            <td>@Html.TextBoxFor(model => model.Station, new { disabled = "disabled" })</td>
+        </tr>
+    </table>
+    <p>社保信息</p>
+    <table>
+        <tr>
+            <td>@Html.LabelFor(model => model.City)</td>
+            <td>@Html.TextBoxFor(model => model.City, new { disabled = "disabled" })</td>
+            <td>@Html.TextBoxFor(model => model.CityID, new { @style="display:none"})</td>
+            <td>@Html.LabelFor(model => model.PoliceAccountNature)</td>
+            <td>@Html.TextBoxFor(model => model.PoliceAccountNature, new { disabled = "disabled" })</td>
+
+        </tr>
+        @*<tr>
+                <td>报减时间</td>
+                <td><input id="YearMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" onchange="yearMonth_Change()" on></td>
+                <td>社保月</td>
+                <td><input id="InsuranceMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" /></td>
+            </tr>*@
+    </table>
+    <div id="div1"></div>
+</fieldset>
+}
+
+
+<script type="text/javascript">
+    $(function () {
+
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Id';
+        $.ajax({
+            url: "/api/EmployeeGoonPayment2Api/GET/" + id,
+            type: "GET",
+            async: false,
+            success: function (res) {
+
+                $("#Name").val(res.Name);
+                $("#CertificateNumber").val(res.CertificateNumber);
+                $("#CompanyName").val(res.CompanyName);
+                $("#Station").val(res.Station);
+                $("#City").val(res.City);
+                $("#CityID").val(res.CityID);
+                $("#PoliceAccountNature").val(res.PoliceAccountNature);
+                //$("#SB_Wage").val(res.SB_Wage);
+                //$("#GJJ_Wage").val(res.GJJ_Wage);
+
+
+                var table = "<table id='tbInsurance'>";
+                table += "<tr>";
+                table += "<th style='width:50px'>险种</th><th  style='width:100px'>原社保工资</th><th  style='width:100px'>新社保工资</th><th style='display:none'>险种ID</th><th  style='display:none'>ID</th>";
+                table += "</tr>";
+                for (var i = 0; i < res.LastChangeWageInsuranceKindInfo.length; i++) {
+                    table += "<tr align='center'>";
+                 
+                    table += "<td>" + res.LastChangeWageInsuranceKindInfo[i].InsuranceKindName + "</td>";
+                    table += "<td>" + res.LastChangeWageInsuranceKindInfo[i].Wage + "</td>";
+                    table += "<td><input type=\"text\"  onchange='shebaogongzi(this)' name='NewWage' id='" + res.LastChangeWageInsuranceKindInfo[i].InsuranceKindId + "InsuranceKind' /></td>";
+                    table += "<td  style='display:none'><input type='text' name='LastChangeWageInsuranceKindInfo.InsuranceKindId' value='" + res.LastChangeWageInsuranceKindInfo[i].InsuranceKindId + "' /></td>";
+                    table += "<td  style='display:none'><input type='text' name='LastChangeWageInsuranceKindInfo.InsuranceKindId' value='" + res.LastChangeWageInsuranceKindInfo[i].EmployeeAddId + "' /></td>";
+                    table += "</tr>";
+                }
+                table += "</table>";
+
+                $("#div1").html(table);
+            }
+        });
+
+     
+    });
+
+    function CreatePost() {
+        var yanglao_InsuranceKind1=yiliao_InsuranceKind1=gongshang_InsuranceKind1=shiye_InsuranceKind1=shengyu_InsuranceKind1='';
+        var employeeID='@ViewBag.Id';
+        var cityID = $("#CityID").val();
+        var yanglao = yiliao = gongshang = shiye = shengyu = gongjijin = '';//工资
+        var yanglao_ID, yiliao_ID, gongshang_ID, shiye_ID, shengyu_ID, gongjijin_ID;
+        $("#tbInsurance").find("tr").not(":first").each(function (i) {
+            if ($(this).find("td:eq(0)").html() == "养老" && $(this).find("td:eq(2)").find("input[name='NewWage']").val() != '') {
+                yanglao = $(this).find("td:eq(2)").find("input[name='NewWage']").val();//新工资
+                yanglao_InsuranceKind1 = $(this).find("td:eq(3)").find("input[type='text']").val();//险种
+                yanglao_ID = $(this).find("td:eq(4)").find("input[type='text']").val();//报增表主键
+            }
+            else if ($(this).find("td:eq(0)").html() == "医疗" && $(this).find("td:eq(2)").find("input[name='NewWage']").val() != '') {
+                yiliao = $(this).find("td:eq(2)").find("input[name='NewWage']").val();
+                yiliao_InsuranceKind1 = $(this).find("td:eq(3)").find("input[type='text']").val();
+                yiliao_ID = $(this).find("td:eq(4)").find("input[type='text']").val();
+            }
+            else if ($(this).find("td:eq(0)").html() == "工伤" && $(this).find("td:eq(2)").find("input[name='NewWage']").val() != '') {
+                gongshang = $(this).find("td:eq(2)").find("input[name='NewWage']").val();
+                gongshang_InsuranceKind1 = $(this).find("td:eq(3)").find("input[type='text']").val();
+                gongshang_ID = $(this).find("td:eq(4)").find("input[type='text']").val();
+            }
+            else if ($(this).find("td:eq(0)").html() == "失业" && $(this).find("td:eq(2)").find("input[name='NewWage']").val() != '') {
+                shiye = $(this).find("td:eq(2)").find("input[name='NewWage']").val();
+                shiye_InsuranceKind1 = $(this).find("td:eq(3)").find("input[type='text']").val();
+                shiye_ID = $(this).find("td:eq(4)").find("input[type='text']").val();
+            }
+            else if ($(this).find("td:eq(0)").html() == "生育" && $(this).find("td:eq(2)").find("input[name='NewWage']").val() != '') {
+                shengyu = $(this).find("td:eq(2)").find("input[name='NewWage']").val();
+                shengyu_InsuranceKind1 = $(this).find("td:eq(3)").find("input[type='text']").val();
+                shengyu_ID  = $(this).find("td:eq(4)").find("input[type='text']").val();
+            }
+            else if ($(this).find("td:eq(0)").html() == "公积金" && $(this).find("td:eq(2)").find("input[name='NewWage']").val() != '') {
+                gongjijin = $(this).find("td:eq(2)").find("input[name='NewWage']").val();
+                gongjijin_ID = $(this).find("td:eq(4)").find("input[type='text']").val();
+            }
+        });
+
+        if (yanglao==''&& yiliao==''&& gongshang=='' && shiye=='' && shengyu=='' && gongjijin=='') {
+            $.messager.alert('提示', "请至少调整一个险种", 'info');
+            return false;
+        }
+        else if (yanglao == '0' || yiliao == '0' || gongshang == '0' || shiye == '0' || shengyu == '0' || gongjijin == '0') {
+            $.messager.alert('提示', "社保工资不能输入0", 'info');
+            return false;
+        }
+        else {
+            $.ajax({
+                url: "/api/EmployeeAddApi/POSTEmployeeAddCREATELimit?Cityid=" + cityID + "&yanglao_InsuranceKind1=" + yanglao_InsuranceKind1 + "&yiliao_InsuranceKind1=" + yiliao_InsuranceKind1 + "&gongshang_InsuranceKind1=" + gongshang_InsuranceKind1 + "&shiye_InsuranceKind1=" + shiye_InsuranceKind1 + "&shengyu_InsuranceKind1=" + shengyu_InsuranceKind1,
+                type: "POST",
+                async: false,
+                success: function (res) {
+                    if (res.Code == 1) {
+                        //var url="/api/EmployeeGoonPayment2Api/Post?Cityid=" + cityID + "&yanglao_InsuranceKind1=" + yanglao + "&yiliao_InsuranceKind1=" + yiliao + "&gongshang_InsuranceKind1=" + gongshang + "&shiye_InsuranceKind1=" + shiye + "&shengyu_InsuranceKind1=" + shengyu;
+                        //$("form").attr("action", url)
+                        //$("form").submit();
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/EmployeeGoonPayment2Api/Post?yanglaoID=" + yanglao_ID + "&yiliaoID=" + yiliao_ID + "&gongshangID=" + gongshang_ID + "&shiyeID=" + shiye_ID + "&shengyuID=" + shengyu_ID + "&gongjijinID=" + gongjijin_ID,
+                            async: false,
+                            data: {CityID:cityID,
+                                Pension_Wage: yanglao, Medical_Wage: yiliao,
+                                WorkInjury_Wage: gongshang,  Unemployment_Wage: shiye,
+                                HousingFund_Wage: gongjijin, Maternity_Wage: shengyu
+                            },
+                            success: function (msg) {
+                                if (msg.Code == 1) {
+                                    $.messager.alert('提示', msg.Message, 'info');
+                                }
+                                else {
+                                    $.messager.alert('提示', msg.Message, 'info');
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        $.messager.alert('提示', "此地市保险" + res.Message + "应为联动一起调基", 'info');
+                    }
+                },
+                error: function (a, b, c) {
+                    $.messager.alert("错误", b, 'error');
+                }
+            });
+        }
+    }
+    function shebaogongzi(obj) {
+
+        var wage = obj.value;
+        if (wage != "") {
+            if (wage <= 0) {
+                alert("社保工资必须大于0");
+                $(obj).val('');
+                return false;
+            }
+            if (isNaN(wage)) {
+                alert("不全是数字");
+                $(obj).val('');
+                return false;
+            }
+        }
+    }
+</script>

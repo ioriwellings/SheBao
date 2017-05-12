@@ -1,0 +1,164 @@
+﻿@model Langben.DAL.StopPaymentEmployeeInfo
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+@using NPOI.SS.Formula.Functions
+@section CurentPlace {
+    社保客服反馈报减信息
+}
+
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" onclick="EditPost()" value="保存并提交" />
+        <input class="a2 f2" type="button" onclick="BackList('EmployeeStopPaymentFeedback')" value="返回列表" />
+    </legend>
+    <p>人员基本信息</p>
+    <table>
+        <tr>
+            <td>@Html.LabelFor(model => model.EmployeeName)</td>
+            <td>@Html.TextBoxFor(model => model.EmployeeName, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.CardId)</td>
+            <td>@Html.TextBoxFor(model => model.CardId, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.CompanyName)</td>
+            <td>@Html.TextBoxFor(model => model.CompanyName, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.Station)</td>
+            <td>@Html.TextBoxFor(model => model.Station, new { disabled = "disabled" })</td>
+        </tr>
+    </table>
+    <p>社保信息</p>
+    <table>
+        <tr>
+            <td>@Html.LabelFor(model => model.CityName)</td>
+            <td>@Html.TextBoxFor(model => model.CityName, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.PoliceAccountNatureName)</td>
+            <td>@Html.TextBoxFor(model => model.PoliceAccountNatureName, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.SB_Wage)</td>
+            <td>@Html.TextBoxFor(model => model.SB_Wage, new { disabled = "disabled" })</td>
+            <td>@Html.LabelFor(model => model.GJJ_Wage)</td>
+            <td>@Html.TextBoxFor(model => model.GJJ_Wage, new { disabled = "disabled" })</td>
+        </tr>
+        @*<tr>
+                <td>报减时间</td>
+                <td><input id="YearMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" onchange="yearMonth_Change()" on></td>
+                <td>社保月</td>
+                <td><input id="InsuranceMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" /></td>
+            </tr>*@
+    </table>
+    <div id="div1"></div>
+</fieldset>
+
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Id';
+        $.ajax({
+            url: "/api/EmployeeStopPaymentFeedbackApi/GET/" + id,
+            type: "GET",
+            async: false,
+            success: function (res) {
+
+                $("#EmployeeName").val(res.EmployeeName);
+                $("#CardId").val(res.CardId);
+                $("#CompanyName").val(res.CompanyName);
+                $("#CityName").val(res.CityName);
+                $("#PoliceAccountNatureName").val(res.PoliceAccountNatureName);
+                $("#SB_Wage").val(res.SB_Wage);
+                $("#GJJ_Wage").val(res.GJJ_Wage);
+
+                var table = "<table>";
+                table += "<tr>";
+                table += "<th></th><th>险种</th><th>基数</th><th>社保月</th><th>报减类型</th>";
+                table += "</tr>";
+                for (var i = 0; i < res.LstStopPaymentInsuranceKindInfos.length; i++) {
+                    table += "<tr>";
+                    table += "<td><input type=\"checkbox\" id='cbox_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "' value=\"" + res.LstStopPaymentInsuranceKindInfos[i].EmployeeStopPaymentID + "\" /></td>";
+                    table += "<td>" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindName + "</td>";
+                    table += "<td>" + res.LstStopPaymentInsuranceKindInfos[i].Wage + "</td>";
+                    table += "<td><input id=\"InsuranceMonth_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "\"  value=\"" + res.LstStopPaymentInsuranceKindInfos[i].StopDate.substr(0, 7) + "\" onclick=\"WdatePicker({dateFmt:'yyyy-MM',realDateFmt:'yyyy-MM'})\" style=\"width:180px;\" disabled /> </td>";
+                    table += "<td> <select id=\"select_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "\"></select><input type=\"hidden\" id=\"police_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "\" value=\"" + res.LstStopPaymentInsuranceKindInfos[i].PoliceInsuranceId + "\"/><input type=\"hidden\" id=\"relation_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "\" value=\"" + res.LstStopPaymentInsuranceKindInfos[i].CompanyEmployeeRelationId + "\"/><input type=\"hidden\" id=\"operationName_" + res.LstStopPaymentInsuranceKindInfos[i].InsuranceKindId + "\" value=\"" + res.LstStopPaymentInsuranceKindInfos[i].PoliceOperationName + "\"/></td>";
+                    table += "</tr>";
+                }
+                table += "</table>";
+
+                $("#div1").html(table);
+            }
+        });
+
+
+        $("select[id^=select_]").each(function (i, value) {
+            var kindId = value.id.substring(7);
+            var operationName = $("#operationName_" + kindId).val();
+            $.ajax({
+                url: "/api/EmployeeStopPaymentSingleApi/PostPoliceOperation?kindId=" + kindId,
+                type: "POST",
+                async: false,
+                success: function (res) {
+                    $.each(res.rows, function (i, item) {
+                        if (operationName == item["Name"]) {
+                            $(value).append("<option value='" + item["ID"] + "' selected='selected'>" + item["Name"] + "</option>");
+                        } else {
+                            $(value).append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                        }
+                    });
+                },
+                error: function (a, b, c) {
+
+                }
+            });
+        });
+    });
+    function formatter2(date) {
+        if (!date) { return ''; }
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        return y + '-' + (m < 10 ? ('0' + m) : m);
+    };
+    function parser2(s) {
+        if (!s) { return null; }
+        var ss = s.split('-');
+        var y = parseInt(ss[0], 10);
+        var m = parseInt(ss[1], 10);
+        if (!isNaN(y) && !isNaN(m)) {
+            return new Date(y, m - 1, 1);
+        } else {
+            return new Date();
+        }
+    };
+
+
+    function EditPost() {
+        var parameters = "";
+        $("input[id^=cbox_]").each(function (i, value) {
+            if ($(value).is(":checked")) {
+                var param = "";
+                var kindId = value.id.substring(5);
+                var stopId = $(value).val();
+                var oper = $("#select_" + kindId).val();
+                param = stopId + "," + oper; //EmployeeStopPaymentID,报减类型
+                parameters += param + ";";
+            }
+        });
+        $.ajax({
+            url: "/api/EmployeeStopPaymentFeedbackApi/Post?parameters=" + parameters,
+            type: "POST",
+            async: false,
+            success: function (res) {
+                if (res.Code == 1) {
+                    alert(res.Message);
+                    BackList('EmployeeStopPaymentFeedback');
+                }
+            },
+            error: function (a, b, c) {
+
+            }
+        });
+    }
+</script>

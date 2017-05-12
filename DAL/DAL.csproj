@@ -1,0 +1,640 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D1AC05A2-96AF-4124-AD40-AD0A05C84F5C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Langben.DAL</RootNamespace>
+    <AssemblyName>DAL</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Allot.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AllotMeta.cs" />
+    <Compile Include="AllotRepository.cs" />
+    <Compile Include="Attachment.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="City.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CompanyEmployeeRelation.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_CostTable.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_CostTableInsurance.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_CostTableOther.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_CostTableService.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_ExpenditureInsurance.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayGongJiJin.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayGongJiJinBC.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayGongJiJinBCMeta.cs" />
+    <Compile Include="COST_PayGongJiJinBCRepository.cs" />
+    <Compile Include="COST_PayGongJiJinMeta.cs" />
+    <Compile Include="COST_PayGongJiJinRepository.cs" />
+    <Compile Include="COST_PayGongShang.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayGongShangMeta.cs" />
+    <Compile Include="COST_PayGongShangRepository.cs" />
+    <Compile Include="COST_PayRecord.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayRecordMeta.cs" />
+    <Compile Include="COST_PayRecordRepository.cs" />
+    <Compile Include="COST_PayRecordStatus.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayRecordStatusMeta.cs" />
+    <Compile Include="COST_PayRecordStatusRepository.cs" />
+    <Compile Include="COST_PayShengYu.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayShengYuMeta.cs" />
+    <Compile Include="COST_PayShengYuRepository.cs" />
+    <Compile Include="COST_PayShiYe.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayShiYeMeta.cs" />
+    <Compile Include="COST_PayShiYeRepository.cs" />
+    <Compile Include="COST_PayTemporary.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayTemporaryMeta.cs" />
+    <Compile Include="COST_PayTemporaryRepository.cs" />
+    <Compile Include="COST_PayYangLao.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayYangLaoMeta.cs" />
+    <Compile Include="COST_PayYangLaoRepository.cs" />
+    <Compile Include="COST_PayYiLiao.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayYiLiaoDaE.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="COST_PayYiLiaoDaEMeta.cs" />
+    <Compile Include="COST_PayYiLiaoDaERepository.cs" />
+    <Compile Include="COST_PayYiLiaoMeta.cs" />
+    <Compile Include="COST_PayYiLiaoRepository.cs" />
+    <Compile Include="CRM_Company.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyBankAccount.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyBankAccount_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyContract.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyContractMeta.cs" />
+    <Compile Include="CRM_CompanyContractRepository.cs" />
+    <Compile Include="CRM_CompanyContract_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyContract_AuditMeta.cs" />
+    <Compile Include="CRM_CompanyContract_AuditRepository.cs" />
+    <Compile Include="CRM_CompanyFinanceMeta.cs" />
+    <Compile Include="CRM_CompanyFinanceRepository.cs" />
+    <Compile Include="CRM_CompanyFinance_AuditMeta.cs" />
+    <Compile Include="CRM_CompanyFinance_AuditRepository.cs" />
+    <Compile Include="CRM_CompanyFinance_Bill.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyFinance_BillMeta.cs" />
+    <Compile Include="CRM_CompanyFinance_BillRepository.cs" />
+    <Compile Include="CRM_CompanyFinance_Bill_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyFinance_Bill_AuditMeta.cs" />
+    <Compile Include="CRM_CompanyFinance_Bill_AuditRepository.cs" />
+    <Compile Include="CRM_CompanyFinance_Payment.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyFinance_PaymentMeta.cs" />
+    <Compile Include="CRM_CompanyFinance_PaymentRepository.cs" />
+    <Compile Include="CRM_CompanyFinance_Payment_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyFinance_Payment_AuditMeta.cs" />
+    <Compile Include="CRM_CompanyFinance_Payment_AuditRepository.cs" />
+    <Compile Include="CRM_CompanyLadderPrice.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyLadderPrice_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyLinkMan.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyLinkMan_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyPrice.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyPrice_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_CompanyToBranch.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_Company_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_Company_Insurance.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_Company_InsuranceMeta.cs" />
+    <Compile Include="CRM_Company_InsuranceRepository.cs" />
+    <Compile Include="CRM_Company_Insurance_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_Company_PoliceInsurance.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_Company_PoliceInsuranceMeta.cs" />
+    <Compile Include="CRM_Company_PoliceInsuranceRepository.cs" />
+    <Compile Include="CRM_Company_PoliceInsurance_Audit.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_ZD_HY.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CRM_ZD_HYMeta.cs" />
+    <Compile Include="CRM_ZD_HYRepository.cs" />
+    <Compile Include="Employee.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeAdd.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeAddHistory.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeBank.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeContact.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeGoonPayment.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeGoonPayment2.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeGoonPayment3adsa.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeGoonPaymentHistory.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeInsuranceAttachment.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeMiddle.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeMiddleImportRecord.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeMiddleImportRecordMeta.cs" />
+    <Compile Include="EmployeeMiddleImportRecordRepository.cs" />
+    <Compile Include="EmployeeStopPayment.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeStopPaymentHistory.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Framework\BaseRepository.cs" />
+    <Compile Include="Framework\BaseViewRepository.cs" />
+    <Compile Include="Framework\IBaseEntity.cs" />
+    <Compile Include="InsuranceKind.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LadderLowestPrice.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LadderLowestPriceRepository.cs" />
+    <Compile Include="LadderLowestPriceMeta.cs" />
+    <Compile Include="LadderPrice.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LadderPriceMeta.cs" />
+    <Compile Include="LadderPriceRepository.cs" />
+    <Compile Include="Model1.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Model\CostType.cs" />
+    <Compile Include="Model\CostPayFenGe.cs" />
+    <Compile Include="Model\COST_PayRecordConfirm.cs" />
+    <Compile Include="Model\CRM_CompanyInsurance_View.cs" />
+    <Compile Include="Model\COST_Pay_Suppler.cs" />
+    <Compile Include="Model\EmployeeGoonPayment2View.cs" />
+    <Compile Include="Model\EmployeeGoonPaymentModels.cs" />
+    <Compile Include="Model\MenuTreeModel.cs" />
+    <Compile Include="Model\CostFeeModel.cs" />
+    <Compile Include="Model\CostPayDuibi.cs" />
+    <Compile Include="Model\CostPayPersonContrasted.cs" />
+    <Compile Include="Model\CostPayInsurance.cs" />
+    <Compile Include="Model\Cost_CostTableDetails.cs" />
+    <Compile Include="Model\COST_PayRecordSummary.cs" />
+    <Compile Include="Model\CRM_CompanyInfo.cs" />
+    <Compile Include="Model\CRM_CompanyAuditView.cs" />
+    <Compile Include="Model\CRM_CompanyView.cs" />
+    <Compile Include="Model\InsuranceKindPoliceOperationMeta.cs" />
+    <Compile Include="Model\EmployeeAddModels.cs" />
+    <Compile Include="Model\EmployeeMiddle.cs" />
+    <Compile Include="Model\EmployeeStopView.cs" />
+    <Compile Include="Model\EmployeeAllot.cs" />
+    <Compile Include="Model\EmployeeBanks.cs" />
+    <Compile Include="Model\EmployeeContacts.cs" />
+    <Compile Include="Model\EmployeeInfo.cs" />
+    <Compile Include="Model\PoliceInsuranceModel.cs" />
+    <Compile Include="Model\StopPaymentModels.cs" />
+    <Compile Include="Model\SupplierInfo.cs" />
+    <Compile Include="Model\SupplierAddView.cs" />
+    <Compile Include="Model\SupplierView.cs" />
+    <Compile Include="ORG_Department.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_Group.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_GroupMeta.cs" />
+    <Compile Include="ORG_GroupRepository.cs" />
+    <Compile Include="ORG_GroupUser.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_GroupUserMeta.cs" />
+    <Compile Include="ORG_GroupUserRepository.cs" />
+    <Compile Include="ORG_Menu.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_MenuMeta.cs" />
+    <Compile Include="ORG_MenuOp.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_MenuOpMeta.cs" />
+    <Compile Include="ORG_MenuOpRepository.cs" />
+    <Compile Include="ORG_MenuRepository.cs" />
+    <Compile Include="ORG_Role.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_RoleDepartmenScopetAuthority.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_RoleDepartmenScopetAuthorityMeta.cs" />
+    <Compile Include="ORG_RoleDepartmenScopetAuthorityRepository.cs" />
+    <Compile Include="ORG_RoleDepartmentAuthority.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_RoleDepartmentAuthorityMeta.cs" />
+    <Compile Include="ORG_RoleDepartmentAuthorityRepository.cs" />
+    <Compile Include="ORG_RoleMenuOpAuthority.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_RoleMenuOpAuthorityMeta.cs" />
+    <Compile Include="ORG_RoleMenuOpAuthorityRepository.cs" />
+    <Compile Include="ORG_RoleMeta.cs" />
+    <Compile Include="ORG_RoleRepository.cs" />
+    <Compile Include="ORG_User.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_UserCity.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_UserCityMeta.cs" />
+    <Compile Include="ORG_UserCityRepository.cs" />
+    <Compile Include="ORG_UserDepartmenScopetAuthority.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_UserDepartmenScopetAuthorityMeta.cs" />
+    <Compile Include="ORG_UserDepartmenScopetAuthorityRepository.cs" />
+    <Compile Include="ORG_UserDepartmentAuthority.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_UserDepartmentAuthorityMeta.cs" />
+    <Compile Include="ORG_UserDepartmentAuthorityRepository.cs" />
+    <Compile Include="ORG_UserInsuranceKind.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_UserInsuranceKindMeta.cs" />
+    <Compile Include="ORG_UserInsuranceKindRepository.cs" />
+    <Compile Include="ORG_UserMenuOpAuthority.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_UserMenuOpAuthorityMeta.cs" />
+    <Compile Include="ORG_UserMenuOpAuthorityRepository.cs" />
+    <Compile Include="ORG_UserRole.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ORG_UserRoleMeta.cs" />
+    <Compile Include="ORG_UserRoleRepository.cs" />
+    <Compile Include="PoliceAccountNature.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PoliceCascadeRelationship.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PoliceInsurance.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PoliceInsurance_Four_Five.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PoliceMasterRelationship.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PoliceOperation.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PoliceOperationPoliceInsurancePoliceAccountNature.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PoliceOperationPoliceInsurancePoliceAccountNature2.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PoliceRejectRelationship.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PRD_Product.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EmployeeMeta.cs" />
+    <Compile Include="EmployeeRepository.cs" />
+    <Compile Include="EmployeeContactMeta.cs" />
+    <Compile Include="EmployeeContactRepository.cs" />
+    <Compile Include="EmployeeBankMeta.cs" />
+    <Compile Include="EmployeeBankRepository.cs" />
+    <Compile Include="PoliceInsuranceMeta.cs" />
+    <Compile Include="PoliceInsuranceRepository.cs" />
+    <Compile Include="PoliceRejectRelationshipMeta.cs" />
+    <Compile Include="PoliceRejectRelationshipRepository.cs" />
+    <Compile Include="InsuranceKindMeta.cs" />
+    <Compile Include="InsuranceKindRepository.cs" />
+    <Compile Include="PoliceCascadeRelationshipMeta.cs" />
+    <Compile Include="PoliceCascadeRelationshipRepository.cs" />
+    <Compile Include="PoliceMasterRelationshipMeta.cs" />
+    <Compile Include="PoliceMasterRelationshipRepository.cs" />
+    <Compile Include="PoliceOperationMeta.cs" />
+    <Compile Include="PoliceOperationRepository.cs" />
+    <Compile Include="PoliceAccountNatureMeta.cs" />
+    <Compile Include="PoliceAccountNatureRepository.cs" />
+    <Compile Include="CityMeta.cs" />
+    <Compile Include="CityRepository.cs" />
+    <Compile Include="AttachmentMeta.cs" />
+    <Compile Include="AttachmentRepository.cs" />
+    <Compile Include="CompanyEmployeeRelationMeta.cs" />
+    <Compile Include="CompanyEmployeeRelationRepository.cs" />
+    <Compile Include="EmployeeAddMeta.cs" />
+    <Compile Include="EmployeeAddRepository.cs" />
+    <Compile Include="EmployeeStopPaymentMeta.cs" />
+    <Compile Include="EmployeeStopPaymentRepository.cs" />
+    <Compile Include="SCHR\COST_CostTableRepository.cs" />
+    <Compile Include="SCHR\COST_PayRecordRepository.cs" />
+    <Compile Include="SCHR\COST_PayRecordStatusRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyBankAccount_AuditRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyContract_AuditRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyFinance_Bill_AuditRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyFinance_Payment_AuditRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyLadderPriceRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyLadderPrice_AuditRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyLinkManRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyLinkMan_AuditRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyPriceRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyPrice_AuditRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyToBranchRepository.cs" />
+    <Compile Include="SCHR\CRM_Company_InsuranceRepository.cs" />
+    <Compile Include="SCHR\EmployeeGoonPayment2Repository.cs" />
+    <Compile Include="SCHR\EmployeeGoonPaymentRepository.cs" />
+    <Compile Include="SCHR\EmployeeMiddleImportRecordRepository.cs" />
+    <Compile Include="SCHR\InsuranceKindRepository.cs" />
+    <Compile Include="SCHR\LadderLowestPriceRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SCHR\LadderPriceRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SCHR\ORG_DepartmentRepository.cs" />
+    <Compile Include="SCHR\ORG_MenuOpRepository.cs" />
+    <Compile Include="SCHR\ORG_MenuRepository.cs" />
+    <Compile Include="SCHR\ORG_RoleMenuOpAuthorityRepository.cs" />
+    <Compile Include="SCHR\ORG_UserRepository.cs" />
+    <Compile Include="SCHR\CRM_Company_AuditRepository.cs" />
+    <Compile Include="SCHR\CRM_CompanyRepository.cs" />
+    <Compile Include="SCHR\EmployeeAppdetail.cs" />
+    <Compile Include="Model\EmployeeApprove.cs" />
+    <Compile Include="SCHR\EmployeeAddRepository.cs" />
+    <Compile Include="SCHR\EmployeeInf.cs" />
+    <Compile Include="SCHR\EmployeeMiddleRepository.cs" />
+    <Compile Include="SCHR\EmployeeRepository.cs" />
+    <Compile Include="SCHR\EmployeeStopPaymentRepository.cs" />
+    <Compile Include="SCHR\PoliceInsuranceRepository.cs" />
+    <Compile Include="SCHR\SupplierLinkManRepository.cs" />
+    <Compile Include="SCHR\SupplierRepository.cs" />
+    <Compile Include="Supplier.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierBankAccount.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierBill.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierBillMeta.cs" />
+    <Compile Include="SupplierBillRepository.cs" />
+    <Compile Include="SupplierBankAccountMeta.cs" />
+    <Compile Include="SupplierBankAccountRepository.cs" />
+    <Compile Include="SupplierLinkMan.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierLinkManMeta.cs" />
+    <Compile Include="SupplierLinkManRepository.cs" />
+    <Compile Include="SupplierMeta.cs" />
+    <Compile Include="SupplierNatureCity.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierNatureCityMeta.cs" />
+    <Compile Include="SupplierNatureCityRepository.cs" />
+    <Compile Include="SupplierRepository.cs" />
+    <Compile Include="EmployeeGoonPaymentMeta.cs" />
+    <Compile Include="EmployeeGoonPaymentRepository.cs" />
+    <Compile Include="EmployeeGoonPayment2Meta.cs" />
+    <Compile Include="EmployeeGoonPayment2Repository.cs" />
+    <Compile Include="EmployeeInsuranceAttachmentMeta.cs" />
+    <Compile Include="EmployeeInsuranceAttachmentRepository.cs" />
+    <Compile Include="EmployeeAddHistoryMeta.cs" />
+    <Compile Include="EmployeeAddHistoryRepository.cs" />
+    <Compile Include="EmployeeStopPaymentHistoryMeta.cs" />
+    <Compile Include="EmployeeStopPaymentHistoryRepository.cs" />
+    <Compile Include="EmployeeGoonPaymentHistoryMeta.cs" />
+    <Compile Include="EmployeeGoonPaymentHistoryRepository.cs" />
+    <Compile Include="EmployeeGoonPayment3adsaMeta.cs" />
+    <Compile Include="EmployeeGoonPayment3adsaRepository.cs" />
+    <Compile Include="EmployeeMiddleMeta.cs" />
+    <Compile Include="EmployeeMiddleRepository.cs" />
+    <Compile Include="PoliceOperationPoliceInsurancePoliceAccountNature2Meta.cs" />
+    <Compile Include="PoliceOperationPoliceInsurancePoliceAccountNature2Repository.cs" />
+    <Compile Include="CRM_CompanyMeta.cs" />
+    <Compile Include="CRM_CompanyRepository.cs" />
+    <Compile Include="CRM_CompanyLinkManMeta.cs" />
+    <Compile Include="CRM_CompanyLinkManRepository.cs" />
+    <Compile Include="CRM_CompanyToBranchMeta.cs" />
+    <Compile Include="CRM_CompanyToBranchRepository.cs" />
+    <Compile Include="CRM_CompanyBankAccountMeta.cs" />
+    <Compile Include="CRM_CompanyBankAccountRepository.cs" />
+    <Compile Include="PRD_ProductMeta.cs" />
+    <Compile Include="PRD_ProductRepository.cs" />
+    <Compile Include="COST_CostTableMeta.cs" />
+    <Compile Include="COST_CostTableRepository.cs" />
+    <Compile Include="CRM_CompanyPriceMeta.cs" />
+    <Compile Include="CRM_CompanyPriceRepository.cs" />
+    <Compile Include="CRM_CompanyLadderPriceMeta.cs" />
+    <Compile Include="CRM_CompanyLadderPriceRepository.cs" />
+    <Compile Include="COST_CostTableOtherMeta.cs" />
+    <Compile Include="COST_CostTableOtherRepository.cs" />
+    <Compile Include="COST_CostTableServiceMeta.cs" />
+    <Compile Include="COST_CostTableServiceRepository.cs" />
+    <Compile Include="COST_CostTableInsuranceMeta.cs" />
+    <Compile Include="COST_CostTableInsuranceRepository.cs" />
+    <Compile Include="COST_ExpenditureInsuranceMeta.cs" />
+    <Compile Include="COST_ExpenditureInsuranceRepository.cs" />
+    <Compile Include="CRM_Company_AuditMeta.cs" />
+    <Compile Include="CRM_Company_AuditRepository.cs" />
+    <Compile Include="CRM_CompanyLinkMan_AuditMeta.cs" />
+    <Compile Include="CRM_CompanyLinkMan_AuditRepository.cs" />
+    <Compile Include="CRM_CompanyBankAccount_AuditMeta.cs" />
+    <Compile Include="CRM_CompanyBankAccount_AuditRepository.cs" />
+    <Compile Include="CRM_CompanyPrice_AuditMeta.cs" />
+    <Compile Include="CRM_CompanyPrice_AuditRepository.cs" />
+    <Compile Include="CRM_CompanyLadderPrice_AuditMeta.cs" />
+    <Compile Include="CRM_CompanyLadderPrice_AuditRepository.cs" />
+    <Compile Include="UserCityCompany.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserCityCompanyMeta.cs" />
+    <Compile Include="UserCityCompanyRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{ade2ca10-f91e-4312-ba9d-5d264291e549}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="Model1.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Model1.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Model1.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model1.edmx</DependentUpon>
+      <LastGenOutput>Model1.Context.cs</LastGenOutput>
+    </None>
+    <None Include="Model1.edmx.diagram">
+      <DependentUpon>Model1.edmx</DependentUpon>
+    </None>
+    <None Include="Model1.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model1.edmx</DependentUpon>
+      <LastGenOutput>Model1.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

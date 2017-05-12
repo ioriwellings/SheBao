@@ -1,0 +1,334 @@
+﻿@model Langben.DAL.CRM_CompanyLadderPrice
+@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery">
+
+    <div class='input_search' style="padding-top:10px;">
+        <a href="#" onclick="GoBack('@ViewBag.Path')" class="easyui-linkbutton" data-options="iconCls:'icon-back'">
+            返回
+        </a>
+    </div>
+</div>
+<input type="text" id="hidGridID" style="display:none" />
+<br style="clear: both;" />
+<div class="p5">
+    <table id="gridPrice"></table>
+</div>
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+<script type="text/javascript" language="javascript">
+    $(function () {
+        $('#gridPrice').datagrid({
+            title: '客户_企业报价', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            url: '/api/CRM_CompanyPriceApi/PostData', //获取数据的url
+            queryParams: {
+                search: '@ViewBag.companyID'
+            },
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            toolbar: [
+                {
+                    text: '创建',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        return flexiCreate();
+                    }
+                }],
+            columns: [[
+                { field: 'CRM_Company_ID', title: '@Html.DisplayNameFor(model => model.CRM_Company_ID)', width: 129, align: 'center', hidden: true }
+                , { field: 'PRD_Product_ID', title: '@Html.DisplayNameFor(model => model.PRD_Product_ID)', width: 129, align: 'center', hidden: true }
+                , { field: 'ProductName', title: '@Html.DisplayNameFor(model => model.PRD_Product_ID)', align: 'center', width: 129 }
+                , { field: 'PriceType', title: '报价类型', align: 'center', width: 129, hidden: true }
+                , { field: 'LowestPrice', title: '整户服务费', align: 'center', width: 129 }
+                , { field: 'AddPrice', title: '补缴服务费', align: 'center', width: 129 }
+                , {
+                    field: 'Status', title: '状态', align: 'center', width: 129,
+                    formatter: function (value, row, index) {
+                        var a = "";
+                        if (value == 0) {
+                            a = '停用';
+                        }
+                        else if (value == 1) {
+                            a = '启用';
+                        }
+                        else if (value == 2) {
+                            a = '修改中';
+                        }
+                        return a;
+                    }
+                }
+                , { field: 'BranchID', title: '@Html.DisplayNameFor(model => model.BranchID)', width: 129, hidden: true }
+                  , {
+                      field: 'ID', title: '操作', align: 'center', width: 111,
+                      formatter: function (value, row, index) {
+                          var a = '';
+                          if (row.Status == 1) {
+                              a += '<a href="#" onclick="flexiModify(' + row.ID + ')">修改</a> ';
+                              a += '<a href="#" onclick="flexiStop(' + row.ID + ')">停用</a> ';
+                          }
+                          else if (row.Status == 0) {
+                              a += '<a href="#" onclick="flexiStart(' + row.ID + ')">启用</a> ';
+                          }
+                          return a;
+                      }
+                  }
+            ]],
+            rownumbers: true,
+            singleSelect: false, //允许选择多行
+            selectOnCheck: true,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+            checkOnSelect: true, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+            onClickRow: function (rowIndex, rowData) {
+                $(this).datagrid('unselectRow', rowIndex);
+            }
+
+        });
+        $('#flexigridData').datagrid({
+            title: '客户_企业阶梯报价', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            url: '/api/CRM_CompanyLadderPriceApi/PostData', //获取数据的url
+            queryParams: {
+                search: '@ViewBag.companyID'
+            },
+            sortName: 'BeginLadder',
+            sortOrder: 'Asc',
+            idField: 'ID',
+            toolbar: [
+              {
+                  text: '创建',
+                  iconCls: 'icon-add',
+                  handler: function () {
+                      return flexiCreateLadder();
+                  }
+              }],
+            columns: [[
+                { field: 'CRM_Company_ID', title: '@Html.DisplayNameFor(model => model.CRM_Company_ID)', width: 129, align: 'center', hidden: true }
+                , { field: 'PRD_Product_ID', title: '@Html.DisplayNameFor(model => model.PRD_Product_ID)', width: 129, align: 'center', hidden: true }
+                , { field: 'ProductName', title: '@Html.DisplayNameFor(model => model.PRD_Product_ID)', align: 'center', width: 129 }
+                , { field: 'SinglePrice', title: '@Html.DisplayNameFor(model => model.SinglePrice)', align: 'center', width: 129 }
+                , { field: 'BeginLadder', title: '@Html.DisplayNameFor(model => model.BeginLadder)', align: 'center', width: 129 }
+                , { field: 'EndLadder', title: '@Html.DisplayNameFor(model => model.EndLadder)', align: 'center', width: 129 }
+                , {
+                    field: 'Status', title: '状态', align: 'center', width: 129,
+                    formatter: function (value, row, index) {
+                        var a = "";
+                        if (value == 0) {
+                            a = '停用';
+                        }
+                        else if (value == 1) {
+                            a = '启用';
+                        }
+                        else if (value == 2) {
+                            a = '修改中';
+                        }
+                        return a;
+                    }
+                }
+                , { field: 'BranchID', title: '@Html.DisplayNameFor(model => model.BranchID)', width: 129, hidden: true }
+                , {
+                    field: 'ID', title: '操作', width: 111, align: 'center',
+                    formatter: function (value, row, index) {
+                        var a = '';
+                        if (row.Status == 1) {
+                            a += '<a href="#" onclick="flexiModifyLadder(' + row.ID + ')">修改</a> ';
+                            a += '<a href="#" onclick="flexiStopLadder(' + row.ID + ')">停用</a> ';
+                        }
+                        else if (row.Status == 0) {
+                            a += '<a href="#" onclick="flexiStartLadder(' + row.ID + ')">启用</a> ';
+                        }
+                        return a;
+                    }
+                }
+            ]],
+            rownumbers: true,
+            singleSelect: false, //允许选择多行
+            selectOnCheck: true,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+            checkOnSelect: true, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+            onClickRow: function (rowIndex, rowData) {
+                $(this).datagrid('unselectRow', rowIndex);
+            }
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            //$('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+    //导航到创建的按钮
+    function flexiCreate() {
+        $.ajax({
+            url: "/api/CRM_CompanyPriceApi/CheckPrice/@ViewBag.companyID",
+            type: "Post",
+            success: function (res) {
+                if (res == 0) {
+                    return CommonSelect('/CRM/CRM_CompanyLadderPrice/Create/@ViewBag.companyID', '创建', 920, 590);
+                }
+                else if (res == 1) {
+                    $.messager.alert('操作提示', "企业只能有一条报价信息", 'warning');
+                }
+                else if (res == 2) {
+                    $.messager.alert('操作提示', "企业已有一条报价信息正在审核中", 'warning');
+                }
+                else {
+                    $.messager.alert('操作提示', "系统错误", 'error');
+                }
+            }
+        })
+    }
+    //导航到修改的按钮
+    function flexiModify(id) {
+        $("#hidGridID").val("gridPrice");
+        return CommonSelect('/CRM/CRM_CompanyLadderPrice/Edit/' + id, '修改', 920, 500);
+    };
+    //停用按钮
+    function flexiStop(id) {
+        $.messager.confirm('操作提示', "确认停用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyPriceApi/Stop/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#gridPrice").datagrid("reload");
+                            $("#gridPrice").datagrid("clearSelections");
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+    //启用按钮
+    function flexiStart(id) {
+        $.messager.confirm('操作提示', "确认启用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyPriceApi/Start/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#gridPrice").datagrid("reload");
+                            $("#gridPrice").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+    };
+
+    //创建阶梯报价
+    function flexiCreateLadder() {
+
+        $.ajax({
+            url: "/api/CRM_CompanyPriceApi/GetActiveProduct/@ViewBag.companyID",
+            type: "Get",
+            success: function (res) {
+                if (res == 0) {
+                    $.messager.alert('操作提示', "请先创建报价信息！", 'warning');
+                }
+                else {
+                    return CommonSelect('/CRM/CRM_CompanyLadderPrice/CreateLadder/@ViewBag.companyID?productID=' + res, '创建', 920, 500);
+                }
+            }
+        })
+
+
+
+    }
+    //修改阶梯报价
+    function flexiModifyLadder(id) {
+        $("#hidGridID").val("flexigridData");
+        return CommonSelect('/CRM/CRM_CompanyLadderPrice/EditLadder/' + id, '修改', 920, 500);
+    };
+    //停用阶梯报价
+    function flexiStopLadder(id) {
+        $.messager.confirm('操作提示', "确认停用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyLadderPriceApi/Stop/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+    //启用阶梯报价
+    function flexiStartLadder(id) {
+        $.messager.confirm('操作提示', "确认启用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyLadderPriceApi/Start/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/" + path + "/Index/?tmp=" + tmp;
+    }
+</script>

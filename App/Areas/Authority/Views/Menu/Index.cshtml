@@ -1,0 +1,153 @@
+﻿@{
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>菜单管理</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#DataGrid").treegrid({
+                url: "@Url.Action("GetData", "Menu", new { area = "Authority" })",
+                method: "GET",
+                title: '菜单列表',
+                fit: true,
+                fitColumns: false,//是否自适应列宽
+                rownumbers: true, //是否加行号
+                lines: true,//显示数网格线
+                idField: 'ID',//树节点的键名字段。必需。
+                treeField: 'MenuName',//树节点字段（数据列表中，把那一列字段做成树结构）
+                animate: false,//节点展开时，不显示动画效果
+                onClickRow: function (rowIndex, rowData) {
+                    $(this).treegrid('unselectRow', rowIndex.ID);
+                },
+                onLoadSuccess: function (row, data) {
+                    $(".tree-icon,.tree-file").removeClass("tree-icon tree-file");
+                    $(".tree-icon,.tree-folder").removeClass("tree-icon tree-folder tree-folder-open tree-folder-closed");
+                }
+            });
+        });
+
+        //显示复选框
+        function formatCheckbox(value, row) {
+            if (value) {
+                return " <input type='checkbox' class='checkid' id='ck_" + row.ID + "'  name='row" + row.ID + "' value='" + row.ID + "'/>" + value;
+            } else {
+                return '';
+            }
+        }
+
+        // 删除菜单
+        function Delete() {
+            var ids = [];
+            $('input:checkbox:checked').each(function (i) {
+                ids.push(this.value);
+            });
+            if (ids.length == 0) {
+                $.messager.alert('操作提示', "请先选择需要删除的数据", 'info');
+                return false;
+            }
+            else {
+                $.messager.confirm('操作提示', "确认删除选中数据吗？", function (r) {
+                    if (r) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("DeleteMenu", "Menu", new { area = "Authority" })?ids=' + ids,
+                            dataType: 'json',
+                            async: false, //同步
+                            success: function (data) {
+                                if (data.Code == "ok") {
+                                    //重新加载数据
+                                    $.messager.alert('操作提示', data.Message, 'info');
+                                    $("#DataGrid").treegrid("reload");
+                                    return true;
+                                }
+                                else {
+                                    $.messager.alert('操作提示', data.Message, 'info');
+                                    return false;
+                                }
+                            },
+                            error: function () {
+                                $.messager.alert('操作提示', "操作失败", 'info');
+                                return false;
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        // 创建菜单
+        function Create() {
+            window.location.href = "../Authority/Menu/Create";
+            return false;
+        }
+
+        // 编辑菜单
+        function Edit() {
+            var ids = [];
+            $('input:checkbox:checked').each(function (i) {
+                ids.push(this.value);
+            });
+            if (ids.length == 0) {
+                $.messager.alert('操作提示', "请先选择一条数据", 'info');
+                return false;
+            }
+            else if (ids.length > 1) {
+                $.messager.alert('操作提示', "只能选择一条数据", 'info');
+                return false;
+            }
+            else {
+                window.location.href = "../Authority/Menu/Edit?id=" + ids[0];
+                return false;
+            }
+        }
+
+    </script>
+</head>
+<body class="easyui-layout">
+    <div data-options="region:'center',title:'',iconCls:'icon-ok',border:false"
+         style="padding:5px;">
+        <div id="toolbar" class="datagrid-toolbar">
+            @if (ViewBag.AddButton)
+            {
+                <a href="javascript:void(0);" class="easyui-linkbutton"
+                   data-options="plain:true,iconCls:'icon-add'" onclick="Create()">添加</a>
+            }
+            @if (ViewBag.EditButton)
+            {
+                <a href="javascript:void(0);" class="easyui-linkbutton"
+                   data-options="plain:true,iconCls:'icon-edit'" onclick="Edit()">编辑</a>
+            }
+            @if (ViewBag.DeleteButton)
+            {
+                <a href="javascript:void(0);" class="easyui-linkbutton"
+                   data-options="plain:true,iconCls:'icon-cancel'" onclick="Delete()">删除</a>
+            }
+        </div>
+        <table id="DataGrid" class="easyui-treegrid" data-options="fit:true,toolbar:'#toolbar'">
+            <thead>
+                <tr>
+                    <th data-options="field:'MenuName',formatter:formatCheckbox" width="15%">菜单名称</th>
+                    <th data-options="field:'ID',align:'center'" width="5%">编号</th>
+                    <th data-options="field:'ParentName',align:'center',halign:'center'" width="10%">父菜单</th>
+                    <th data-options="field:'MenuUrl',align:'left',halign:'center'" width="15%">菜单地址</th>
+                    <th data-options="field:'DepartmentScopeAuthority',align:'center'" width="10%">部门范围权限配置功能</th>
+                    <th data-options="field:'DepartmentAuthority',align:'center'" width="10%">部门业务权限配置功能</th>
+                    <th data-options="field:'IsDisplay',align:'center'" width="10%">是否显示导航链接</th>
+                    <th data-options="field:'NodeLevel',align:'center'" width="10%">层级</th>
+                    <th data-options="field:'Sort',align:'center'" width="10%">排序</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="06cfbae2dc4f47a3923564e6abd36d81" Name="Diagram1" ZoomLevel="106">
+        <EntityTypeShape EntityType="SysModel.Attachment" Width="1.5" PointX="7.5" PointY="15.25" />
+        <EntityTypeShape EntityType="SysModel.City" Width="1.5" PointX="3" PointY="24.25" />
+        <EntityTypeShape EntityType="SysModel.CompanyEmployeeRelation" Width="1.5" PointX="10.5" PointY="34.5" />
+        <EntityTypeShape EntityType="SysModel.COST_CostTable" Width="1.5" PointX="10.75" PointY="5.75" />
+        <EntityTypeShape EntityType="SysModel.COST_CostTableInsurance" Width="1.5" PointX="9.75" PointY="10.75" />
+        <EntityTypeShape EntityType="SysModel.COST_CostTableOther" Width="1.5" PointX="11.75" PointY="10.75" />
+        <EntityTypeShape EntityType="SysModel.COST_CostTableService" Width="1.5" PointX="13.75" PointY="5.75" />
+        <EntityTypeShape EntityType="SysModel.COST_ExpenditureInsurance" Width="1.5" PointX="13.75" PointY="11.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayGongJiJin" Width="1.5" PointX="15.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayGongJiJinBC" Width="1.5" PointX="15.75" PointY="6.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayGongShang" Width="1.5" PointX="15.75" PointY="12.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayRecord" Width="1.5" PointX="0.75" PointY="16.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayRecordStatus" Width="1.5" PointX="2.75" PointY="16.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayShengYu" Width="1.5" PointX="4.75" PointY="16.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayShiYe" Width="1.5" PointX="11.75" PointY="16.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayTemporary" Width="1.5" PointX="17.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayYangLao" Width="1.5" PointX="17.75" PointY="12.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayYiLiao" Width="1.5" PointX="17.75" PointY="18.75" />
+        <EntityTypeShape EntityType="SysModel.COST_PayYiLiaoDaE" Width="1.5" PointX="13.75" PointY="18.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_Company" Width="1.5" PointX="19.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_Company_Audit" Width="1.5" PointX="19.75" PointY="5.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_Company_Insurance" Width="1.5" PointX="19.75" PointY="10.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_Company_Insurance_Audit" Width="1.5" PointX="19.75" PointY="14.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_Company_PoliceInsurance" Width="1.5" PointX="19.75" PointY="19.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_Company_PoliceInsurance_Audit" Width="1.5" PointX="21.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyBankAccount" Width="1.5" PointX="21.75" PointY="5.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyBankAccount_Audit" Width="1.5" PointX="21.75" PointY="9.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyContract" Width="1.5" PointX="21.75" PointY="14.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyContract_Audit" Width="1.5" PointX="21.75" PointY="19.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyFinance_Bill" Width="1.5" PointX="23.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyFinance_Bill_Audit" Width="1.5" PointX="23.75" PointY="4.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyFinance_Payment" Width="1.5" PointX="0.75" PointY="20.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyFinance_Payment_Audit" Width="1.5" PointX="23.75" PointY="9.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyLadderPrice" Width="1.5" PointX="23.75" PointY="13.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyLadderPrice_Audit" Width="1.5" PointX="23.75" PointY="17.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyLinkMan" Width="1.5" PointX="23.75" PointY="22.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyLinkMan_Audit" Width="1.5" PointX="25.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyPrice" Width="1.5" PointX="25.75" PointY="6.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyPrice_Audit" Width="1.5" PointX="25.75" PointY="10.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_CompanyToBranch" Width="1.5" PointX="17.75" PointY="24.75" />
+        <EntityTypeShape EntityType="SysModel.CRM_ZD_HY" Width="1.5" PointX="25.75" PointY="15.75" />
+        <EntityTypeShape EntityType="SysModel.Employee" Width="1.5" PointX="5.75" PointY="3" />
+        <EntityTypeShape EntityType="SysModel.EmployeeAdd" Width="1.5" PointX="12.75" PointY="25.375" />
+        <EntityTypeShape EntityType="SysModel.EmployeeAddHistory" Width="1.5" PointX="25.75" PointY="18.75" />
+        <EntityTypeShape EntityType="SysModel.EmployeeBank" Width="1.5" PointX="8" PointY="1.25" />
+        <EntityTypeShape EntityType="SysModel.EmployeeContact" Width="1.5" PointX="8" PointY="5.625" />
+        <EntityTypeShape EntityType="SysModel.EmployeeGoonPayment" Width="1.5" PointX="15" PointY="33.25" />
+        <EntityTypeShape EntityType="SysModel.EmployeeGoonPayment2" Width="1.5" PointX="15" PointY="24.25" />
+        <EntityTypeShape EntityType="SysModel.EmployeeGoonPayment3adsa" Width="1.5" PointX="20.75" PointY="25.75" />
+        <EntityTypeShape EntityType="SysModel.EmployeeGoonPaymentHistory" Width="1.5" PointX="25.75" PointY="24.75" />
+        <EntityTypeShape EntityType="SysModel.EmployeeInsuranceAttachment" Width="1.5" PointX="12.75" PointY="34.5" />
+        <EntityTypeShape EntityType="SysModel.EmployeeMiddle" Width="1.5" PointX="27.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SysModel.EmployeeMiddleImportRecord" Width="1.5" PointX="27.75" PointY="6.75" />
+        <EntityTypeShape EntityType="SysModel.EmployeeStopPayment" Width="1.5" PointX="18" PointY="27.875" />
+        <EntityTypeShape EntityType="SysModel.EmployeeStopPaymentHistory" Width="1.5" PointX="27.75" PointY="10.75" />
+        <EntityTypeShape EntityType="SysModel.InsuranceKind" Width="1.5" PointX="5.25" PointY="22.5" />
+        <EntityTypeShape EntityType="SysModel.LadderLowestPrice" Width="1.5" PointX="10.75" PointY="1" />
+        <EntityTypeShape EntityType="SysModel.LadderPrice" Width="1.5" PointX="13" PointY="1.125" />
+        <EntityTypeShape EntityType="SysModel.ORG_Group" Width="1.5" PointX="27.75" PointY="14.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_GroupUser" Width="1.5" PointX="27.75" PointY="17.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_Menu" Width="1.5" PointX="27.75" PointY="20.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_MenuOp" Width="1.5" PointX="22.75" PointY="27.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_Role" Width="1.5" PointX="27.75" PointY="24.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_RoleDepartmenScopetAuthority" Width="1.5" PointX="27.75" PointY="27.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_RoleDepartmentAuthority" Width="1.5" PointX="0.75" PointY="28.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_RoleMenuOpAuthority" Width="1.5" PointX="2.75" PointY="28.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_UserCity" Width="1.5" PointX="5.25" PointY="38.875" />
+        <EntityTypeShape EntityType="SysModel.ORG_UserDepartmenScopetAuthority" Width="1.5" PointX="4.75" PointY="28.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_UserDepartmentAuthority" Width="1.5" PointX="24.75" PointY="28.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_UserInsuranceKind" Width="1.5" PointX="7.5" PointY="19.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_UserMenuOpAuthority" Width="1.5" PointX="29.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_UserRole" Width="1.5" PointX="29.75" PointY="3.75" />
+        <EntityTypeShape EntityType="SysModel.PoliceAccountNature" Width="1.5" PointX="0.75" PointY="24.125" />
+        <EntityTypeShape EntityType="SysModel.PoliceCascadeRelationship" Width="1.5" PointX="7.5" PointY="11.25" />
+        <EntityTypeShape EntityType="SysModel.PoliceInsurance" Width="1.5" PointX="7.5" PointY="23" />
+        <EntityTypeShape EntityType="SysModel.PoliceInsurance_Four_Five" Width="1.5" PointX="9.75" PointY="22.25" />
+        <EntityTypeShape EntityType="SysModel.PoliceMasterRelationship" Width="1.5" PointX="7.5" PointY="34.625" />
+        <EntityTypeShape EntityType="SysModel.PoliceOperation" Width="1.5" PointX="7.5" PointY="30.375" />
+        <EntityTypeShape EntityType="SysModel.PoliceOperationPoliceInsurancePoliceAccountNature" Width="1.5" PointX="9.75" PointY="31.375" />
+        <EntityTypeShape EntityType="SysModel.PoliceOperationPoliceInsurancePoliceAccountNature2" Width="1.5" PointX="29.75" PointY="6.75" />
+        <EntityTypeShape EntityType="SysModel.PoliceRejectRelationship" Width="1.5" PointX="9.75" PointY="26.5" />
+        <EntityTypeShape EntityType="SysModel.PRD_Product" Width="1.5" PointX="29.75" PointY="11.75" />
+        <EntityTypeShape EntityType="SysModel.Supplier" Width="1.5" PointX="0.75" PointY="6.375" />
+        <EntityTypeShape EntityType="SysModel.SupplierBankAccount" Width="1.5" PointX="3" PointY="4" />
+        <EntityTypeShape EntityType="SysModel.SupplierBill" Width="1.5" PointX="3" PointY="12.125" />
+        <EntityTypeShape EntityType="SysModel.SupplierLinkMan" Width="1.5" PointX="3" PointY="7.5" />
+        <EntityTypeShape EntityType="SysModel.SupplierNatureCity" Width="1.5" PointX="3" PointY="1.5" />
+        <EntityTypeShape EntityType="SysModel.Allot" Width="1.5" PointX="29.75" PointY="14.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_Department" Width="1.5" PointX="29.75" PointY="19.75" />
+        <EntityTypeShape EntityType="SysModel.ORG_User" Width="1.5" PointX="14.75" PointY="29.75" />
+        <AssociationConnector Association="SysModel.FK_ATTACHME_REFERENCE_INSURANC" />
+        <AssociationConnector Association="SysModel.FK_InsuranceKind_City" />
+        <AssociationConnector Association="SysModel.FK_ORG_UserCity_City" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_COMPANYE" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_COMPANYE2" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_EMPLOYEE2" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_EMPLOYEE3" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_EMPLOYEE" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_EMPLOYEE4" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_EMPLOYEE5" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_POLICEAC" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_POLICEIN" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_POLICEOP2" />
+        <AssociationConnector Association="SysModel.FK_EMPLOYEE_REFERENCE_POLICEOP" />
+        <AssociationConnector Association="SysModel.FK_ORG_UserInsuranceKind_InsuranceKind" />
+        <AssociationConnector Association="SysModel.FK_POLICECA_REFERENCE_INSURANC" />
+        <AssociationConnector Association="SysModel.FK_POLICEIN_REFERENCE_INSURANC" />
+        <AssociationConnector Association="SysModel.FK_POLICEMA_REFERENCE_INSURANC" />
+        <AssociationConnector Association="SysModel.FK_LADDERPR_REFERENCE_LADDERLO" />
+        <AssociationConnector Association="SysModel.FK_POLICEOP_REFERENCE_POLICEAC" />
+        <AssociationConnector Association="SysModel.FK_PoliceInsurance_Four_Five_PoliceInsurance" />
+        <AssociationConnector Association="SysModel.FK_POLICEOP_REFERENCE_POLICEIN" />
+        <AssociationConnector Association="SysModel.FK_POLICERE_REFERENCE_POLICEIN" />
+        <AssociationConnector Association="SysModel.FK_POLICEOP_REFERENCE_POLICEOP" />
+        <AssociationConnector Association="SysModel.FK_SUPPLIER_REFERENCE_SUPPLIER" />
+        <AssociationConnector Association="SysModel.FK_SUPPLIER_REFERENCE_SUPPLIER2" />
+        <AssociationConnector Association="SysModel.FK_SUPPLIER_REFERENCE_SUPPLIER3" />
+        <AssociationConnector Association="SysModel.FK_SUPPLIER_REFERENCE_SUPPLIER4" />
+        <AssociationConnector Association="SysModel.InsuranceKindPoliceOperation" />
+        <AssociationConnector Association="SysModel.PoliceAccountNatureCity" />
+        <AssociationConnector Association="SysModel.PoliceAccountNatureCity2" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

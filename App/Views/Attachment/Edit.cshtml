@@ -1,0 +1,124 @@
+﻿@model Langben.DAL.Attachment
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+ @section CurentPlace {
+    修改  
+}
+
+@using (Html.BeginForm("", "api/AttachmentApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('Attachment')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.Id )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Name)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Path)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Path)
+                @Html.ValidationMessageFor(model => model.Path)
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.FullPath)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.FullPath) 
+                @Html.ValidationMessageFor(model => model.FullPath) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Suffix)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Suffix)
+                @Html.ValidationMessageFor(model => model.Suffix)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Size) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Size, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.Size) 
+            </div>      
+            <div class="editor-label">
+                <a class="anUnderLine" onclick="showModalOnly('InsuranceKindId','../../InsuranceKind');">
+                    @Html.LabelFor(model => model.InsuranceKindId) 
+                </a>：
+            </div>
+            <div class="editor-field">
+                <div id="checkInsuranceKindId">
+                        @if(Model!=null)
+                        {
+                        if (null != Model.InsuranceKindId)                      
+                        { 
+                    <table id="@Model.InsuranceKindId"
+                        class="deleteStyle">
+                        <tr>
+                            <td>
+                                <img alt="删除"  title="点击删除" onclick="deleteTable('@Model.InsuranceKindId ','InsuranceKindId');" src="../../../Images/deleteimge.png" />
+                            </td>
+                            <td>
+                                @Model.InsuranceKind.Name
+                            </td>
+                        </tr>
+                    </table>
+                    }} 
+                </div>
+                @Html.HiddenFor(model => model.InsuranceKindId)
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>        
+            <div class="editor-label">
+                @Html.LabelFor(model => model.State)：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.State,Models.SysFieldModels.GetSysField("Attachment","State"),"请选择")
+            </div>@Html.HiddenFor(model => model.CreateTime ) @Html.HiddenFor(model => model.CreatePerson ) 
+        </div>
+    </fieldset>
+}
+
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            
+
+            // 获取待编辑内容并显示
+            var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/AttachmentApi/" + id,
+                type: "POST",
+                // async: false,
+                success: function (res) {
+                    $("#Id").val(res.Id);$("#Name").val(res.Name);$("#Path").val(res.Path);$("#FullPath").val(res.FullPath);$("#Suffix").val(res.Suffix);$("#Size").val(res.Size);$("#Remark").val(res.Remark);$("#State").val(res.State);$("#CreateTime").val(res.CreateTime);$("#CreatePerson").val(res.CreatePerson);
+                }
+            })
+        });
+        
+
+    </script>
+
+
+

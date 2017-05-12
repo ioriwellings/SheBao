@@ -1,0 +1,219 @@
+﻿@*<title>员工社保收支对比</title>*@
+
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+
+<div id="divQuery" data-options="region:'north',border:false" style="height:110px">
+    <div class="input_search">
+        <div class="input_search-label">
+            保险类型：
+        </div>
+        <div class="input_search-field">
+            <select id="CostType" onchange="GetCity()">
+                @*<option value="1">养老</option>
+                    <option value="2">医疗</option>
+                    <option value="3">工伤</option>
+                    <option value="4">失业</option>
+                    <option value="5">公积金</option>
+                    <option value="6">生育</option>
+                    <option value="9">大病</option>
+                    <option value="8">补充公积金</option>*@
+            </select>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            年月：
+        </div>
+        <div class="input_search-field">
+            <input id="YearMonthStart" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" />~<input id="YearMonthEnd" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" />
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label" style="width:auto">
+            单位名称：
+        </div>
+        <div class="input_search-field">
+            <select id="Company"></select>
+        </div>
+    </div>
+    <div>
+        <div class="input_search-label" style="width:auto">
+            身份证号：
+        </div>
+        <div>
+            <textarea id="Certificate" class="CertificateNumber"></textarea>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label" style="width:auto">
+            姓名：
+        </div>
+        <div class="input_search-field">
+            <input id="EmployeeName" type="text">
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            缴纳地：
+        </div>
+        <div class="input_search-field">
+            <select id="City"></select>
+        </div>
+    </div>
+
+    <div class='input_search' style="padding-top:10px;">
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+
+<br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(".yearMonth").simpleCanleder();
+
+    function GetCompany() {
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/CostPayPersonContrastedApi/GetCompany",
+            async: true,
+            success: function (data) {
+                $("#Company").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+                    $("#Company").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+
+    function GetCostType() {
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/CostPayPersonContrastedApi/GetCostType",
+            async: true,
+            success: function (data) {
+                $("#CostType").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+                    $("#CostType").append("<option value='" + item["Code"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+
+    function GetCity() {
+        $("#City").html("");
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/CostPayPersonContrastedApi/GetCity?costType=" + $("#CostType").val(),
+            async: true,
+            success: function (data) {
+                $("#City").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+
+                    $("#City").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+
+    $(function () {
+        GetCompany();
+        GetCostType();
+        $('#flexigridData').datagrid({
+            title: '员工社保收支对比', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: true,
+            url: 'api/CostPayPersonContrastedApi/PostData', //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+
+            columns: [[
+                { field: 'CompanyCode', title: '单位编号', width: 97 }
+                , { field: 'CompanyName', title: '单位名称', width: 150 }
+                , { field:'CityName', title:'缴纳地', width:80 }
+                , { field: 'Certificate', title: '身份证号', width: 150 }
+                , { field: 'EmployeeName', title: '姓名', width: 97 }
+                , { field: 'PayCompanyCost', title: '单位支出', width: 97 }
+                , { field: 'PayPersonCost', title: '个人支出', width: 97 }
+                , { field: 'CostCompanyCost', title: '单位收入', width: 97 }
+                , { field: 'CostPersonCost', title: '个人收入', width: 97 }
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        //将查询条件按照分隔符拼接成字符串
+        //if ($("#Company").val() == "0" && $("#Certificate").val() == "" && $("#EmployeeName").val() == "") {
+        //    $.messager.alert('操作提示', "单位、身份证号、名称，请至少选择或填写一个", 'info');
+        //    return false;
+        //}
+        //else {
+        if ($("#CostType").val() == "0") {
+            $.messager.alert('操作提示', "请选择险种", 'info');
+            return false;
+        }
+            var start = "";
+            var end = "";
+            if ($("#YearMonthStart").val() == "") {
+                start = "000101";  // 设置为0001-01，最小时间
+            }
+            else {
+                start = $("#YearMonthStart").val().replace('-', '');
+            }
+            if ($("#YearMonthEnd").val() == "") {
+                end = "999912";  // 设置为9999-12，最大时间
+            }
+            else {
+                end = $("#YearMonthEnd").val().replace('-', '');
+            }
+
+            var city = $("#City").val();
+            if ($("#City").val() == "0") {
+                // 若没有选择缴纳地，则缴纳地参数传空字符
+                city = "";
+            }
+            var search = "";
+            search = "yearMonthStart&" + start + "^yearMonthEnd&" + end + "^costType&" + $("#CostType").val() + "^company&" + $("#Company").val()
+                + "^certificate&" + $("#Certificate").val() + "^employeeName&" + $("#EmployeeName").val() + "^cityId&" + city;
+
+            //执行查询
+            $('#flexigridData').datagrid('load', { search: search });
+        //}
+    };
+
+</script>
+
+
+
+
+
+

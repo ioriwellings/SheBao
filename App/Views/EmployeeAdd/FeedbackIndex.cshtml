@@ -1,0 +1,192 @@
+﻿@*@{ Layout = "~/Views/Shared/Index.cshtml"; }*@
+@using Common
+@using Models
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+<script src="~/Scripts/JScriptIndex.js"></script>
+<script src="~/Scripts/Myl.js"></script>
+
+    <div id="divQuery">
+        <div id="div1"></div>
+       
+    </div>
+<script>
+    $(function () {
+        myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + @(ViewBag.Cityid), function (data) {
+            if (data != null) {
+                var table = "<table id=\"tabRateInfo\" style=\"padding-left:100px;\">";
+                table += "<tr>";
+                table += "<td></td>";
+                table += "<td></td>";
+                table += "<td>";
+                $.each(data, function (i, item1) {
+                    table += "<input type=\"checkbox\" value=\"" + item1["Name"] + "\" id=\"\" name=\"ck\" />" + item1["Name"] + "";
+                });
+                table += "</td>";
+                table += "</tr>";
+                table += "<tr>";
+                table += "<td></td>";
+                table += "<td> 失败原因:</td>";
+                table += "<td>  <textarea id=\"htyy\"></textarea></td>";
+                table += "</tr>";
+                table += "<tr>";
+                table += "<td></td>";
+                table += "<td></td>";
+                table += "<td> <input type=\"button\" value=\"通过\" onclick=\"FeedBackIndex()\" /><input type=\"button\" value=\"返回\" onclick=\"javascript:history.back(-1);\" />  </td>";
+               
+                table += "</tr>";
+                table += "</table>";
+                $("#div1").html(table);
+            }
+        });
+
+        var ids = '@ViewBag.ids';
+        var Cityid = '@ViewBag.Cityid';
+
+
+        var alltype = '@ViewBag.alltype';
+        var allarr = alltype.split(',');
+        var flag = '@ViewBag.flag';
+        $("#divQuery").find(':checkbox').click(function () {
+            var nn = this;
+            liandong(nn.id, nn.checked);
+        });
+        var datann = $("#divQuery").find(':checkbox');
+        if (flag == '1') {
+            for (var i = 0; i < datann.length; i++) {
+
+                if ($.inArray(datann[i].value, allarr) == -1) {
+
+                    datann[i].disabled = 'disabled';
+                }
+
+            }
+        }
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            //方法所在页面和方法名
+            url: "/api/EmployeeAddApi/InsuranceKindCity?Cityid=" + Cityid,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                var KindLis = data;
+                var datan = $("#divQuery").find(':checkbox');
+
+
+                for (var i = 0; i < datan.length; i++) {
+                    for (var j = 0; j < KindLis.total; j++) {
+                        if (datan[i].value == KindLis.rows[j].Name) {
+                            datan[i].id = KindLis.rows[j].Id;
+                        }
+                    }
+                }
+            },
+            error: function (err) {
+            }
+        });
+
+
+    });
+
+    ///联动
+    function liandong(id, boolpd) {
+        var ids = '@ViewBag.ids';
+        var Cityid = '@ViewBag.Cityid';
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            //方法所在页面和方法名
+            url: "/api/EmployeeAddApi/POSTEmployeeAddLinkage?Cityid=" + Cityid + "&yanglao_InsuranceKind1=" + id,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+
+                var type = data.Message;
+                var KindLis = type.split(',');
+                var datan = $("#divQuery").find(':checkbox');
+                for (var i = 0; i < datan.length; i++) {
+                    for (var j = 0; j < KindLis.length; j++) {
+                        if (datan[i].value == KindLis[j]) {
+                            if (datan[i].disabled != 'disabled') {
+                                datan[i].checked = boolpd;
+                            }
+                        }
+                    }
+
+                }
+
+            },
+            error: function (err) {
+
+            }
+        });
+    }
+    function FeedBackIndex() {
+        var datan = $("#divQuery").find("input[name='ck']:checked").length;
+        if (datan == 0)
+        {
+            alert('请选择险种！');
+            return false;
+        }
+        var alltype = '';   
+        var datan = $("#divQuery").find(':checkbox');
+        for (var i = 0; i < datan.length; i++) {
+
+            if (datan[i].checked) {
+                alltype = alltype + ',' + datan[i].value;
+            }
+        }
+        alltype = escape(alltype);
+        var msg = $("#htyy").val();
+        if (msg.length == 0) {
+            alert('请输入失败信息！');
+            return false;
+        }
+
+        if (msg.length >4000) {
+            alert('最多允许输入4000字！');
+            return false;
+        }
+        var ids = '@ViewBag.ids';
+        var CompanyEmployeeRelationId = '@ViewBag.CompanyEmployeeRelationId';
+        msg = escape(msg);
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            //方法所在页面和方法名
+            url: "/api/EmployeeAddApi/FeedBackAction1?ids=" + ids + "&alltype=" + alltype + "&CompanyEmployeeRelationId=" + CompanyEmployeeRelationId + "&message=" + msg,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                alert(data);
+                $("#htyy").val("");
+                window.location.href = "../EmployeeAdd/FeedbackList";
+              
+            },
+            error: function (err) {
+                alert(data);
+            }
+        });
+
+
+
+     //  $.ajax({
+     //   type: 'POST',
+     //   url: '../api/EmployeeAddApi/FeedBackAction?ids=' + ids + "&message=" + msg  + "&alltype=" + alltype+ "&CompanyEmployeeRelationId" + CompanyEmployeeRelationId,
+     //  // data: { "ids": ids, "message": msg },  //最正确的Ajax传参
+     //   dataType: 'json',
+     //   async: true, //异步
+     //   success: function (data) {
+     //       alert(data);
+     //       $("#htyy").val("");
+     //       window.location("/EmployeeAdd/FeedbackList");
+     //   },
+     //   error: function () {
+     //       alert(data);
+     //   }
+     //});
+    }
+</script>
+

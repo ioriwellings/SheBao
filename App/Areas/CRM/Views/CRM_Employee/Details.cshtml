@@ -1,0 +1,150 @@
+﻿@model Langben.DAL.Employee
+
+@{
+    Layout = "~/Views/Shared/Details.cshtml";
+}
+@using Common
+@section CurentPlace {
+    详细
+}
+
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" onclick="window.location.href = 'javascript:history.go(-1)';" value="返回" />
+    </legend>
+    <div class="bigdiv">
+        <div class="display-label">
+            员工姓名：
+        </div>
+        <div class="display-field" id="Name">
+        </div>
+        <div class="display-label">
+            证件号码 :
+        </div>
+        <div class="display-field" id="CertificateNumber">
+        </div>
+        <div class="display-label">
+            证件类型 :
+        </div>
+        <div class="display-field" id="CertificateType">
+        </div>
+        <div class="display-label">
+            性别 :
+        </div>
+        <div class="display-field" id="Sex">
+        </div>
+        <br style="clear: both;" />
+        <div class="display-label">
+            户口性质 :
+        </div>
+        <div class="display-field" id="AccountType">
+        </div>
+
+    </div>
+    <div class="bigdiv" id="contact">
+            员工联系信息
+    </div>
+    <div class="bigdiv" id="bank">
+        员工银行信息
+    </div>
+</fieldset>
+
+<script type="text/javascript">
+
+    $(function () {
+        // 获取内容并显示
+        var id = '@ViewBag.Id';
+        $.ajax({
+            url: "/api/CRM_EmployeeApi/Get/" + id,
+            //type: "POST",
+            // async: false,
+            success: function (res) {
+                debugger;
+                var jsonarray = eval("(" + res + ")");
+                $("#Name").html(jsonarray.Empname);
+                $("#CertificateNumber").html(jsonarray.CertificateNumber);
+                $("#CertificateType").html(jsonarray.CertificateType);
+                $("#Sex").html(jsonarray.Sex);
+                $("#AccountType").html(jsonarray.AccountType);
+                for (var i = 0; i < jsonarray.contactList.length; i++) {
+                    var contactInfo = "<br style='clear: both;' />";
+                    contactInfo += "<div class='display-label'>姓名:</div>";
+                    contactInfo += "<div class='display-field'>" + jsonarray.Empname + "</div>";
+
+                    contactInfo += "<div class='display-label'>电话:</div>";
+                    var telephone = jsonarray.contactList[i].Telephone == null ? ' ' : jsonarray.contactList[i].Telephone;
+                    contactInfo += "<div class='display-field'>" + telephone + "</div>";
+
+                    contactInfo += "<div class='display-label'>手机:</div>";
+                    contactInfo += "<div class='display-field'>" + jsonarray.contactList[i].MobilePhone + "</div>";
+
+
+                    contactInfo += "<div class='display-label'>状态:</div>";
+                    var CState = jsonarray.contactList[i].CState == null ? ' ' : jsonarray.contactList[i].CState;
+                    contactInfo += "<div class='display-field'>" + CState + "</div>";
+
+                    contactInfo += "<div class='display-label'>邮箱:</div>";
+                    var Email = jsonarray.contactList[i].Email == null ? ' ' : jsonarray.contactList[i].Email;
+                    contactInfo += "<div class='display-field'>" + Email + "</div>";
+
+                    contactInfo += "<div class='display-label'>地址:</div>";
+                    var Address = jsonarray.contactList[i].Address == null ? ' ' : jsonarray.contactList[i].Address;
+                    contactInfo += "<div class='display-field'>" + Address + "</div>";
+
+                    contactInfo += "<div class='display-label'>备注:</div>";
+                    var Remark = jsonarray.contactList[i].Remark == null ? ' ' : jsonarray.contactList[i].Remark;
+                    contactInfo += "<div class='display-field'>" + Remark + "</div>";
+
+                    $("#contact").append(contactInfo);
+                }
+                for (var i = 0; i < jsonarray.bankList.length; i++) {
+                    var bankInfo = "<br style='clear: both;' />";
+                    bankInfo += "<div class='display-label'>姓名:</div>";
+                    bankInfo += "<div class='display-field'>" + jsonarray.Empname + "</div>";
+
+                    bankInfo += "<div class='display-label'>证件号码:</div>";
+                    bankInfo += "<div class='display-field'>" + jsonarray.CertificateNumber + "</div>";
+
+                    bankInfo += "<div class='display-label'>银行名称:</div>";
+                    var Email = jsonarray.bankList[i].Bank == null ? ' ' : jsonarray.bankList[i].Bank;
+                    bankInfo += "<div class='display-field'>" + jsonarray.bankList[i].Bank + "</div>";
+
+                    bankInfo += "<div class='display-label'>支行名称:</div>";
+                    var Email = jsonarray.bankList[i].BranchBank == null ? ' ' : jsonarray.bankList[i].BranchBank;
+                    bankInfo += "<div class='display-field'>" + jsonarray.bankList[i].BranchBank + "</div>";
+
+                    bankInfo += "<div class='display-label'>银行帐号:</div>";
+                    var Email = jsonarray.bankList[i].Account == null ? ' ' : jsonarray.bankList[i].Account;
+                    bankInfo += "<div class='display-field'>" + jsonarray.bankList[i].Account + "</div>";
+
+                    bankInfo += "<div class='display-label'>收款人名称:</div>";
+                    var Email = jsonarray.bankList[i].AccountName == null ? ' ' : jsonarray.bankList[i].AccountName;
+                    bankInfo += "<div class='display-field'>" + jsonarray.bankList[i].AccountName + "</div>";
+
+                    bankInfo += "<div class='display-label'>状态:</div>";
+                    var Email = jsonarray.bankList[i].BState == null ? ' ' : jsonarray.bankList[i].BState;
+                    bankInfo += "<div class='display-field'>" + jsonarray.bankList[i].BState + "</div>";
+
+                    $("#bank").append(bankInfo);
+                }
+            }
+        })
+    });
+</script>
+@*员工基本信息  Employee
+    姓名Name 证件号码CertificateNumber
+    证件类型CertificateType  性别Sex
+    户口性质AccountType  户口所在地
+
+    员工联系信息EmployeeContact
+    姓名
+    电话Telephone 手机MobilePhone
+    状态（启用 信用）State  邮箱 Email
+    地址 Address
+    备注 Remark
+
+    员工银行信息EmployeeBank
+    姓名Name 证件号码 CertificateNumber
+    银行名称 Bank 支行名称 BranchBank
+    银行帐号 Account
+    收款人名称 AccountName  状态（启用 停用）State*@

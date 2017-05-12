@@ -1,0 +1,105 @@
+﻿@model Langben.DAL.Employee
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+}
+@using Common
+@using Models
+@section CurentPlace {
+    修改
+}
+@using (Html.BeginForm("", "../api/CRM_EmployeeApi/BaseEdit"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            
+            <input class="a2 f2" type="button" onclick="BackList('CRM_Employee/Index/@ViewBag.Id')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.Id)
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Name)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CertificateNumber)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CertificateNumber)
+                @Html.ValidationMessageFor(model => model.CertificateNumber)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CertificateType)：
+            </div>
+            <div class="editor-field">
+                <select name="CertificateType" id="certificate">
+                    <option value="">请选择</option>
+                    <option value="居民身份证">居民身份证</option>
+                    <option value="护照">护照</option>
+                </select>
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Sex)：
+            </div>
+            <div class="editor-field">
+                <select name="Sex" id="selctsex">
+                    <option value="">请选择</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </div>
+
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.AccountType)：
+            </div>
+            <div class="editor-field">
+                <select name="AccountType" id="atype">
+                    <option value="">请选择</option>
+                    <option value="农业">农业</option>
+                    <option value="城镇">城镇</option>
+                </select>
+            </div>
+            <br style="clear: both;" />
+        </div>
+    </fieldset>
+}
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Id';
+        $.ajax({
+            url: "/api/CRM_EmployeeApi/Gets/" + id,
+            //type: "POST",
+            // async: false,
+            success: function (res) {
+                $("#Id").val(res.empId);
+                $("#Name").val(res.Empname);
+                if (res.CertificateType == '居民身份证') {
+                    $("#CertificateNumber").attr("readonly", true);
+                }
+                
+                $("#certificate").val(res.CertificateType);
+                $("#CertificateType").val(res.CertificateType);
+                $("#CertificateNumber").val(res.CertificateNumber);
+                $("#selctsex").val(res.Sex);
+                $("#atype").val(res.AccountType);
+            }
+        })
+
+        $("#certificate").change(function () {
+            var txt = $("#certificate").val();
+            if (txt != "居民身份证") {
+                $("#CertificateNumber").attr("readonly", false);
+            }
+            else { $("#CertificateNumber").attr("readonly", true); }
+        })
+    });
+</script>

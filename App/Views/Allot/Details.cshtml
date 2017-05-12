@@ -1,0 +1,148 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>管理信息系统</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+
+
+
+    <script type="text/javascript">
+
+
+        function windowResize1(col) {
+            var width = $(window).width();
+            var height = $(window).height();
+            $("#" + col).width(width);
+            //$('#' + col).height(100);
+            $('#' + col).panel();
+        }
+        //窗口自适应
+        function windowResize2(layout, panel) {
+            var width = $(window).width();
+            var height = $(window).height();
+            $('#' + layout).height(height - 91);
+            $('#' + layout).layout();
+            $('#' + panel).panel();
+        }
+
+        $(function () {
+
+
+            windowResize1("searchPanel");  //文档载入时加载
+            windowResize2('listLayout', "listPanel");
+            $(window).resize(function () {
+                windowResize2('listLayout', 'listPanel');
+                windowResize1("searchPanel");  //窗口改变大小时加载
+            });
+
+            LoadList();
+            Loadjbxx();
+        });
+
+        function LoadList() {
+
+            var id = '@ViewBag.Id';
+            var YearMonth = '@ViewBag.YearMonth';
+            $("#tt").datagrid({
+               // url: "/EmployeeAdd/GetDetail?id=" + id + "&YearMonth=" + YearMonth,
+                url: "../api/EmployeeAddApi/Zrkfsh_Detail?id=" + id + "&YearMonth=" + YearMonth,
+                type: "POST",
+                dataType: 'json',
+                title: "",
+                rownumbers: true,
+                //queryParams: { search: search },
+                fitColumns: true,
+                fitRows: true,
+                checkOnSelect: false,
+                fit: true,
+                striped: true,
+                singleSelect: true,
+                columns: [[
+
+                    { field: "bxzl", title: "险种", width: 14, align: "center", hidden: false },
+                    { field: "zclx", title: "政策标识", width: 10, align: "center", hidden: false },
+                    { field: "sbjs", title: "基数", width: 10, align: "center", hidden: false },
+                    { field: "qjsj", title: "起缴时间", width: 12, align: "center", formatter: DateFormatter, hidden: false },
+                     { field: "YearMonth", title: "报增自然月", width: 12, align: "center", hidden: false },
+                    { field: "bzlx", title: "报增类型", width: 10, align: "center", hidden: false }
+                ]]
+
+            });
+
+
+        }
+        function DateFormatter(value, rowData, rowIndex) {
+            if (value == undefined) {
+                return "";
+            }
+            var dd = new Date();
+            dd.getFullYear();
+            /*json格式时间转js时间格式*/
+            var arrDate = value.split('T');
+            var newDate = arrDate[0];
+            if (new Date(newDate, 'yyyy-MM-dd').getFullYear() < 1900) {
+                return "";
+            }
+            return newDate;
+        }
+
+        //加载人员信息
+        function Loadjbxx()
+        {
+            var id = '@ViewBag.Id';
+            $.ajax({
+                //要用post方式
+                type: "Post",
+                //方法所在页面和方法名
+                url: "/EmployeeAdd/Xxxx?id=" + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (data) {
+
+                        var htmlstr = "";
+                        htmlstr = "公司：" + data.rows[0].company + " 姓名：" + data.rows[0].name + " 身份证号：" + data.rows[0].code;
+                        $("#grxx").html("");
+                        $("#grxx").append(htmlstr);
+
+
+                    //$("#ProductType").append(" <option value=''>全部</option>");
+                    //for (var i = 0; i < data.rows.length; i++) {
+                    //    $("#ProductType").append(" <option value=" + data.rows[i ].ID + ">" + data.rows[i].CPLXMC + "</option>");
+                    //}
+
+
+                },
+                error: function (err) {
+                    alert(err);
+                }
+            });
+        }
+        function fanhui()
+        {
+            window.location.href = '/EmployeeAdd/ApproveList';
+        }
+
+    </script>
+
+
+</head>
+<body>
+    <div id="listPanel" class="easyui-panel">
+        <div><input type="button" onclick="fanhui()" value="返回" /></div>
+        <div id="grxx">
+
+        </div>
+
+        <div id="listLayout" fit="true" class="easyui-layout">
+            <table id="tt"></table>
+        </div>
+    </div>
+</body>
+</html>
+

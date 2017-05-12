@@ -1,0 +1,114 @@
+﻿@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        // 获取内容并显示
+        $.ajax({
+            url: "/api/CRM_CompanyContract_AuditApi/Get/@ViewBag.ID",
+            type: "Get",
+            async: false,
+            success: function (res) {
+                $("#Audit_BillDay").text(res.BillDay == null ? '' : res.BillDay);
+                $("#Audit_ReceivedDay").text(res.ReceivedDay == null ? '' : res.ReceivedDay);
+                $("#Audit_FeesCycle").text(res.FeesCycle == null ? '' : res.FeesCycle);
+                $("#Audit_ChangeDay").text(res.ChangeDay == null ? '' : res.ChangeDay);
+                $("#Audit_DatumDay").text(res.DatumDay == null ? '' : res.DatumDay);
+                $("#Audit_ServceEndDay").text(res.ServceEndDay == null ? '' : formatDatebox(res.ServceEndDay));
+                $("#Audit_SendBillDay").text(res.SendBillDay == null ? '' : res.SendBillDay);
+                $("#Audit_ServiceBeginDay").text(res.ServiceBeginDay == null ? '' : formatDatebox(res.ServiceBeginDay));
+            }
+        })
+
+        $('#BasicGrid').datagrid()
+
+    });
+    function PassAdd() {
+        $.ajax({
+            url: "/api/CRM_CompanyContract_AuditApi/PassAdd/@ViewBag.ID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function ReturnAdd() {
+        $.ajax({
+            url: "/api/CRM_CompanyContract_AuditApi/ReturnAdd/@ViewBag.ID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function GoBack() {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/CRM_Company_Audit/Index/?tmp=" + tmp;
+    }
+</script>
+
+<div id="divQuery">
+    <div class='input_search' style="padding-top:10px;">
+        @if (ViewBag.State == 1)
+        {
+            <input class="a2 f2" type="button" onclick="PassAdd()" value="通过" />
+            <input class="a2 f2" type="button" onclick="ReturnAdd()" value="退回" />
+        }
+        <input class="a2 f2" type="button" onclick="GoBack()" value="返回列表" />
+
+    </div>
+</div>
+
+<br style="clear: both;" />
+
+<input type="hidden" id="ID" value="@ViewBag.ID" />
+<input type="hidden" id="MainTableID" value="@ViewBag.MainTableID" />
+
+<table id="BasicGrid" style="width: auto; height: auto; border: 1px solid #ccc;">
+    <thead>
+        <tr>
+            <th data-options="field:'BillDay',width:100">账单日</th>
+            <th data-options="field:'ReceivedDay',width:150">回款日</th>
+            <th data-options="field:'FeesCycle',width:200">结费周期</th>
+            <th data-options="field:'ChangeDay',width:100">变动截止日</th>
+            <th data-options="field:'DatumDay',width:100">资料交付日</th>
+            <th data-options="field:'SendBillDay',width:200">发送账单日</th>
+            <th data-options="field:'ServiceBeginDay',width:200">服务起始日</th>
+            <th data-options="field:'ServceEndDay',width:100">服务截止日</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><span id="Audit_BillDay"></span></td>
+            <td><span id="Audit_ReceivedDay"></span></td>
+            <td><span id="Audit_FeesCycle"></span></td>
+            <td><span id="Audit_ChangeDay"></span></td>
+            <td><span id="Audit_DatumDay"></span></td>
+            <td><span id="Audit_ServceEndDay"></span></td>
+            <td><span id="Audit_SendBillDay"></span></td>
+            <td><span id="Audit_ServiceBeginDay"></span></td>
+        </tr>
+    </tbody>
+</table>
+
+
+

@@ -1,0 +1,90 @@
+﻿@model Langben.DAL.PoliceMasterRelationship
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+}
+@using Common
+@using Models
+ 
+@section CurentPlace {
+ 
+      创建  
+ 
+ }
+@using (Html.BeginForm("", "api/PoliceMasterRelationshipApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="创建" />
+            <input class="a2 f2" type="button" onclick="BackList('PoliceMasterRelationship')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                 
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Name)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+        <div class="editor-label">
+            <a class="anUnderLine" onclick="showModalOnly('InsuranceKindId','../../InsuranceKind');">
+                @Html.LabelFor(model => model.InsuranceKindId) 
+            </a>：
+        </div>
+        <div class="editor-field">
+            <div id="checkInsuranceKindId">            
+            </div>
+            @Html.HiddenFor(model => model.InsuranceKindId)
+        </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Tag)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Tag)
+                @Html.ValidationMessageFor(model => model.Tag)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Style)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Style)
+                @Html.ValidationMessageFor(model => model.Style)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.IsMaster)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.IsMaster)
+                @Html.ValidationMessageFor(model => model.IsMaster)
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>        
+            <div class="editor-label">
+                @Html.LabelFor(model => model.State)：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.State,Models.SysFieldModels.GetSysField("PoliceMasterRelationship","State"),"请选择")
+            </div>
+        </div>
+    </fieldset>
+} 
+
+
+    
+    <script type="text/javascript">
+
+        $(function () {
+            
+        });
+              
+
+    </script>
+
+

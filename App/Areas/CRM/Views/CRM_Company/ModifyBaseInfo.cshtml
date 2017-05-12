@@ -1,0 +1,246 @@
+﻿@model Langben.DAL.CRM_Company
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head id="MyHead">
+    <title></title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+    <style type="text/css">
+        .combo {
+            font-family: 微软雅黑,新宋体;
+            height: 24px;
+            width: 210px;
+            border: 1px solid #CCC;
+        }
+    </style>
+
+    <script type='text/javascript'>
+        function ajaxForm(form, url) {
+            $.ajax({
+                url: url,
+                type: "Post",
+                data: $(form).serialize(),
+                dataType: "json",
+                success: function (data) {
+                    if (data.Code == 0) { $.messager.alert('操作提示', data.Message, 'info'); }
+                    else {
+                        if ($.messager) {
+                            $.messager.defaults.ok = '确定';
+                            //$.messager.defaults.cancel = '返回';
+
+                            $.messager.alert('', '提交成功！', 'info', function (r) {
+                                GoBack('@Request.QueryString["path"]');
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        $(function () {
+            $('.easyui-combobox').combobox({
+                width: 243,
+                onSelect: function (record) {
+                    var strs = record.text.split("—");
+                    $(this).combobox('setValue', strs[0]);
+                }
+            });
+            $("form").submit(function (form) {
+                if (form.result) {
+                    ajaxForm(this, this.action);
+                }
+                return false;
+            });
+            //按钮样式
+            $('.a2').mouseover(function () { this.style.color = "#ae1121"; }).mouseout(function () { this.style.color = "#333"; });
+
+        });
+    </script>
+</head>
+<body>
+    <div class="mbx">
+        创建
+    </div>
+
+    @Html.ValidationSummary(true)
+    @using (Html.BeginForm("", "../api/CRM_Company_AuditApi/Post"))
+    {
+        <fieldset>
+            <legend>
+                <input class="a2 f2" type="button" id="txtModify" onclick="ModifyBase()" value="修改" />
+                <input class="a2 f2" type="button" onclick="GoBack('@Request.QueryString["path"]')" value="返回" />
+            </legend>
+            <div class="bigdiv">
+                @Html.HiddenFor(model => model.ID)
+                <div class="editor-label">
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.CompanyName)：
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.CompanyName, new { @onblur = "CheckCompanyName()", @class = "text-box single-line valid" })
+                    @Html.ValidationMessageFor(model => model.CompanyName)
+                    <span id="spCompanyName" style="display:none;color:red" class="">该公司名已存在</span>
+                </div>
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.OrganizationCode)：
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.OrganizationCode, new { @style = "height:26px", @class = "easyui-textbox" })
+                    @Html.ValidationMessageFor(model => model.OrganizationCode)
+                </div>
+                <div class="editor-label">
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.Dict_HY_Code)：
+                </div>
+                <div class="editor-field">
+                    @Html.DropDownList("HY", (SelectList)ViewData["HY"], "--请选择--", new { onchange = "GetSonNode(this)", @style = "font-size:14px;" })
+                </div>
+                <div class="editor-label">
+
+                </div>
+                <div class="editor-field">
+                    @Html.DropDownListFor(model => model.Dict_HY_Code, (SelectList)ViewBag.HYSon, "--请选择--", new { @id = "ddlSonHY" })
+                    @Html.ValidationMessageFor(model => model.Dict_HY_Code)
+                </div>
+                <div class="editor-label">
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.OfficeAddress)：
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.OfficeAddress, new { @style = "height:26px", @class = "easyui-textbox" })
+                    @Html.ValidationMessageFor(model => model.OfficeAddress)
+                </div>
+                <div class="editor-label">
+                    <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.RegisterAddress)：
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.RegisterAddress, new { @style = "height:26px", @class = "easyui-textbox" })
+                    @Html.ValidationMessageFor(model => model.RegisterAddress)
+                </div>
+                <div class="editor-label">
+                </div>
+                <div class="editor-field">
+                    @Html.HiddenFor(model => model.CompanyCode)
+                </div>
+            </div>
+        </fieldset>
+    }
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $(function () {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/CRM_CompanyApi/Get/" + id,
+                type: "Get",
+                // async: false,
+                success: function (data) {
+                    var res = eval("(" + data + ")");
+                    if(res.OperateStatus=='2'){
+                        $("#txtModify").attr({ "disabled": "disabled" });
+                        $("#txtModify").attr({ "value": "修改中..." });
+                        $("#txtModify").attr({ "style": "color:red" })
+                    }
+                    $("#ID").val(res.ID); $("#CompanyCode").val(res.CompanyCode);
+                    $("#CompanyName").val(res.CompanyName);
+                    //$("#TaxRegistryNumber").val(res.TaxRegistryNumber);
+                    $("#OrganizationCode").val(res.OrganizationCode);
+                    $("#RegisterAddress").val(res.RegisterAddress);
+                    $("#OfficeAddress").val(res.OfficeAddress);
+                    //$("#Status").val(res.Status);
+                    $("#HY").val(res.ParentCode).change();
+                    $("#Dict_HY_Code").val(res.Dict_HY_Code);
+                    $("#ddlSonHY").val(res.Dict_HY_Code);
+                }
+            })
+        });
+        //获得下级节点
+        function GetSonNode(obj) {
+            var parentID = obj.value;
+            var parentName = $("#" + obj.id).find("option:selected").text();
+            if (parentID != "") {
+                $.ajax({
+                    type: 'Get',
+                    url: '/api/CRM_ZD_HYApi/GetHYNode/' + parentID,
+                    dataType: 'json',
+                    async: false, //同步
+                    success: function (data) {
+                        $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+                        var count = 0;
+                        var jsonArray = eval("(" + data + ")");
+                        $.each(jsonArray, function (i, itemValue) {
+                            count++;
+                            $("#ddlSonHY").append("<option value = '" + itemValue.Code + "'>" + itemValue.HYMC + "</option>");
+                            //$("<option><option>").val(itemValue.ID).html(itemValue.CPLXMC)
+                        })
+                        //if (count == 1) {
+                        //    $("#ddlPost").val(itemID);
+                        //}
+                    },
+                    error: function () {
+                        $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+                    }
+                });
+            }
+            else {
+                $("#ddlSonHY").html("<option value=''>--请选择--</option>");
+            }
+        }
+
+        //检查公司名
+        var check = null;
+        function CheckCompanyName() {
+            var companyID = $("#ID").val();
+            var companyName = $.trim($("#CompanyName").val());
+            if (companyName != '') {
+                $.ajax({
+                    type: 'Post',
+                    url: '/api/CRM_CompanyApi/CheckCompanyName?companyID=' + companyID + "&companyName=" + companyName,
+                    dataType: 'json',
+                    async: false, //同步
+                    success: function (data) {
+                        check = data.Code;
+                        if (check == 1) {
+                            $("#spCompanyName").show();
+                            $("#CompanyName").removeClass("valid");
+                            $("#CompanyName").addClass("input-validation-error");
+                            $("#CompanyName").focus();
+                            //$.messager.alert('提示', data.Message, 'info');
+                        }
+                        else {
+                            $("#spCompanyName").hide();
+                            $("#CompanyName").removeClass("input-validation-error");
+                            $("#CompanyName").addClass("valid");
+                        }
+                    },
+                    error: function () {
+                        $.messager.alert('提示', "系统异常，请稍后再试！", 'info');
+                    }
+                });
+            }  
+        }
+        //提交
+        function ModifyBase() {
+            if (check == 1) {
+                $("#spCompanyName").show();
+                $("#CompanyName").focus();
+                //$.messager.alert('提示', "该公司名已存在！", 'info');
+                return false;
+            }
+            else {
+                $("form").submit();
+            }
+        }
+
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/" + path + "/Index/?tmp=" + tmp;
+    }
+</script>
+
+

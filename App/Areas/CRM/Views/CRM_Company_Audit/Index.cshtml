@@ -1,0 +1,309 @@
+﻿@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:100px">
+
+    <div class='input_search'>
+        <div class="input_search-label">
+            企业名称：
+        </div>
+        <div class="input_search-field">
+            <input id="searchName" type="text" class="easyui-textbox" style="height:26px" />
+        </div>
+    </div>
+
+    <div class='input_search'>
+        <div class="input_search-label">
+            企业编号：
+        </div>
+        <div class="input_search-field">
+            <input id="searchCode" type="text" class="easyui-textbox" style="height:26px" />
+        </div>
+    </div>
+
+    <div class='input_search'>
+        <div class="input_search-label">
+            责任客服：
+        </div>
+        <div class="input_search-field">
+            @Html.DropDownList("searchUser_ZR", (SelectList)ViewData["listUserKF"], "请选择", new { ID = "searchUser_ZR", @class = "easyui-combobox", @style = "font-size:14px;height:26px" })
+        </div>
+    </div>
+
+    <div class='input_search'>
+        <div class="input_search-label">
+            销售人员：
+        </div>
+        <div class="input_search-field">
+            @Html.DropDownList("searchUser_XS", (SelectList)ViewData["listUserXS"], "请选择", new { ID = "searchUser_XS", @class = "easyui-combobox", @style = "font-size:14px;height:26px" })
+        </div>
+    </div>
+
+    <div class='input_search'>
+        <div class="input_search-label">
+            类型：
+        </div>
+        <div class="input_search-field">
+            <select id="auditType" class="easyui-combobox" style="height:26px">
+                <option value="">请选择</option>
+                <option value="1">修改企业基本信息</option>
+                <option value="2">新建联系人信息</option>
+                <option value="3">修改联系人信息</option>
+                <option value="4">新建企业银行信息</option>
+                <option value="5">修改企业银行信息</option>
+                <option value="6">新建企业财务信息</option>
+                <option value="7">修改企业财务信息</option>
+                <option value="8">新建企业报价信息</option>
+                <option value="9">修改企业报价信息</option>
+                <option value="10">新建企业合同信息</option>
+                <option value="11">修改企业合同信息</option>
+                <option value="12">新建企业社保信息</option>
+                <option value="13">修改企业社保信息</option>
+            </select>
+        </div>
+    </div>
+
+    <div class='input_search'>
+        <div class="input_search-label">
+            状态：
+        </div>
+        <div class="input_search-field">
+            <select id="operateStatus" class="easyui-combobox" style="height:26px">
+                <option value="">请选择</option>
+                <option value="1" selected>待审核</option>
+                <option value="2">通过审核</option>
+                <option value="0">不通过审核</option>
+            </select>
+        </div>
+    </div>
+
+    <div class='input_search input_search_btn'>
+        &nbsp;&nbsp;&nbsp;<a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+<br style="clear: both;" />
+
+<br style="clear: both;" />
+<script type="text/javascript" language="javascript">
+    var tmpParam = null;
+    var sParam = null;
+    var returnParam = '';
+
+    var opt = {
+        title: '客户_企业审核信息', //列表的标题
+        iconCls: 'icon-site',
+        width: 'auto',
+        height: 'auto',
+        //nowrap: false,
+        striped: true,
+        fit: true,
+        collapsible: false,
+        //url: '/api/CRM_Company_AuditApi/PostAuditData', //获取数据的url
+        sortName: 'ID',
+        sortOrder: 'desc',
+        idField: 'ID',
+        columns: [[
+            { field: 'CompanyCode', title: '企业编号', align: 'center', width: 100 }
+            //, { field: 'CityID', title: '缴纳地编号', align: 'center', width: 200}
+            , { field: 'CompanyName', title: '企业名称', align: 'center', width: 200 }
+            , { field: 'UserID_ZR_Name', title: '责任客服', align: 'center', width: 80 }
+            , { field: 'UserID_XS_Name', title: '销售人员', align: 'center', width: 80 }
+            , { field: 'AuditTypeName', title: '请求类型', align: 'center', width: 110 }
+            , { field: 'CreateTime', title: '创建时间', align: 'center', width: 100, formatter: formatDatebox }
+            , { field: 'CreateUserName', title: '发起人', align: 'center', width: 80 }
+            , {
+                field: 'AuditType', title: '详情', align: 'center', width: 80, formatter: function (value, row, index) {
+                    var a = '';
+                    if (row.OperateStatus == '@((int)Common.AuditStatus.待处理)') {
+                        if (value == 12 || value == 13) {
+                            a += '<a href="#" onclick="detailInfo(' + value + ',' + row.CompanyID + ',' + row.CityID + ',' + row.OperateStatus + ')">详情</a> ';
+                        }
+                        else {
+                            a += '<a href="#" onclick="detailInfo(' + value + ',' + row.ID + ',' + row.MainTableID + ',' + row.OperateStatus + ')">详情</a> ';
+                        }
+                    }
+                    return a;
+                }
+            }
+            , {
+                field: 'OperateStatus', title: '状态', align: 'center', width: 80, formatter: function (value, row, index) {
+                    var a = "";
+                    if (value == 0) {
+                        a = '不通过';
+                    }
+                    else if (value == 1) {
+                        a = '待审核';
+                    }
+                    else if (value == 2) {
+                        a = '审核通过';
+                    }
+                    return a;
+                }
+            }
+        ]],
+        pagination: true,
+        rownumbers: true,
+        singleSelect: false, //允许选择多行
+        selectOnCheck: true,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+        checkOnSelect: true, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+        onClickRow: function (rowIndex, rowData) {
+            $(this).datagrid('unselectRow', rowIndex);
+        },
+        onBeforeLoad: function (param) {
+            tmpParam = param;
+            sParam = null;
+
+            return true;
+        },
+        onLoadSuccess: function (data) {
+            sParam = tmpParam;
+            if (sParam.search == undefined) {
+                sParam.search = '^^^^^';
+            }
+        }
+    };
+
+    $(function () {
+        $("#searchUser_XS").combobox({
+            onSelect: function () {
+                //如果不写onSelect方法，就无法获取下拉框选择的值
+            }
+        });
+        $("#searchUser_ZR").combobox({
+            onSelect: function () {
+                //如果不写onSelect方法，就无法获取下拉框选择的值
+            }
+        });
+        $("#auditType").combobox({
+            onSelect: function () {
+                //如果不写onSelect方法，就无法获取下拉框选择的值
+            }
+        });
+        $("#operateStatus").combobox({
+            onSelect: function () {
+                //如果不写onSelect方法，就无法获取下拉框选择的值
+            }
+        });
+
+        $('#operateStatus').combobox('setValue', 1);//默认查询待审核
+
+        returnParam = '@Request.QueryString["tmp"]';
+
+        if (returnParam != '') {
+            var rparam = returnParam.split('_');
+            opt.pageNumber = rparam[1];
+            opt.pageSize = rparam[2];
+            opt.queryParams = { search: rparam[0] };
+
+            var search = rparam[0].split('^');
+            $('#searchName').val(search[0]);
+            $('#searchUser_ZR').combobox('setValue', search[1]);
+            $('#searchUser_XS').combobox('setValue', search[2]);
+            $('#auditType').combobox('setValue', search[3]);
+            $('#operateStatus').combobox('setValue', search[4]);
+            //$('#auditType').val(search[3]);
+            //$('#operateStatus').val(search[4]);
+            $('#searchCode').val(search[5]);
+
+        }
+
+        $('#flexigridData').datagrid(opt);
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+        }
+
+        $('#flexigridData').datagrid('options').url = "/api/CRM_Company_AuditApi/PostAuditData";
+
+        flexiQuery();
+    });
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        //将查询条件按照分隔符拼接成字符串
+        var search = $('#searchName').val() + "^" +
+       $('#searchUser_ZR').combobox('getValue') + "^" +
+       $('#searchUser_XS').combobox('getValue') + "^" +
+       $('#auditType').combobox('getValue') + "^" +
+       $('#operateStatus').combobox('getValue') + "^" +
+       //$('#auditType').val() + "^" +
+       //$('#operateStatus').val() + "^" +
+       $('#searchCode').val();
+
+        //执行查询
+        $('#flexigridData').datagrid('load', { search: search });
+    };
+
+
+    //修改信息
+    function detailInfo(type, id, mainTableId, state) {
+        var tmp = '';
+        if (sParam != null) {
+            tmp = sParam.search + '_' + sParam.page + '_' + sParam.rows;
+        }
+
+        switch (type) {
+            case 1:
+                window.location.href = "/CRM/CRM_Company_Audit/EditBasic/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 2:
+                window.location.href = "/CRM/CRM_Company_Audit/AddLinkMan/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 3:
+                window.location.href = "/CRM/CRM_Company_Audit/EditLinkMan/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 4:
+                window.location.href = "/CRM/CRM_Company_Audit/AddBank/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 5:
+                window.location.href = "/CRM/CRM_Company_Audit/EditBank/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 61:
+                window.location.href = "/CRM/CRM_Company_Audit/AddFinanceBill/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 71:
+                window.location.href = "/CRM/CRM_Company_Audit/EditFinanceBill/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 81:
+                window.location.href = "/CRM/CRM_Company_Audit/AddPrice/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 91:
+                window.location.href = "/CRM/CRM_Company_Audit/EditPrice/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 62:
+                window.location.href = "/CRM/CRM_Company_Audit/AddFinancePayment/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 72:
+                window.location.href = "/CRM/CRM_Company_Audit/EditFinancePayment/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 82:
+                window.location.href = "/CRM/CRM_Company_Audit/AddLadderPrice/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 92:
+                window.location.href = "/CRM/CRM_Company_Audit/EditLadderPrice/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 10:
+                window.location.href = "/CRM/CRM_Company_Audit/AddContract/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 11:
+                window.location.href = "/CRM/CRM_Company_Audit/EditContract/" + id + "?mainTableId=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 12:
+                window.location.href = "/CRM/CRM_Company_Audit/AddInsurance/" + id + "?cityID=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+            case 13:
+                window.location.href = "/CRM/CRM_Company_Audit/EditInsurance/" + id + "?cityID=" + mainTableId + "&state=" + state + "&tmp=" + tmp;
+                break;
+        }
+
+    }
+
+</script>

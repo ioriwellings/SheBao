@@ -1,0 +1,58 @@
+﻿@model Langben.DAL.SupplierBill
+
+@{
+    Layout = "~/Views/Shared/CRMEdit.cshtml";
+}
+@using Common
+@using Models
+@section CurentPlace {
+    修改
+}
+
+@using (Html.BeginForm("", "../api/SupplierBillApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.Id)
+            
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>*@Html.LabelFor(model => model.BillName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.BillName)
+                @Html.ValidationMessageFor(model => model.BillName)
+            </div>
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>@Html.LabelFor(model => model.TaxRegistryNumber)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.TaxRegistryNumber)
+                @Html.ValidationMessageFor(model => model.TaxRegistryNumber)
+            </div>
+        </div>
+    </fieldset>
+}
+
+<script type="text/javascript">
+    $(function () {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.BillID';
+        $.ajax({
+            url: "/api/SupplierBillApi/Get/" + id,
+            //type: "Get",
+            // async: false,
+            success: function (res) {
+                var jsonarray = eval("(" + res + ")");
+                $("#ID").val(jsonarray.ID);
+                $("#SupplierId").val(jsonarray.SupplierId);
+                $("#PayName").val(jsonarray.PayName);
+                $("#BillName").val(jsonarray.BillName);
+                $("#TaxRegistryNumber").val(jsonarray.TaxRegistryNumber);
+            }
+        })
+    });
+</script>

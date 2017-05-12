@@ -1,0 +1,65 @@
+﻿@model Langben.DAL.COST_CostTable
+
+
+@using Common
+@using Models
+ @section CurentPlace {
+    备注  
+}
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+@*@using (Html.BeginForm("", "api/COST_CostTableApi/PutRemark"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.ID )
+
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>     
+        </div>
+    </fieldset>
+}*@
+<body>
+
+    <div>
+        备注：<textarea id="Remarkn" style="height:100px; width:90%"></textarea>       
+        <input type="hidden" id="ID"  />
+       
+    </div>
+
+</body>
+
+
+
+    <script type="text/javascript">
+
+      
+        $(function () {
+            // 获取待编辑内容并显示
+            var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/COST_CostTableApi/GetById?id=" + id,
+                type: "Get",
+                success: function (res) {
+                    $("#ID").val(res.ID);
+                    $("#Remarkn").val(res.Remark);
+                }
+            })
+        });
+
+    </script>
+
+
+

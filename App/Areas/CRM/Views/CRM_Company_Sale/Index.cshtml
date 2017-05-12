@@ -1,0 +1,133 @@
+﻿
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery">
+
+    <div class='input_search' style="padding-top:10px;">
+        企业名称：<input id="searchName" type="text" />
+        状态：<select id="ddlStatus">
+                       <option value="">-请选择-</option>
+                       <option value="0">失败</option>
+                       <option value="1">待处理</option>
+                       <option value="2">成功</option>
+                    </select>
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+<br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        $('#flexigridData').datagrid({
+            title: '客户_企业信息', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            url: "/api/CRM_Company_AuditApi/PostData",
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+     
+            columns: [[
+                { field: 'CompanyCode', title: '企业编号', width: 100 }
+                , { field: 'CompanyName', title: '企业名称', width: 200 }
+                , { field: 'HYName', title: '行业', width: 100 }
+                 , { field: 'OrganizationCode', title: '机构代码', width: 100 }
+                 , { field: 'RegisterAddress', title: '注册地址', width: 100 }
+                 , { field: 'OfficeAddress', title: '办公地址', width: 100 }
+                  , {
+                      field: 'Source', title: '来源', width: 100, formatter: function (value, row, index) {
+                          if (value == 1) return "平台推送";
+                          else return "系统录入";
+                      }
+                  }
+                    , { field: 'CreateUserName', title: '创建人', width: 100 }
+                , {
+                    field: 'OperateStatus', title: '状态', width: 100, formatter: function (value, row, index) {
+                        var a = "";
+                        if (value == 0) { a = "失败";}
+                        else if (value == 1) {a = '待处理';}
+                        else if (value == 2) {a = '成功';}
+                        return a;
+                    }
+                }
+                , { field: 'CreateTime', title: '创建时间', width: 200, formatter: formatDatebox }
+                , {
+                    field: 'ID', title: '操作', width: 500, formatter: function (value, row, index) {
+                        var a = '<a href="#" onclick="baseInfo(' + row.CRM_Company_ID + ')">详情</a> ';
+                        if (row.OperateStatus == 1) {
+                            a += '<a href="#" onclick="Pass(' + row.ID + ')">通过</a> ';
+                            a += '<a href="#" onclick="NotPass(' + row.ID + ')">不通过</a> ';
+                        }
+                        return a;
+                    }
+                }
+            ]],
+            pagination: true,
+            rownumbers: true,
+            singleSelect: false, //允许选择多行
+            selectOnCheck: true,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+            checkOnSelect: true, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+            onClickRow: function (rowIndex, rowData) {
+                $(this).datagrid('unselectRow', rowIndex);
+            }
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            //$('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        //将查询条件按照分隔符拼接成字符串
+        var companyName = $.trim($('#searchName').val());
+        var status = $('#ddlStatus').val();
+        var search=companyName+"^"+status;
+        //执行查询
+        $('#flexigridData').datagrid('load', {
+            search: search
+        });
+    };
+    // 不通过
+    function NotPass(companyID) {
+        $.messager.confirm('操作提示', "确认不通过吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    type: 'Post',
+                    url: '/api/CRM_Company_AuditApi/NotPass/' + companyID,
+                    dataType: 'json',
+                    async: false, //同步
+                    success: function (data) {
+                        if (data.Code == 1) {
+                            $.messager.alert('操作提示', data.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                        }
+                        else {
+                            $.messager.alert('操作提示', data.Message, 'info');
+                        }
+                    },
+                    error: function () {
+                        $.messager.alert('操作提示', "系统异常，请稍后再试","info");
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+

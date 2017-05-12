@@ -1,0 +1,177 @@
+﻿@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+@using Common
+@using Models
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        // 获取内容并显示
+        var url = '';
+        if ('@ViewBag.State' == '1') {
+            url = "/api/CRM_CompanyContractApi/Get/@ViewBag.MainTableID";
+        }
+        else {
+
+        }
+        $.ajax({
+            url: url,
+            type: "Get",
+            async: false,
+            success: function (res) {
+                $("#BillDay").text(res.BillDay == null ? '' : res.BillDay);
+                $("#ReceivedDay").text(res.ReceivedDay == null ? '' : res.ReceivedDay);
+                $("#FeesCycle").text(res.FeesCycle == null ? '' : res.FeesCycle);
+                $("#ChangeDay").text(res.ChangeDay == null ? '' : res.ChangeDay);
+                $("#DatumDay").text(res.DatumDay == null ? '' : res.DatumDay);
+                $("#ServceEndDay").text(res.ServceEndDay == null ? '' : formatDatebox(res.ServceEndDay));
+                $("#SendBillDay").text(res.SendBillDay == null ? '' : res.SendBillDay);
+                $("#ServiceBeginDay").text(res.ServiceBeginDay == null ? '' : formatDatebox(res.ServiceBeginDay));
+            }
+        })
+
+        $.ajax({
+            url: "/api/CRM_CompanyContract_AuditApi/Get/@ViewBag.ID",
+            type: "Get",
+            async: false,
+            success: function (res) {
+                $("#Audit_BillDay").text(res.BillDay == null ? '' : res.BillDay);
+                $("#Audit_ReceivedDay").text(res.ReceivedDay == null ? '' : res.ReceivedDay);
+                $("#Audit_FeesCycle").text(res.FeesCycle == null ? '' : res.FeesCycle);
+                $("#Audit_ChangeDay").text(res.ChangeDay == null ? '' : res.ChangeDay);
+                $("#Audit_DatumDay").text(res.DatumDay == null ? '' : res.DatumDay);
+                $("#Audit_ServceEndDay").text(res.ServceEndDay == null ? '' : formatDatebox(res.ServceEndDay));
+                $("#Audit_SendBillDay").text(res.SendBillDay == null ? '' : res.SendBillDay);
+                $("#Audit_ServiceBeginDay").text(res.ServiceBeginDay == null ? '' : formatDatebox(res.ServiceBeginDay));
+            }
+        })
+
+
+        if ($('#Audit_BillDay').text() != $('#BillDay').text()) {
+            $('#Audit_BillDay').css('color', 'red');
+        }
+        if ($('#Audit_ReceivedDay').text() != $('#ReceivedDay').text()) {
+            $('#Audit_ReceivedDay').css('color', 'red');
+        }
+        if ($('#Audit_FeesCycle').text() != $('#FeesCycle').text()) {
+            $('#Audit_FeesCycle').css('color', 'red');
+        }
+        if ($('#Audit_ChangeDay').text() != $('#ChangeDay').text()) {
+            $('#Audit_ChangeDay').css('color', 'red');
+        }
+        if ($('#Audit_DatumDay').text() != $('#DatumDay').text()) {
+            $('#Audit_DatumDay').css('color', 'red');
+        }
+        if ($('#Audit_ServceEndDay').text() != $('#ServceEndDay').text()) {
+            $('#Audit_ServceEndDay').css('color', 'red');
+        }
+        if ($('#Audit_SendBillDay').text() != $('#SendBillDay').text()) {
+            $('#Audit_SendBillDay').css('color', 'red');
+        }
+        if ($('#Audit_ServiceBeginDay').text() != $('#ServiceBeginDay').text()) {
+            $('#Audit_ServiceBeginDay').css('color', 'red');
+        }
+
+        $('#BasicGrid').datagrid()
+
+    });
+    function PassEdit() {
+        $.ajax({
+            url: "/api/CRM_CompanyContract_AuditApi/PassEdit/@ViewBag.ID?MainTableID=@ViewBag.MainTableID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function ReturnEdit() {
+        $.ajax({
+            url: "/api/CRM_CompanyContract_AuditApi/ReturnEdit/@ViewBag.ID?MainTableID=@ViewBag.MainTableID",
+            type: "Post",
+            //async: false,
+            success: function (data) {
+                $.messager.alert('操作提示', data.Message, 'info', function () {
+                    if (data.Code == 1) {
+                        //window.location.href = 'javascript:history.go(-1)';
+                        GoBack();
+                    }
+                });
+            }
+        })
+    }
+
+    function GoBack() {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/CRM_Company_Audit/Index/?tmp=" + tmp;
+    }
+
+</script>
+
+<div id="divQuery">
+    <div class='input_search' style="padding-top:10px;">
+        @if (ViewBag.State == 1)
+        {
+            <input class="a2 f2" type="button" onclick="PassEdit()" value="通过" />
+            <input class="a2 f2" type="button" onclick="ReturnEdit()" value="退回" />
+        }
+        <input class="a2 f2" type="button" onclick="GoBack()" value="返回列表" />
+
+    </div>
+</div>
+
+<br style="clear: both;" />
+
+<input type="hidden" id="ID" value="@ViewBag.ID" />
+<input type="hidden" id="MainTableID" value="@ViewBag.MainTableID" />
+
+<table id="BasicGrid" style="width: auto; height: auto; border: 1px solid #ccc;">
+    <thead>
+        <tr>
+            <th data-options="field:'ID',width:100">信息类别</th>
+            <th data-options="field:'BillDay',width:100">账单日</th>
+            <th data-options="field:'ReceivedDay',width:100">回款日</th>
+            <th data-options="field:'FeesCycle',width:100">结费周期</th>
+            <th data-options="field:'ChangeDay',width:100">变动截止日</th>
+            <th data-options="field:'DatumDay',width:100">资料交付日</th>
+            <th data-options="field:'SendBillDay',width:100">发送账单日</th>
+            <th data-options="field:'ServiceBeginDay',width:100">服务起始日</th>
+            <th data-options="field:'ServceEndDay',width:100">服务截止日</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>企业原信息</td>
+            <td><span id="BillDay"></span></td>
+            <td><span id="ReceivedDay"></span></td>
+            <td><span id="FeesCycle"></span></td>
+            <td><span id="ChangeDay"></span></td>
+            <td><span id="DatumDay"></span></td>
+            <td><span id="SendBillDay"></span></td>
+            <td><span id="ServiceBeginDay"></span></td>
+            <td><span id="ServceEndDay"></span></td>
+        </tr>
+        <tr>
+            <td>企业新信息</td>
+            <td><span id="Audit_BillDay"></span></td>
+            <td><span id="Audit_ReceivedDay"></span></td>
+            <td><span id="Audit_FeesCycle"></span></td>
+            <td><span id="Audit_ChangeDay"></span></td>
+            <td><span id="Audit_DatumDay"></span></td>
+            <td><span id="Audit_SendBillDay"></span></td>
+            <td><span id="Audit_ServiceBeginDay"></span></td>
+            <td><span id="Audit_ServceEndDay"></span></td>
+        </tr>
+    </tbody>
+</table>
+
+
+

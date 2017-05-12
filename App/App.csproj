@@ -1,0 +1,1666 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{09A415DA-8901-40AB-8EE8-7AE86B72FA7C}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Langben.App</RootNamespace>
+    <AssemblyName>App</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\DLL\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\NPOI 2.2.0.0\dotnet4\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=4.1.0.0, Culture=neutral, PublicKeyToken=e44a2bc38ed2c13c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data">
+      <HintPath>..\packages\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception">
+      <HintPath>..\packages\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.2.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NPOI 2.2.0.0\dotnet4\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.2.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NPOI 2.2.0.0\dotnet4\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.2.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NPOI 2.2.0.0\dotnet4\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.2.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NPOI 2.2.0.0\dotnet4\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.0.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.0.0\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.0.0\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\DLL\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\DLL\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\DLL\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\DLL\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\DLL\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\DLL\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\DLL\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\DLL\WebGrease.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Areas\CRM\Models\" />
+    <Folder Include="Areas\CRM\Views\Shared\" />
+    <Folder Include="Areas\Suppliers\Models\" />
+    <Folder Include="DataExport\" />
+    <Folder Include="excel\" />
+    <Folder Include="Uploads\Excel\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Authority\AuthorityAreaRegistration.cs" />
+    <Compile Include="Areas\Authority\Controllers\RoleApiController.cs" />
+    <Compile Include="Areas\Authority\Controllers\GroupApiController.cs" />
+    <Compile Include="Areas\Authority\Controllers\GroupController.cs" />
+    <Compile Include="Areas\Authority\Controllers\MenuController.cs" />
+    <Compile Include="Areas\Authority\Controllers\ConfigController.cs" />
+    <Compile Include="Areas\Authority\Controllers\PersonController.cs" />
+    <Compile Include="Areas\Authority\Controllers\RoleController.cs" />
+    <Compile Include="Areas\Authority\Controllers\UserController.cs" />
+    <Compile Include="Areas\Authority\Models\DepTree.cs" />
+    <Compile Include="Areas\Authority\Controllers\MenuOpController.cs" />
+    <Compile Include="Areas\Authority\Models\MenuOption.cs" />
+    <Compile Include="Areas\Authority\Models\SysMenu.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyContractAPIController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyContractController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyContract_AuditApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_InsuranceApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_SaleManagerApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_SaleManagerController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_ServiceManagerApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_AuditController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyFinance_BillApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyFinance_Bill_AuditApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyFinance_PaymentApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyFinanceController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyLinkManApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_AuditApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_ReSubmitController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_SaleController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_InsuranceController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_EmployeeBankApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_EmployeeBankController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_EmployeeContactApiController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Areas\CRM\Controllers\CRM_EmployeeContactController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Areas\CRM\Controllers\CRM_ZD_HYApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_Company_ServiceManagerController.cs" />
+    <Compile Include="Areas\CRM\CRMAreaRegistration.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\Cost_CostTable_SupplerApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\Cost_CostTable_SupplerController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\LadderLowestPriceApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\LadderPriceApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierBankAccountApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\LadderPriceController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierBankAccountController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierBillApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierBillController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierLinkManApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierLinkManController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierStopExportApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierAddExportApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierStopExportController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierAddFeedBackApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierAddExportController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierAddFeedBackController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierStopFeedBackApiController.cs" />
+    <Compile Include="Areas\Suppliers\Controllers\SupplierStopFeedBackController.cs" />
+    <Compile Include="Areas\Suppliers\SuppliersAreaRegistration.cs" />
+    <Compile Include="Codes\BaseApiController.cs" />
+    <Compile Include="Codes\BaseController.cs" />
+    <Compile Include="Codes\LogClassModels.cs" />
+    <Compile Include="Codes\SupportFilter.cs" />
+    <Compile Include="Codes\SysFieldModels.cs" />
+    <Compile Include="Codes\Util_XLS.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AddEmployeeApiController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\AllotApiController.cs" />
+    <Compile Include="Controllers\AllotController.cs" />
+    <Compile Include="Controllers\backpayApiController.cs" />
+    <Compile Include="Controllers\BillListApiController.cs" />
+    <Compile Include="Controllers\BillStatusApiController.cs" />
+    <Compile Include="Controllers\CityCategoryApiController.cs" />
+    <Compile Include="Controllers\CompanyApiController.cs" />
+    <Compile Include="Controllers\CostPayDuibiApiController.cs" />
+    <Compile Include="Controllers\CostPayDuibiController.cs" />
+    <Compile Include="Controllers\COST_CostTable_FinanceAduitController.cs" />
+    <Compile Include="Controllers\COST_CostTable_CreateController.cs" />
+    <Compile Include="Controllers\COST_PayCreateApiController.cs" />
+    <Compile Include="Controllers\COST_PayCreateController.cs" />
+    <Compile Include="Controllers\COST_PayGongJiJinBCController.cs" />
+    <Compile Include="Controllers\COST_PayGongJiJinController.cs" />
+    <Compile Include="Controllers\COST_PayGongShangController.cs" />
+    <Compile Include="Controllers\CostPayPersonContrastedApiController.cs" />
+    <Compile Include="Controllers\COST_PayRecord_ContrastedApiController.cs" />
+    <Compile Include="Controllers\COST_PayRecordApiController.cs" />
+    <Compile Include="Controllers\COST_PayRecordController.cs" />
+    <Compile Include="Controllers\COST_PayRecordStatusController.cs" />
+    <Compile Include="Controllers\CostPayPersonContrastedController.cs" />
+    <Compile Include="Controllers\COST_PayRecord_ContrastedController.cs" />
+    <Compile Include="Controllers\COST_PayRecord_ConfirmController.cs" />
+    <Compile Include="Controllers\COST_PayShengYuController.cs" />
+    <Compile Include="Controllers\COST_PayShiYeController.cs" />
+    <Compile Include="Controllers\COST_PayTemporaryController.cs" />
+    <Compile Include="Controllers\COST_PayYangLaoController.cs" />
+    <Compile Include="Controllers\COST_PayYiLiaoController.cs" />
+    <Compile Include="Controllers\COST_PayYiLiaoDaEController.cs" />
+    <Compile Include="Controllers\Cost_Pay_FenGeApiController.cs" />
+    <Compile Include="Controllers\Cost_Pay_FenGeController.cs" />
+    <Compile Include="Controllers\CreateBillApiController.cs" />
+    <Compile Include="Controllers\CRM_ZD_HYController.cs" />
+    <Compile Include="Controllers\EmployeeAddApiController.cs" />
+    <Compile Include="Controllers\EmployeeAddSetFailByExcelController.cs" />
+    <Compile Include="Controllers\EmployeeBankApiController.cs" />
+    <Compile Include="Controllers\EmployeeBankController.cs" />
+    <Compile Include="Controllers\EmployeeContactApiController.cs" />
+    <Compile Include="Controllers\EmployeeContactController.cs" />
+    <Compile Include="Controllers\EmployeeMiddleImportRecordApiController.cs" />
+    <Compile Include="Controllers\EmployeeMiddleImportRecordController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentFeedbackApiController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentFeedbackController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentForCustomerApiController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentExeclController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentForCustomerController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentPlatApiController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentPlatController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentSetFailByExcelController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentSingleApiController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentSingleController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InsurancekindsApiController.cs" />
+    <Compile Include="Controllers\ORG_UserCityController.cs" />
+    <Compile Include="Controllers\PoliceApiController.cs" />
+    <Compile Include="Controllers\PoliceOperationsApiController.cs" />
+    <Compile Include="Controllers\RemoveEmployeeApiController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="HtmlHelper\CheckBoxListHelper.cs" />
+    <Compile Include="HtmlHelper\Easyui.cs" />
+    <Compile Include="HtmlHelper\RadioButtonListHelper.cs" />
+    <Compile Include="Models\EmptyClass.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\css.css" />
+    <Content Include="Content\Default.css" />
+    <Content Include="Content\StyleSheet.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Images\anquantuichu.gif" />
+    <Content Include="Images\bangzhu.gif" />
+    <Content Include="Images\beijing.gif" />
+    <Content Include="Images\buttonOn_login.gif" />
+    <Content Include="Images\deleteimge.png" />
+    <Content Include="Images\direction.gif" />
+    <Content Include="Images\duanxinxi.gif" />
+    <Content Include="Images\excelcss.jpg" />
+    <Content Include="Images\line_n2.gif" />
+    <Content Include="Images\login_bottom.gif" />
+    <Content Include="Images\login_midbg.gif" />
+    <Content Include="Images\login_pic.gif" />
+    <Content Include="Images\login_top.gif" />
+    <Content Include="Images\mimaxiugai.gif" />
+    <Content Include="Images\noscript.gif" />
+    <Content Include="Images\notfound.gif" />
+    <Content Include="Images\password_bg.gif" />
+    <Content Include="Images\tabicons.png" />
+    <Content Include="Images\top-back.gif" />
+    <Content Include="Images\username_bg.gif" />
+    <Content Include="Images\view.png" />
+    <Content Include="Images\yuanjiao.gif" />
+    <Content Include="Images\yuanjiao.png" />
+    <Content Include="Images\welcome.png" />
+    <Content Include="img\ar.png" />
+    <Content Include="img\bg_01.png" />
+    <Content Include="img\dl_08.png" />
+    <Content Include="img\hx.png" />
+    <Content Include="img\hx_03.png" />
+    <Content Include="img\logowaibao.png" />
+    <Content Include="img\oabg_01_03.png" />
+    <Content Include="img\wb.png" />
+    <Content Include="img\wb_01.png" />
+    <Content Include="img\xiet-bg_06.png" />
+    <Content Include="img\zmbg_01.png" />
+    <Content Include="img\zmbg_03.png" />
+    <Content Include="install_lodop32.exe" />
+    <Content Include="install_lodop64.exe" />
+    <Content Include="Res\easyui\jquery.easyui.min.js" />
+    <Content Include="Res\easyui\locale\easyui-lang-zh_CN.js" />
+    <Content Include="Res\easyui\themes\black\accordion.css" />
+    <Content Include="Res\easyui\themes\black\calendar.css" />
+    <Content Include="Res\easyui\themes\black\combo.css" />
+    <Content Include="Res\easyui\themes\black\combobox.css" />
+    <Content Include="Res\easyui\themes\black\datagrid.css" />
+    <Content Include="Res\easyui\themes\black\datebox.css" />
+    <Content Include="Res\easyui\themes\black\dialog.css" />
+    <Content Include="Res\easyui\themes\black\easyui.css" />
+    <Content Include="Res\easyui\themes\black\images\accordion_arrows.png" />
+    <Content Include="Res\easyui\themes\black\images\blank.gif" />
+    <Content Include="Res\easyui\themes\black\images\calendar_arrows.png" />
+    <Content Include="Res\easyui\themes\black\images\combo_arrow.png" />
+    <Content Include="Res\easyui\themes\black\images\datagrid_icons.png" />
+    <Content Include="Res\easyui\themes\black\images\datebox_arrow.png" />
+    <Content Include="Res\easyui\themes\black\images\layout_arrows.png" />
+    <Content Include="Res\easyui\themes\black\images\linkbutton_bg.png" />
+    <Content Include="Res\easyui\themes\black\images\loading.gif" />
+    <Content Include="Res\easyui\themes\black\images\menu_arrows.png" />
+    <Content Include="Res\easyui\themes\black\images\messager_icons.png" />
+    <Content Include="Res\easyui\themes\black\images\pagination_icons.png" />
+    <Content Include="Res\easyui\themes\black\images\panel_tools.png" />
+    <Content Include="Res\easyui\themes\black\images\searchbox_button.png" />
+    <Content Include="Res\easyui\themes\black\images\slider_handle.png" />
+    <Content Include="Res\easyui\themes\black\images\spinner_arrows.png" />
+    <Content Include="Res\easyui\themes\black\images\tabs_icons.png" />
+    <Content Include="Res\easyui\themes\black\images\tree_icons.png" />
+    <Content Include="Res\easyui\themes\black\images\validatebox_warning.png" />
+    <Content Include="Res\easyui\themes\black\layout.css" />
+    <Content Include="Res\easyui\themes\black\linkbutton.css" />
+    <Content Include="Res\easyui\themes\black\menu.css" />
+    <Content Include="Res\easyui\themes\black\menubutton.css" />
+    <Content Include="Res\easyui\themes\black\messager.css" />
+    <Content Include="Res\easyui\themes\black\numberbox.css" />
+    <Content Include="Res\easyui\themes\black\pagination.css" />
+    <Content Include="Res\easyui\themes\black\panel.css" />
+    <Content Include="Res\easyui\themes\black\progressbar.css" />
+    <Content Include="Res\easyui\themes\black\propertygrid.css" />
+    <Content Include="Res\easyui\themes\black\searchbox.css" />
+    <Content Include="Res\easyui\themes\black\slider.css" />
+    <Content Include="Res\easyui\themes\black\spinner.css" />
+    <Content Include="Res\easyui\themes\black\splitbutton.css" />
+    <Content Include="Res\easyui\themes\black\tabs.css" />
+    <Content Include="Res\easyui\themes\black\textbox.css" />
+    <Content Include="Res\easyui\themes\black\tooltip.css" />
+    <Content Include="Res\easyui\themes\black\tree.css" />
+    <Content Include="Res\easyui\themes\black\validatebox.css" />
+    <Content Include="Res\easyui\themes\black\window.css" />
+    <Content Include="Res\easyui\themes\bootstrap\accordion.css" />
+    <Content Include="Res\easyui\themes\bootstrap\calendar.css" />
+    <Content Include="Res\easyui\themes\bootstrap\combo.css" />
+    <Content Include="Res\easyui\themes\bootstrap\combobox.css" />
+    <Content Include="Res\easyui\themes\bootstrap\datagrid.css" />
+    <Content Include="Res\easyui\themes\bootstrap\datebox.css" />
+    <Content Include="Res\easyui\themes\bootstrap\dialog.css" />
+    <Content Include="Res\easyui\themes\bootstrap\easyui.css" />
+    <Content Include="Res\easyui\themes\bootstrap\images\accordion_arrows.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\blank.gif" />
+    <Content Include="Res\easyui\themes\bootstrap\images\calendar_arrows.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\combo_arrow.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\datagrid_icons.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\datebox_arrow.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\layout_arrows.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\linkbutton_bg.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\loading.gif" />
+    <Content Include="Res\easyui\themes\bootstrap\images\menu_arrows.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\messager_icons.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\pagination_icons.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\panel_tools.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\searchbox_button.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\slider_handle.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\spinner_arrows.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\tabs_icons.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\tree_icons.png" />
+    <Content Include="Res\easyui\themes\bootstrap\images\validatebox_warning.png" />
+    <Content Include="Res\easyui\themes\bootstrap\layout.css" />
+    <Content Include="Res\easyui\themes\bootstrap\linkbutton.css" />
+    <Content Include="Res\easyui\themes\bootstrap\menu.css" />
+    <Content Include="Res\easyui\themes\bootstrap\menubutton.css" />
+    <Content Include="Res\easyui\themes\bootstrap\messager.css" />
+    <Content Include="Res\easyui\themes\bootstrap\numberbox.css" />
+    <Content Include="Res\easyui\themes\bootstrap\pagination.css" />
+    <Content Include="Res\easyui\themes\bootstrap\panel.css" />
+    <Content Include="Res\easyui\themes\bootstrap\progressbar.css" />
+    <Content Include="Res\easyui\themes\bootstrap\propertygrid.css" />
+    <Content Include="Res\easyui\themes\bootstrap\searchbox.css" />
+    <Content Include="Res\easyui\themes\bootstrap\slider.css" />
+    <Content Include="Res\easyui\themes\bootstrap\spinner.css" />
+    <Content Include="Res\easyui\themes\bootstrap\splitbutton.css" />
+    <Content Include="Res\easyui\themes\bootstrap\tabs.css" />
+    <Content Include="Res\easyui\themes\bootstrap\textbox.css" />
+    <Content Include="Res\easyui\themes\bootstrap\tooltip.css" />
+    <Content Include="Res\easyui\themes\bootstrap\tree.css" />
+    <Content Include="Res\easyui\themes\bootstrap\validatebox.css" />
+    <Content Include="Res\easyui\themes\bootstrap\window.css" />
+    <Content Include="Res\easyui\themes\default\accordion.css" />
+    <Content Include="Res\easyui\themes\default\calendar.css" />
+    <Content Include="Res\easyui\themes\default\combo.css" />
+    <Content Include="Res\easyui\themes\default\combobox.css" />
+    <Content Include="Res\easyui\themes\default\datagrid.css" />
+    <Content Include="Res\easyui\themes\default\datebox.css" />
+    <Content Include="Res\easyui\themes\default\dialog.css" />
+    <Content Include="Res\easyui\themes\default\easyui.css" />
+    <Content Include="Res\easyui\themes\default\images\accordion_arrows.png" />
+    <Content Include="Res\easyui\themes\default\images\blank.gif" />
+    <Content Include="Res\easyui\themes\default\images\calendar_arrows.png" />
+    <Content Include="Res\easyui\themes\default\images\combo_arrow.png" />
+    <Content Include="Res\easyui\themes\default\images\datagrid_icons.png" />
+    <Content Include="Res\easyui\themes\default\images\datebox_arrow.png" />
+    <Content Include="Res\easyui\themes\default\images\layout_arrows.png" />
+    <Content Include="Res\easyui\themes\default\images\linkbutton_bg.png" />
+    <Content Include="Res\easyui\themes\default\images\loading.gif" />
+    <Content Include="Res\easyui\themes\default\images\menu_arrows.png" />
+    <Content Include="Res\easyui\themes\default\images\messager_icons.png" />
+    <Content Include="Res\easyui\themes\default\images\pagination_icons.png" />
+    <Content Include="Res\easyui\themes\default\images\panel_tools.png" />
+    <Content Include="Res\easyui\themes\default\images\searchbox_button.png" />
+    <Content Include="Res\easyui\themes\default\images\slider_handle.png" />
+    <Content Include="Res\easyui\themes\default\images\spinner_arrows.png" />
+    <Content Include="Res\easyui\themes\default\images\tabs_icons.png" />
+    <Content Include="Res\easyui\themes\default\images\tree_icons.png" />
+    <Content Include="Res\easyui\themes\default\images\validatebox_warning.png" />
+    <Content Include="Res\easyui\themes\default\layout.css" />
+    <Content Include="Res\easyui\themes\default\linkbutton.css" />
+    <Content Include="Res\easyui\themes\default\menu.css" />
+    <Content Include="Res\easyui\themes\default\menubutton.css" />
+    <Content Include="Res\easyui\themes\default\messager.css" />
+    <Content Include="Res\easyui\themes\default\numberbox.css" />
+    <Content Include="Res\easyui\themes\default\pagination.css" />
+    <Content Include="Res\easyui\themes\default\panel.css" />
+    <Content Include="Res\easyui\themes\default\progressbar.css" />
+    <Content Include="Res\easyui\themes\default\propertygrid.css" />
+    <Content Include="Res\easyui\themes\default\searchbox.css" />
+    <Content Include="Res\easyui\themes\default\slider.css" />
+    <Content Include="Res\easyui\themes\default\spinner.css" />
+    <Content Include="Res\easyui\themes\default\splitbutton.css" />
+    <Content Include="Res\easyui\themes\default\tabs.css" />
+    <Content Include="Res\easyui\themes\default\textbox.css" />
+    <Content Include="Res\easyui\themes\default\tooltip.css" />
+    <Content Include="Res\easyui\themes\default\tree.css" />
+    <Content Include="Res\easyui\themes\default\validatebox.css" />
+    <Content Include="Res\easyui\themes\default\window.css" />
+    <Content Include="Res\easyui\themes\gray\accordion.css" />
+    <Content Include="Res\easyui\themes\gray\calendar.css" />
+    <Content Include="Res\easyui\themes\gray\combo.css" />
+    <Content Include="Res\easyui\themes\gray\combobox.css" />
+    <Content Include="Res\easyui\themes\gray\datagrid.css" />
+    <Content Include="Res\easyui\themes\gray\datebox.css" />
+    <Content Include="Res\easyui\themes\gray\dialog.css" />
+    <Content Include="Res\easyui\themes\gray\easyui.css" />
+    <Content Include="Res\easyui\themes\gray\images\accordion_arrows.png" />
+    <Content Include="Res\easyui\themes\gray\images\blank.gif" />
+    <Content Include="Res\easyui\themes\gray\images\calendar_arrows.png" />
+    <Content Include="Res\easyui\themes\gray\images\combo_arrow.png" />
+    <Content Include="Res\easyui\themes\gray\images\datagrid_icons.png" />
+    <Content Include="Res\easyui\themes\gray\images\datebox_arrow.png" />
+    <Content Include="Res\easyui\themes\gray\images\layout_arrows.png" />
+    <Content Include="Res\easyui\themes\gray\images\linkbutton_bg.png" />
+    <Content Include="Res\easyui\themes\gray\images\loading.gif" />
+    <Content Include="Res\easyui\themes\gray\images\menu_arrows.png" />
+    <Content Include="Res\easyui\themes\gray\images\messager_icons.png" />
+    <Content Include="Res\easyui\themes\gray\images\pagination_icons.png" />
+    <Content Include="Res\easyui\themes\gray\images\panel_tools.png" />
+    <Content Include="Res\easyui\themes\gray\images\searchbox_button.png" />
+    <Content Include="Res\easyui\themes\gray\images\slider_handle.png" />
+    <Content Include="Res\easyui\themes\gray\images\spinner_arrows.png" />
+    <Content Include="Res\easyui\themes\gray\images\tabs_icons.png" />
+    <Content Include="Res\easyui\themes\gray\images\tree_icons.png" />
+    <Content Include="Res\easyui\themes\gray\images\validatebox_warning.png" />
+    <Content Include="Res\easyui\themes\gray\layout.css" />
+    <Content Include="Res\easyui\themes\gray\linkbutton.css" />
+    <Content Include="Res\easyui\themes\gray\menu.css" />
+    <Content Include="Res\easyui\themes\gray\menubutton.css" />
+    <Content Include="Res\easyui\themes\gray\messager.css" />
+    <Content Include="Res\easyui\themes\gray\numberbox.css" />
+    <Content Include="Res\easyui\themes\gray\pagination.css" />
+    <Content Include="Res\easyui\themes\gray\panel.css" />
+    <Content Include="Res\easyui\themes\gray\progressbar.css" />
+    <Content Include="Res\easyui\themes\gray\propertygrid.css" />
+    <Content Include="Res\easyui\themes\gray\searchbox.css" />
+    <Content Include="Res\easyui\themes\gray\slider.css" />
+    <Content Include="Res\easyui\themes\gray\spinner.css" />
+    <Content Include="Res\easyui\themes\gray\splitbutton.css" />
+    <Content Include="Res\easyui\themes\gray\tabs.css" />
+    <Content Include="Res\easyui\themes\gray\textbox.css" />
+    <Content Include="Res\easyui\themes\gray\tooltip.css" />
+    <Content Include="Res\easyui\themes\gray\tree.css" />
+    <Content Include="Res\easyui\themes\gray\validatebox.css" />
+    <Content Include="Res\easyui\themes\gray\window.css" />
+    <Content Include="Res\easyui\themes\icon.css" />
+    <Content Include="Res\easyui\themes\icons\back.png" />
+    <Content Include="Res\easyui\themes\icons\blank.gif" />
+    <Content Include="Res\easyui\themes\icons\cancel.png" />
+    <Content Include="Res\easyui\themes\icons\clear.png" />
+    <Content Include="Res\easyui\themes\icons\cut.png" />
+    <Content Include="Res\easyui\themes\icons\daoru.png" />
+    <Content Include="Res\easyui\themes\icons\detail.png" />
+    <Content Include="Res\easyui\themes\icons\edit_add.png" />
+    <Content Include="Res\easyui\themes\icons\edit_remove.png" />
+    <Content Include="Res\easyui\themes\icons\fenpei.png" />
+    <Content Include="Res\easyui\themes\icons\filesave.png" />
+    <Content Include="Res\easyui\themes\icons\filter.png" />
+    <Content Include="Res\easyui\themes\icons\guaqi.png" />
+    <Content Include="Res\easyui\themes\icons\help.png" />
+    <Content Include="Res\easyui\themes\icons\large_chart.png" />
+    <Content Include="Res\easyui\themes\icons\large_clipart.png" />
+    <Content Include="Res\easyui\themes\icons\large_picture.png" />
+    <Content Include="Res\easyui\themes\icons\large_shapes.png" />
+    <Content Include="Res\easyui\themes\icons\large_smartart.png" />
+    <Content Include="Res\easyui\themes\icons\lock.png" />
+    <Content Include="Res\easyui\themes\icons\man.png" />
+    <Content Include="Res\easyui\themes\icons\menu.png" />
+    <Content Include="Res\easyui\themes\icons\mini_add.png" />
+    <Content Include="Res\easyui\themes\icons\mini_edit.png" />
+    <Content Include="Res\easyui\themes\icons\mini_refresh.png" />
+    <Content Include="Res\easyui\themes\icons\no.png" />
+    <Content Include="Res\easyui\themes\icons\ok.png" />
+    <Content Include="Res\easyui\themes\icons\pass.png" />
+    <Content Include="Res\easyui\themes\icons\peizhi.png" />
+    <Content Include="Res\easyui\themes\icons\pencil.png" />
+    <Content Include="Res\easyui\themes\icons\print.png" />
+    <Content Include="Res\easyui\themes\icons\redo.png" />
+    <Content Include="Res\easyui\themes\icons\reload.png" />
+    <Content Include="Res\easyui\themes\icons\return.png" />
+    <Content Include="Res\easyui\themes\icons\search.png" />
+    <Content Include="Res\easyui\themes\icons\settings.png" />
+    <Content Include="Res\easyui\themes\icons\stop.png" />
+    <Content Include="Res\easyui\themes\icons\sum.png" />
+    <Content Include="Res\easyui\themes\icons\tip.png" />
+    <Content Include="Res\easyui\themes\icons\tiqu.png" />
+    <Content Include="Res\easyui\themes\icons\undo.png" />
+    <Content Include="Res\easyui\themes\metro\accordion.css" />
+    <Content Include="Res\easyui\themes\metro\calendar.css" />
+    <Content Include="Res\easyui\themes\metro\combo.css" />
+    <Content Include="Res\easyui\themes\metro\combobox.css" />
+    <Content Include="Res\easyui\themes\metro\datagrid.css" />
+    <Content Include="Res\easyui\themes\metro\datebox.css" />
+    <Content Include="Res\easyui\themes\metro\dialog.css" />
+    <Content Include="Res\easyui\themes\metro\easyui.css" />
+    <Content Include="Res\easyui\themes\metro\images\accordion_arrows.png" />
+    <Content Include="Res\easyui\themes\metro\images\blank.gif" />
+    <Content Include="Res\easyui\themes\metro\images\calendar_arrows.png" />
+    <Content Include="Res\easyui\themes\metro\images\combo_arrow.png" />
+    <Content Include="Res\easyui\themes\metro\images\datagrid_icons.png" />
+    <Content Include="Res\easyui\themes\metro\images\datebox_arrow.png" />
+    <Content Include="Res\easyui\themes\metro\images\layout_arrows.png" />
+    <Content Include="Res\easyui\themes\metro\images\linkbutton_bg.png" />
+    <Content Include="Res\easyui\themes\metro\images\loading.gif" />
+    <Content Include="Res\easyui\themes\metro\images\menu_arrows.png" />
+    <Content Include="Res\easyui\themes\metro\images\messager_icons.png" />
+    <Content Include="Res\easyui\themes\metro\images\pagination_icons.png" />
+    <Content Include="Res\easyui\themes\metro\images\panel_tools.png" />
+    <Content Include="Res\easyui\themes\metro\images\searchbox_button.png" />
+    <Content Include="Res\easyui\themes\metro\images\slider_handle.png" />
+    <Content Include="Res\easyui\themes\metro\images\spinner_arrows.png" />
+    <Content Include="Res\easyui\themes\metro\images\tabs_icons.png" />
+    <Content Include="Res\easyui\themes\metro\images\tree_icons.png" />
+    <Content Include="Res\easyui\themes\metro\images\validatebox_warning.png" />
+    <Content Include="Res\easyui\themes\metro\layout.css" />
+    <Content Include="Res\easyui\themes\metro\linkbutton.css" />
+    <Content Include="Res\easyui\themes\metro\menu.css" />
+    <Content Include="Res\easyui\themes\metro\menubutton.css" />
+    <Content Include="Res\easyui\themes\metro\messager.css" />
+    <Content Include="Res\easyui\themes\metro\numberbox.css" />
+    <Content Include="Res\easyui\themes\metro\pagination.css" />
+    <Content Include="Res\easyui\themes\metro\panel.css" />
+    <Content Include="Res\easyui\themes\metro\progressbar.css" />
+    <Content Include="Res\easyui\themes\metro\propertygrid.css" />
+    <Content Include="Res\easyui\themes\metro\searchbox.css" />
+    <Content Include="Res\easyui\themes\metro\slider.css" />
+    <Content Include="Res\easyui\themes\metro\spinner.css" />
+    <Content Include="Res\easyui\themes\metro\splitbutton.css" />
+    <Content Include="Res\easyui\themes\metro\tabs.css" />
+    <Content Include="Res\easyui\themes\metro\textbox.css" />
+    <Content Include="Res\easyui\themes\metro\tooltip.css" />
+    <Content Include="Res\easyui\themes\metro\tree.css" />
+    <Content Include="Res\easyui\themes\metro\validatebox.css" />
+    <Content Include="Res\easyui\themes\metro\window.css" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\cancel.png" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\expressInstall.swf" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\jquery-1.4.2.min.js" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\jquery.uploadify.v2.1.4.js" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\jquery.uploadify.v2.1.4.min.js" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\swfobject.js" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\uploadify.allglyphs.swf" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\uploadify.css" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\uploadify.swf" />
+    <Content Include="Res\My97DatePicker\calendar.js" />
+    <Content Include="Res\My97DatePicker\demo.htm" />
+    <Content Include="Res\My97DatePicker\lang\en.js" />
+    <Content Include="Res\My97DatePicker\lang\zh-cn.js" />
+    <Content Include="Res\My97DatePicker\lang\zh-tw.js" />
+    <Content Include="Res\My97DatePicker\skin\datePicker.gif" />
+    <Content Include="Res\My97DatePicker\skin\default\datepicker.css" />
+    <Content Include="Res\My97DatePicker\skin\default\img.gif" />
+    <Content Include="Res\My97DatePicker\skin\WdatePicker.css" />
+    <Content Include="Res\My97DatePicker\skin\whyGreen\bg.jpg" />
+    <Content Include="Res\My97DatePicker\skin\whyGreen\datepicker.css" />
+    <Content Include="Res\My97DatePicker\skin\whyGreen\img.gif" />
+    <Content Include="Res\My97DatePicker\WdatePicker.js" />
+    <Content Include="Res\SimpleCanleder\SimpleCanleder.css" />
+    <Content Include="Res\SimpleCanleder\SimpleCanleder.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.all-3.5.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.all-3.5.min.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.core-3.5.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.core-3.5.min.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.excheck-3.5.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.excheck-3.5.min.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.exedit-3.5.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.exedit-3.5.min.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.exedit.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.exhide-3.5.js" />
+    <Content Include="Res\ztree\js\jquery.ztree.exhide-3.5.min.js" />
+    <Content Include="Res\ztree\zTreeStyle\demo.css" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\1_close.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\1_open.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\2.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\3.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\4.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\5.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\6.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\7.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\8.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\diy\9.png" />
+    <Content Include="Res\ztree\zTreeStyle\img\line_conn.gif" />
+    <Content Include="Res\ztree\zTreeStyle\img\loading.gif" />
+    <Content Include="Res\ztree\zTreeStyle\img\zTreeStandard.gif" />
+    <Content Include="Res\ztree\zTreeStyle\img\zTreeStandard.png" />
+    <Content Include="Res\ztree\zTreeStyle\zTreeStyle.css" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\check.php" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\air\logging\FileTarget.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\crypto\HMAC.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\crypto\MD5.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\crypto\MD5Stream.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\crypto\SHA1.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\crypto\SHA224.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\crypto\SHA256.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\crypto\WSSEUsernameToken.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\errors\IllegalStateError.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\fileformats\vcard\Address.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\fileformats\vcard\Email.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\fileformats\vcard\Phone.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\fileformats\vcard\VCard.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\fileformats\vcard\VCardParser.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\images\BitString.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\images\JPGEncoder.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\images\PNGEncoder.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\net\DynamicURLLoader.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\net\IURIResolver.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\net\MimeTypeMap.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\net\proxies\RFC2817Socket.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\net\URI.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\net\URIEncodingBitmap.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\Database.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\Definition.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\Dict.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\DictionaryServer.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\ConnectedEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\DatabaseEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\DefinitionEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\DefinitionHeaderEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\DictionaryServerEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\DisconnectedEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\ErrorEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\MatchEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\MatchStrategiesEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\events\NoMatchEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\MatchStrategy.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\Response.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\util\CompleteResponseEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\protocols\dict\util\SocketHelper.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\serialization\json\JSON.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\serialization\json\JSONDecoder.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\serialization\json\JSONEncoder.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\serialization\json\JSONParseError.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\serialization\json\JSONToken.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\serialization\json\JSONTokenizer.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\serialization\json\JSONTokenType.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\utils\ArrayUtil.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\utils\DateUtil.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\utils\DictionaryUtil.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\utils\IntUtil.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\utils\NumberFormatter.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\utils\StringUtil.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\utils\XMLUtil.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\webapis\events\ServiceEvent.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\webapis\ServiceBase.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\com\adobe\webapis\URLLoaderBase.as" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\FileUploader.ashx" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\FileUploaderExcle.ashx" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\uploadify.fla" />
+    <Content Include="Res\jquery.uploadify-v2.1.4\uploadify.php" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery.easyui.min.js" />
+    <Content Include="Scripts\jquery.form.js" />
+    <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Areas\CRM\Views\web.config" />
+    <Content Include="Areas\CRM\Views\CRM_Company\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company\ModifyBaseInfo.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\CRM\Views\CRM_Employee\BaseInfo.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyLadderPrice\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_EmployeeBank\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_EmployeeBank\Create.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_EmployeeBank\Edit.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_EmployeeContact\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyLadderPrice\Create.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyLadderPrice\Edit.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyLadderPrice\CreateLadder.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyLadderPrice\EditLadder.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyFinance\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyFinance\EditPayment.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyFinance\CreatePayment.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyFinance\CreateBill.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyFinance\EditBill.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\EditBasic.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\AddLinkMan.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\EditLinkMan.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\EditBank.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\AddBank.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\EditFinanceBill.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\AddFinanceBill.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\AddFinancePayment.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\EditFinancePayment.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\EditPrice.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\EditLadderPrice.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\AddLadderPrice.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\AddPrice.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_ServiceManager\AlreadyIndex.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_SaleManager\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_ServiceManager\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyContract\Create.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyContract\Details.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyContract\Edit.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyContract\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\EditContract.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\AddContract.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company\CompanyDetail.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_ServiceManager\ServiceAssigned.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_SaleManager\SaleAssigned.cshtml" />
+    <Content Include="Areas\Authority\Views\Config\ConfigAuthority.cshtml" />
+    <Content Include="Areas\Authority\Views\web.config" />
+    <Content Include="Areas\Authority\Views\Role\Index.cshtml" />
+    <Content Include="Areas\Authority\Views\User\Index.cshtml" />
+    <Content Include="Areas\Authority\Views\MenuOp\Index.cshtml" />
+    <Content Include="Areas\Authority\Views\Menu\Index.cshtml" />
+    <Content Include="Areas\Authority\Views\MenuOp\Create.cshtml" />
+    <Content Include="Areas\Authority\Views\MenuOp\Edit.cshtml" />
+    <Content Include="Areas\Authority\Views\Menu\Create.cshtml" />
+    <Content Include="Areas\Authority\Views\Person\Add.cshtml" />
+    <Content Include="Areas\Authority\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Authority\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Authority\Views\Group\Index.cshtml" />
+    <Content Include="Areas\Authority\Views\Group\Edit.cshtml" />
+    <Content Include="Areas\Authority\Views\Menu\Edit.cshtml" />
+    <Content Include="Areas\Authority\Views\Role\Create.cshtml" />
+    <Content Include="Areas\Authority\Views\Role\Edit.cshtml" />
+    <Content Include="Images\供应商导出.xls" />
+    <Content Include="Images\费用详情导出模板.xls" />
+    <Content Include="Areas\CRM\Views\CRM_Employee\Add.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Employee\ImportEmployee.cshtml" />
+    <Content Include="Areas\Authority\Views\Group\Index2.cshtml" />
+    <Content Include="Areas\Authority\Views\Group\AddUsers.cshtml" />
+    <Content Include="Areas\Suppliers\Views\Supplier\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\Supplier\Create.cshtml" />
+    <Content Include="Areas\Suppliers\Views\web.config" />
+    <Content Include="Areas\Suppliers\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Suppliers\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierAddFeedBack\SupFeedbackSuccess.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierStopFeedBack\SupFeedbackSuccess.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierStopExport\ExportList.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierBankAccount\Create.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierBankAccount\Edit.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierBankAccount\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierAddFeedBack\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierAddExport\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierBill\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierBill\Create.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierBill\Edit.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierStopFeedBack\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierAddFeedBack\FeedbackIndex.cshtml" />
+    <Content Include="Areas\Suppliers\Views\Supplier\Edit.cshtml" />
+    <Content Include="Areas\Suppliers\Views\LadderPrice\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\LadderPrice\Create.cshtml" />
+    <Content Include="Areas\Suppliers\Views\LadderPrice\EditLowest.cshtml" />
+    <Content Include="Areas\Suppliers\Views\LadderPrice\CreateLadder.cshtml" />
+    <Content Include="Areas\Suppliers\Views\LadderPrice\EditLadder.cshtml" />
+    <Content Include="Areas\Suppliers\Views\Supplier\ServiceAssigned.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierLinkMan\Create.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierLinkMan\Edit.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierLinkMan\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\Cost_CostTable_Suppler\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\Supplier\Detail.cshtml" />
+    <Content Include="Areas\Suppliers\Views\SupplierStopFeedBack\SetFail.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Insurance\Create.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Insurance\Edit.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Insurance\Index.cshtml" />
+    <Content Include="Areas\Suppliers\Views\Cost_CostTable_Suppler\List.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\AddInsurance.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\EditInsurance.cshtml" />
+    <Content Include="Images\报增查询导出.xls" />
+    <None Include="Properties\PublishProfiles\SBO2O.pubxml" />
+    <Content Include="Areas\Authority\Views\Role\List.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <None Include="Properties\PublishProfiles\shebao.pubxml" />
+    <None Include="Properties\PublishProfiles\新外包.pubxml" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Sale\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_ReSubmit\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_EmployeeContact\Create.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_EmployeeContact\Edit.cshtml" />
+    <Content Include="Scripts\jquery.minBak.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\JScriptCommon.js" />
+    <Content Include="Scripts\JScriptIndex.js" />
+    <Content Include="Scripts\LodopFuncs.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\Myl.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\themes\black\accordion.css" />
+    <Content Include="Scripts\themes\black\calendar.css" />
+    <Content Include="Scripts\themes\black\combo.css" />
+    <Content Include="Scripts\themes\black\combobox.css" />
+    <Content Include="Scripts\themes\black\datagrid.css" />
+    <Content Include="Scripts\themes\black\datalist.css" />
+    <Content Include="Scripts\themes\black\datebox.css" />
+    <Content Include="Scripts\themes\black\dialog.css" />
+    <Content Include="Scripts\themes\black\easyui.css" />
+    <Content Include="Scripts\themes\black\filebox.css" />
+    <Content Include="Scripts\themes\black\images\accordion_arrows.png" />
+    <Content Include="Scripts\themes\black\images\blank.gif" />
+    <Content Include="Scripts\themes\black\images\calendar_arrows.png" />
+    <Content Include="Scripts\themes\black\images\combo_arrow.png" />
+    <Content Include="Scripts\themes\black\images\datagrid_icons.png" />
+    <Content Include="Scripts\themes\black\images\datebox_arrow.png" />
+    <Content Include="Scripts\themes\black\images\layout_arrows.png" />
+    <Content Include="Scripts\themes\black\images\linkbutton_bg.png" />
+    <Content Include="Scripts\themes\black\images\loading.gif" />
+    <Content Include="Scripts\themes\black\images\menu_arrows.png" />
+    <Content Include="Scripts\themes\black\images\messager_icons.png" />
+    <Content Include="Scripts\themes\black\images\pagination_icons.png" />
+    <Content Include="Scripts\themes\black\images\panel_tools.png" />
+    <Content Include="Scripts\themes\black\images\searchbox_button.png" />
+    <Content Include="Scripts\themes\black\images\slider_handle.png" />
+    <Content Include="Scripts\themes\black\images\spinner_arrows.png" />
+    <Content Include="Scripts\themes\black\images\tabs_icons.png" />
+    <Content Include="Scripts\themes\black\images\tree_icons.png" />
+    <Content Include="Scripts\themes\black\images\validatebox_warning.png" />
+    <Content Include="Scripts\themes\black\layout.css" />
+    <Content Include="Scripts\themes\black\linkbutton.css" />
+    <Content Include="Scripts\themes\black\menu.css" />
+    <Content Include="Scripts\themes\black\menubutton.css" />
+    <Content Include="Scripts\themes\black\messager.css" />
+    <Content Include="Scripts\themes\black\numberbox.css" />
+    <Content Include="Scripts\themes\black\pagination.css" />
+    <Content Include="Scripts\themes\black\panel.css" />
+    <Content Include="Scripts\themes\black\progressbar.css" />
+    <Content Include="Scripts\themes\black\propertygrid.css" />
+    <Content Include="Scripts\themes\black\searchbox.css" />
+    <Content Include="Scripts\themes\black\slider.css" />
+    <Content Include="Scripts\themes\black\spinner.css" />
+    <Content Include="Scripts\themes\black\splitbutton.css" />
+    <Content Include="Scripts\themes\black\switchbutton.css" />
+    <Content Include="Scripts\themes\black\tabs.css" />
+    <Content Include="Scripts\themes\black\textbox.css" />
+    <Content Include="Scripts\themes\black\tooltip.css" />
+    <Content Include="Scripts\themes\black\tree.css" />
+    <Content Include="Scripts\themes\black\validatebox.css" />
+    <Content Include="Scripts\themes\black\window.css" />
+    <Content Include="Scripts\themes\bootstrap\accordion.css" />
+    <Content Include="Scripts\themes\bootstrap\calendar.css" />
+    <Content Include="Scripts\themes\bootstrap\combo.css" />
+    <Content Include="Scripts\themes\bootstrap\combobox.css" />
+    <Content Include="Scripts\themes\bootstrap\datagrid.css" />
+    <Content Include="Scripts\themes\bootstrap\datalist.css" />
+    <Content Include="Scripts\themes\bootstrap\datebox.css" />
+    <Content Include="Scripts\themes\bootstrap\dialog.css" />
+    <Content Include="Scripts\themes\bootstrap\easyui.css" />
+    <Content Include="Scripts\themes\bootstrap\filebox.css" />
+    <Content Include="Scripts\themes\bootstrap\images\accordion_arrows.png" />
+    <Content Include="Scripts\themes\bootstrap\images\blank.gif" />
+    <Content Include="Scripts\themes\bootstrap\images\calendar_arrows.png" />
+    <Content Include="Scripts\themes\bootstrap\images\combo_arrow.png" />
+    <Content Include="Scripts\themes\bootstrap\images\datagrid_icons.png" />
+    <Content Include="Scripts\themes\bootstrap\images\datebox_arrow.png" />
+    <Content Include="Scripts\themes\bootstrap\images\layout_arrows.png" />
+    <Content Include="Scripts\themes\bootstrap\images\linkbutton_bg.png" />
+    <Content Include="Scripts\themes\bootstrap\images\loading.gif" />
+    <Content Include="Scripts\themes\bootstrap\images\menu_arrows.png" />
+    <Content Include="Scripts\themes\bootstrap\images\messager_icons.png" />
+    <Content Include="Scripts\themes\bootstrap\images\pagination_icons.png" />
+    <Content Include="Scripts\themes\bootstrap\images\panel_tools.png" />
+    <Content Include="Scripts\themes\bootstrap\images\searchbox_button.png" />
+    <Content Include="Scripts\themes\bootstrap\images\slider_handle.png" />
+    <Content Include="Scripts\themes\bootstrap\images\spinner_arrows.png" />
+    <Content Include="Scripts\themes\bootstrap\images\tabs_icons.png" />
+    <Content Include="Scripts\themes\bootstrap\images\tree_icons.png" />
+    <Content Include="Scripts\themes\bootstrap\images\validatebox_warning.png" />
+    <Content Include="Scripts\themes\bootstrap\layout.css" />
+    <Content Include="Scripts\themes\bootstrap\linkbutton.css" />
+    <Content Include="Scripts\themes\bootstrap\menu.css" />
+    <Content Include="Scripts\themes\bootstrap\menubutton.css" />
+    <Content Include="Scripts\themes\bootstrap\messager.css" />
+    <Content Include="Scripts\themes\bootstrap\numberbox.css" />
+    <Content Include="Scripts\themes\bootstrap\pagination.css" />
+    <Content Include="Scripts\themes\bootstrap\panel.css" />
+    <Content Include="Scripts\themes\bootstrap\progressbar.css" />
+    <Content Include="Scripts\themes\bootstrap\propertygrid.css" />
+    <Content Include="Scripts\themes\bootstrap\searchbox.css" />
+    <Content Include="Scripts\themes\bootstrap\slider.css" />
+    <Content Include="Scripts\themes\bootstrap\spinner.css" />
+    <Content Include="Scripts\themes\bootstrap\splitbutton.css" />
+    <Content Include="Scripts\themes\bootstrap\switchbutton.css" />
+    <Content Include="Scripts\themes\bootstrap\tabs.css" />
+    <Content Include="Scripts\themes\bootstrap\textbox.css" />
+    <Content Include="Scripts\themes\bootstrap\tooltip.css" />
+    <Content Include="Scripts\themes\bootstrap\tree.css" />
+    <Content Include="Scripts\themes\bootstrap\validatebox.css" />
+    <Content Include="Scripts\themes\bootstrap\window.css" />
+    <Content Include="Scripts\themes\color.css" />
+    <Content Include="Scripts\themes\default\accordion.css" />
+    <Content Include="Scripts\themes\default\calendar.css" />
+    <Content Include="Scripts\themes\default\combo.css" />
+    <Content Include="Scripts\themes\default\combobox.css" />
+    <Content Include="Scripts\themes\default\datagrid.css" />
+    <Content Include="Scripts\themes\default\datalist.css" />
+    <Content Include="Scripts\themes\default\datebox.css" />
+    <Content Include="Scripts\themes\default\dialog.css" />
+    <Content Include="Scripts\themes\default\easyui.css" />
+    <Content Include="Scripts\themes\default\filebox.css" />
+    <Content Include="Scripts\themes\default\images\accordion_arrows.png" />
+    <Content Include="Scripts\themes\default\images\blank.gif" />
+    <Content Include="Scripts\themes\default\images\calendar_arrows.png" />
+    <Content Include="Scripts\themes\default\images\combo_arrow.png" />
+    <Content Include="Scripts\themes\default\images\datagrid_icons.png" />
+    <Content Include="Scripts\themes\default\images\datebox_arrow.png" />
+    <Content Include="Scripts\themes\default\images\layout_arrows.png" />
+    <Content Include="Scripts\themes\default\images\linkbutton_bg.png" />
+    <Content Include="Scripts\themes\default\images\loading.gif" />
+    <Content Include="Scripts\themes\default\images\menu_arrows.png" />
+    <Content Include="Scripts\themes\default\images\messager_icons.png" />
+    <Content Include="Scripts\themes\default\images\pagination_icons.png" />
+    <Content Include="Scripts\themes\default\images\panel_tools.png" />
+    <Content Include="Scripts\themes\default\images\searchbox_button.png" />
+    <Content Include="Scripts\themes\default\images\slider_handle.png" />
+    <Content Include="Scripts\themes\default\images\spinner_arrows.png" />
+    <Content Include="Scripts\themes\default\images\tabs_icons.png" />
+    <Content Include="Scripts\themes\default\images\tree_icons.png" />
+    <Content Include="Scripts\themes\default\images\validatebox_warning.png" />
+    <Content Include="Scripts\themes\default\layout.css" />
+    <Content Include="Scripts\themes\default\linkbutton.css" />
+    <Content Include="Scripts\themes\default\menu.css" />
+    <Content Include="Scripts\themes\default\menubutton.css" />
+    <Content Include="Scripts\themes\default\messager.css" />
+    <Content Include="Scripts\themes\default\numberbox.css" />
+    <Content Include="Scripts\themes\default\pagination.css" />
+    <Content Include="Scripts\themes\default\panel.css" />
+    <Content Include="Scripts\themes\default\progressbar.css" />
+    <Content Include="Scripts\themes\default\propertygrid.css" />
+    <Content Include="Scripts\themes\default\searchbox.css" />
+    <Content Include="Scripts\themes\default\slider.css" />
+    <Content Include="Scripts\themes\default\spinner.css" />
+    <Content Include="Scripts\themes\default\splitbutton.css" />
+    <Content Include="Scripts\themes\default\switchbutton.css" />
+    <Content Include="Scripts\themes\default\tabs.css" />
+    <Content Include="Scripts\themes\default\textbox.css" />
+    <Content Include="Scripts\themes\default\tooltip.css" />
+    <Content Include="Scripts\themes\default\tree.css" />
+    <Content Include="Scripts\themes\default\validatebox.css" />
+    <Content Include="Scripts\themes\default\window.css" />
+    <Content Include="Scripts\themes\gray\accordion.css" />
+    <Content Include="Scripts\themes\gray\calendar.css" />
+    <Content Include="Scripts\themes\gray\combo.css" />
+    <Content Include="Scripts\themes\gray\combobox.css" />
+    <Content Include="Scripts\themes\gray\datagrid.css" />
+    <Content Include="Scripts\themes\gray\datalist.css" />
+    <Content Include="Scripts\themes\gray\datebox.css" />
+    <Content Include="Scripts\themes\gray\dialog.css" />
+    <Content Include="Scripts\themes\gray\easyui.css" />
+    <Content Include="Scripts\themes\gray\filebox.css" />
+    <Content Include="Scripts\themes\gray\images\accordion_arrows.png" />
+    <Content Include="Scripts\themes\gray\images\blank.gif" />
+    <Content Include="Scripts\themes\gray\images\calendar_arrows.png" />
+    <Content Include="Scripts\themes\gray\images\combo_arrow.png" />
+    <Content Include="Scripts\themes\gray\images\datagrid_icons.png" />
+    <Content Include="Scripts\themes\gray\images\datebox_arrow.png" />
+    <Content Include="Scripts\themes\gray\images\layout_arrows.png" />
+    <Content Include="Scripts\themes\gray\images\linkbutton_bg.png" />
+    <Content Include="Scripts\themes\gray\images\loading.gif" />
+    <Content Include="Scripts\themes\gray\images\menu_arrows.png" />
+    <Content Include="Scripts\themes\gray\images\messager_icons.png" />
+    <Content Include="Scripts\themes\gray\images\pagination_icons.png" />
+    <Content Include="Scripts\themes\gray\images\panel_tools.png" />
+    <Content Include="Scripts\themes\gray\images\searchbox_button.png" />
+    <Content Include="Scripts\themes\gray\images\slider_handle.png" />
+    <Content Include="Scripts\themes\gray\images\spinner_arrows.png" />
+    <Content Include="Scripts\themes\gray\images\tabs_icons.png" />
+    <Content Include="Scripts\themes\gray\images\tree_icons.png" />
+    <Content Include="Scripts\themes\gray\images\validatebox_warning.png" />
+    <Content Include="Scripts\themes\gray\layout.css" />
+    <Content Include="Scripts\themes\gray\linkbutton.css" />
+    <Content Include="Scripts\themes\gray\menu.css" />
+    <Content Include="Scripts\themes\gray\menubutton.css" />
+    <Content Include="Scripts\themes\gray\messager.css" />
+    <Content Include="Scripts\themes\gray\numberbox.css" />
+    <Content Include="Scripts\themes\gray\pagination.css" />
+    <Content Include="Scripts\themes\gray\panel.css" />
+    <Content Include="Scripts\themes\gray\progressbar.css" />
+    <Content Include="Scripts\themes\gray\propertygrid.css" />
+    <Content Include="Scripts\themes\gray\searchbox.css" />
+    <Content Include="Scripts\themes\gray\slider.css" />
+    <Content Include="Scripts\themes\gray\spinner.css" />
+    <Content Include="Scripts\themes\gray\splitbutton.css" />
+    <Content Include="Scripts\themes\gray\switchbutton.css" />
+    <Content Include="Scripts\themes\gray\tabs.css" />
+    <Content Include="Scripts\themes\gray\textbox.css" />
+    <Content Include="Scripts\themes\gray\tooltip.css" />
+    <Content Include="Scripts\themes\gray\tree.css" />
+    <Content Include="Scripts\themes\gray\validatebox.css" />
+    <Content Include="Scripts\themes\gray\window.css" />
+    <Content Include="Scripts\themes\icon.css" />
+    <Content Include="Scripts\themes\icons\back.png" />
+    <Content Include="Scripts\themes\icons\blank.gif" />
+    <Content Include="Scripts\themes\icons\cancel.png" />
+    <Content Include="Scripts\themes\icons\clear.png" />
+    <Content Include="Scripts\themes\icons\cut.png" />
+    <Content Include="Scripts\themes\icons\edit_add.png" />
+    <Content Include="Scripts\themes\icons\edit_remove.png" />
+    <Content Include="Scripts\themes\icons\filesave.png" />
+    <Content Include="Scripts\themes\icons\filter.png" />
+    <Content Include="Scripts\themes\icons\help.png" />
+    <Content Include="Scripts\themes\icons\large_chart.png" />
+    <Content Include="Scripts\themes\icons\large_clipart.png" />
+    <Content Include="Scripts\themes\icons\large_picture.png" />
+    <Content Include="Scripts\themes\icons\large_shapes.png" />
+    <Content Include="Scripts\themes\icons\large_smartart.png" />
+    <Content Include="Scripts\themes\icons\lock.png" />
+    <Content Include="Scripts\themes\icons\man.png" />
+    <Content Include="Scripts\themes\icons\mini_add.png" />
+    <Content Include="Scripts\themes\icons\mini_edit.png" />
+    <Content Include="Scripts\themes\icons\mini_refresh.png" />
+    <Content Include="Scripts\themes\icons\more.png" />
+    <Content Include="Scripts\themes\icons\no.png" />
+    <Content Include="Scripts\themes\icons\ok.png" />
+    <Content Include="Scripts\themes\icons\pencil.png" />
+    <Content Include="Scripts\themes\icons\print.png" />
+    <Content Include="Scripts\themes\icons\redo.png" />
+    <Content Include="Scripts\themes\icons\reload.png" />
+    <Content Include="Scripts\themes\icons\search.png" />
+    <Content Include="Scripts\themes\icons\sum.png" />
+    <Content Include="Scripts\themes\icons\tip.png" />
+    <Content Include="Scripts\themes\icons\undo.png" />
+    <Content Include="Scripts\themes\metro\accordion.css" />
+    <Content Include="Scripts\themes\metro\calendar.css" />
+    <Content Include="Scripts\themes\metro\combo.css" />
+    <Content Include="Scripts\themes\metro\combobox.css" />
+    <Content Include="Scripts\themes\metro\datagrid.css" />
+    <Content Include="Scripts\themes\metro\datalist.css" />
+    <Content Include="Scripts\themes\metro\datebox.css" />
+    <Content Include="Scripts\themes\metro\dialog.css" />
+    <Content Include="Scripts\themes\metro\easyui.css" />
+    <Content Include="Scripts\themes\metro\filebox.css" />
+    <Content Include="Scripts\themes\metro\images\accordion_arrows.png" />
+    <Content Include="Scripts\themes\metro\images\blank.gif" />
+    <Content Include="Scripts\themes\metro\images\calendar_arrows.png" />
+    <Content Include="Scripts\themes\metro\images\combo_arrow.png" />
+    <Content Include="Scripts\themes\metro\images\datagrid_icons.png" />
+    <Content Include="Scripts\themes\metro\images\datebox_arrow.png" />
+    <Content Include="Scripts\themes\metro\images\layout_arrows.png" />
+    <Content Include="Scripts\themes\metro\images\linkbutton_bg.png" />
+    <Content Include="Scripts\themes\metro\images\loading.gif" />
+    <Content Include="Scripts\themes\metro\images\menu_arrows.png" />
+    <Content Include="Scripts\themes\metro\images\messager_icons.png" />
+    <Content Include="Scripts\themes\metro\images\pagination_icons.png" />
+    <Content Include="Scripts\themes\metro\images\panel_tools.png" />
+    <Content Include="Scripts\themes\metro\images\searchbox_button.png" />
+    <Content Include="Scripts\themes\metro\images\slider_handle.png" />
+    <Content Include="Scripts\themes\metro\images\spinner_arrows.png" />
+    <Content Include="Scripts\themes\metro\images\tabs_icons.png" />
+    <Content Include="Scripts\themes\metro\images\tree_icons.png" />
+    <Content Include="Scripts\themes\metro\images\validatebox_warning.png" />
+    <Content Include="Scripts\themes\metro\layout.css" />
+    <Content Include="Scripts\themes\metro\linkbutton.css" />
+    <Content Include="Scripts\themes\metro\menu.css" />
+    <Content Include="Scripts\themes\metro\menubutton.css" />
+    <Content Include="Scripts\themes\metro\messager.css" />
+    <Content Include="Scripts\themes\metro\numberbox.css" />
+    <Content Include="Scripts\themes\metro\pagination.css" />
+    <Content Include="Scripts\themes\metro\panel.css" />
+    <Content Include="Scripts\themes\metro\progressbar.css" />
+    <Content Include="Scripts\themes\metro\propertygrid.css" />
+    <Content Include="Scripts\themes\metro\searchbox.css" />
+    <Content Include="Scripts\themes\metro\slider.css" />
+    <Content Include="Scripts\themes\metro\spinner.css" />
+    <Content Include="Scripts\themes\metro\splitbutton.css" />
+    <Content Include="Scripts\themes\metro\switchbutton.css" />
+    <Content Include="Scripts\themes\metro\tabs.css" />
+    <Content Include="Scripts\themes\metro\textbox.css" />
+    <Content Include="Scripts\themes\metro\tooltip.css" />
+    <Content Include="Scripts\themes\metro\tree.css" />
+    <Content Include="Scripts\themes\metro\validatebox.css" />
+    <Content Include="Scripts\themes\metro\window.css" />
+    <Content Include="Scripts\themes\mobile.css" />
+    <Content Include="Scripts\validform\images\arrow1.gif" />
+    <Content Include="Scripts\validform\images\arrow2.gif" />
+    <Content Include="Scripts\validform\images\error.png" />
+    <Content Include="Scripts\validform\images\header-bg.gif" />
+    <Content Include="Scripts\validform\images\navbg.gif" />
+    <Content Include="Scripts\validform\images\onLoad.gif" />
+    <Content Include="Scripts\validform\images\right.png" />
+    <Content Include="Scripts\validform\images\totop.png" />
+    <Content Include="Scripts\validform\validform.css" />
+    <Content Include="Scripts\validform\Validform_v5.3.2_min.js" />
+    <None Include="Scripts\_references.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.all-3.5.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.all-3.5.min.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.core-3.5.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.core-3.5.min.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.excheck-3.5.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.excheck-3.5.min.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.exedit-3.5.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.exedit-3.5.min.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.exedit.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.exhide-3.5.js" />
+    <Content Include="Scripts\ztree\js\jquery.ztree.exhide-3.5.min.js" />
+    <Content Include="Scripts\ztree\zTreeStyle\demo.css" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\1_close.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\1_open.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\2.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\3.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\4.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\5.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\6.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\7.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\8.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\diy\9.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\line_conn.gif" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\loading.gif" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\zTreeStandard.gif" />
+    <Content Include="Scripts\ztree\zTreeStyle\img\zTreeStandard.png" />
+    <Content Include="Scripts\ztree\zTreeStyle\zTreeStyle.css" />
+    <Content Include="Views\up\b.xls" />
+    <Content Include="Views\EmployeeAdd\ApproveList.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\EmployeeAdd\Fallback.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentSingle\Index.cshtml" />
+    <Content Include="Views\EmployeeAdd\AllotList.cshtml" />
+    <Content Include="Views\EmployeeAdd\EmpAllotDetail.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\EmployeeAdd\SupplierList.cshtml" />
+    <Content Include="Views\CRM_ZD_HY\Create.cshtml" />
+    <Content Include="Views\CRM_ZD_HY\Details.cshtml" />
+    <Content Include="Views\CRM_ZD_HY\Edit.cshtml" />
+    <Content Include="Views\CRM_ZD_HY\Index.cshtml" />
+    <Content Include="Views\EmployeeAdd\EmployeeFallback.cshtml" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\EmployeeBank\Create.cshtml" />
+    <Content Include="Views\EmployeeBank\Details.cshtml" />
+    <Content Include="Views\EmployeeBank\Edit.cshtml" />
+    <Content Include="Views\EmployeeBank\Index.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\EmployeeContact\Create.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\EmployeeContact\Details.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\EmployeeContact\Edit.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\EmployeeContact\Index.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentSingle\Create.cshtml" />
+    <Content Include="Views\EmployeeAdd\FeedbackIndex.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentExecl\Index.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentForCustomer\Index.cshtml" />
+    <Content Include="Views\COST_PayRecord_Contrasted\Index.cshtml" />
+    <Content Include="Template\Excel\报减模板.xls" />
+    <Content Include="Views\EmployeeAdd\EmployeeModify.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\EmployeeAdd\EmployeeModifyList.cshtml" />
+    <Content Include="Views\EmployeeAdd\EmployeeStop.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentForCustomer\Update.cshtml" />
+    <Content Include="Views\CostPayDuibi\Index.cshtml" />
+    <Content Include="Views\CostPayPersonContrasted\Index.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\EmployeeStopViewList.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\SupplierList.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\EmployeeFallback.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\StopCustomerModify.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\StopCustomerModifyList.cshtml" />
+    <Content Include="Views\EmployeeAdd\CustomerDetailed.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\FeedbackIndex.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\FeedbackList.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\FeedbackListModify.cshtml" />
+    <Content Include="Template\Excel\报增模板.xls" />
+    <Content Include="Views\CostPayDuibi\Details.cshtml" />
+    <Content Include="Views\COST_CostTable\Remark.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentFeedback\Index.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentFeedback\Edit.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentFeedback\SetSuccess.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentFeedback\SetFail.cshtml" />
+    <Content Include="Views\COST_CostTable_FinanceAduit\Details.cshtml" />
+    <Content Include="Views\COST_CostTable_FinanceAduit\Index.cshtml" />
+    <Content Include="Views\Shared\CRMCreate.cshtml" />
+    <Content Include="Views\Shared\CRMEdit.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\EmployeeAdd\EmpFeedBackSuccess.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentPlat\Update.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment2\ApproveIndex.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\ApproveList.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentForCustomer\Edit.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment2\SupplierList.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\CustomerModifyList.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\CustomerList.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment2\ApproveDetails.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\CustomerModify.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment2\EmployeeGoonPayment2ViewList.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\EmployeeFallback.cshtml" />
+    <Content Include="Views\COST_CostTable_Create\Index.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentForCustomer\SetStop.cshtml" />
+    <Content Include="Views\Allot\Index.cshtml" />
+    <Content Include="Views\Allot\EmpAllotDetail.cshtml" />
+    <Content Include="Views\EmployeeAdd\InsCodeUpdatebyExcel.cshtml" />
+    <Content Include="Views\Allot\Details.cshtml" />
+    <Content Include="Views\EmployeeMiddle\Edit.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Template\Excel\其他社保费导入模板.xlsx" />
+    <Content Include="Views\EmployeeMiddle\EmployeeMiddleByExcel.cshtml" />
+    <Content Include="Template\Excel\其他社保费导入模板.xls" />
+    <Content Include="Template\Excel\导入社保号模板.xls" />
+    <Content Include="Template\Excel\批量添加员工.xls" />
+    <Content Include="Views\EmployeeMiddleImportRecord\Create.cshtml" />
+    <Content Include="Views\EmployeeMiddleImportRecord\Details.cshtml" />
+    <Content Include="Views\EmployeeMiddleImportRecord\Edit.cshtml" />
+    <Content Include="Views\EmployeeMiddleImportRecord\Index.cshtml" />
+    <Content Include="Template\Excel\导入社保失败人员.xlsx" />
+    <Content Include="Views\EmployeeAddSetFailByExcel\Index.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentSetFailByExcel\Index.cshtml" />
+    <Content Include="Views\Cost_Pay_FenGe\Index.cshtml" />
+    <Content Include="Views\Home\Welcome.cshtml" />
+    <Content Include="Template\Excel\社保分割单.xls" />
+    <Content Include="Views\Shared\CRMIndex.cshtml" />
+    <Content Include="Template\Excel\供应商费用表导入模板.xlsx" />
+    <Content Include="Template\Excel\供应商客服报增数据提取模板.xls" />
+    <Content Include="Template\Excel\停缴信息查询导出模版.xls" />
+    <Content Include="Template\Excel\供应商客服报减数据提取模版.xls" />
+    <Content Include="Template\Excel\费用对比导出模板.xls" />
+    <Content Include="Template\Excel\费用详情导出模板.xls" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BLL\BLL.csproj">
+      <Project>{90ae47ed-b0d9-4b2a-a7ac-1c6d74b51de6}</Project>
+      <Name>BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CallAPI\CallAPI.csproj">
+      <Project>{8e97f1d8-9ed5-47a2-9ed5-67abc2c2b91e}</Project>
+      <Name>CallAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{ade2ca10-f91e-4312-ba9d-5d264291e549}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL\DAL.csproj">
+      <Project>{d1ac05a2-96af-4124-ad40-ad0a05c84f5c}</Project>
+      <Name>DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IBLL\IBLL.csproj">
+      <Project>{9b7fca89-a8a4-4fa8-b67b-0bf0fe9c53cd}</Project>
+      <Name>IBLL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Areas\CRM\Views\CRM_Company_ReSubmit\EditBaseInfo.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company\Create.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_Audit\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Company_ServiceManager\ServiceIndex.cshtml" />
+    <None Include="Project_Readme.html" />
+    <Content Include="Views\Attachment\Create.cshtml" />
+    <Content Include="Views\Attachment\Details.cshtml" />
+    <Content Include="Views\Attachment\Edit.cshtml" />
+    <Content Include="Views\Attachment\Index.cshtml" />
+    <Content Include="Views\City\Create.cshtml" />
+    <Content Include="Views\City\Details.cshtml" />
+    <Content Include="Views\City\Edit.cshtml" />
+    <Content Include="Views\City\Index.cshtml" />
+    <Content Include="Views\CompanyEmployeeRelation\Create.cshtml" />
+    <Content Include="Views\CompanyEmployeeRelation\Details.cshtml" />
+    <Content Include="Views\CompanyEmployeeRelation\Edit.cshtml" />
+    <Content Include="Views\CompanyEmployeeRelation\Index.cshtml" />
+    <Content Include="Views\COST_CostTableInsurance\Create.cshtml" />
+    <Content Include="Views\COST_CostTableInsurance\Details.cshtml" />
+    <Content Include="Views\COST_CostTableInsurance\Edit.cshtml" />
+    <Content Include="Views\COST_CostTableInsurance\Index.cshtml" />
+    <Content Include="Views\COST_CostTableOther\Create.cshtml" />
+    <Content Include="Views\COST_CostTableOther\Details.cshtml" />
+    <Content Include="Views\COST_CostTableOther\Edit.cshtml" />
+    <Content Include="Views\COST_CostTableOther\Index.cshtml" />
+    <Content Include="Views\COST_CostTableService\Create.cshtml" />
+    <Content Include="Views\COST_CostTableService\Details.cshtml" />
+    <Content Include="Views\COST_CostTableService\Edit.cshtml" />
+    <Content Include="Views\COST_CostTableService\Index.cshtml" />
+    <Content Include="Views\COST_CostTable\Details.cshtml" />
+    <Content Include="Views\COST_CostTable\Index.cshtml" />
+    <Content Include="Views\COST_ExpenditureInsurance\Create.cshtml" />
+    <Content Include="Views\COST_ExpenditureInsurance\Details.cshtml" />
+    <Content Include="Views\COST_ExpenditureInsurance\Edit.cshtml" />
+    <Content Include="Views\COST_ExpenditureInsurance\Index.cshtml" />
+    <Content Include="Views\CRM_CompanyBankAccount_Audit\Create.cshtml" />
+    <Content Include="Views\CRM_CompanyBankAccount_Audit\Details.cshtml" />
+    <Content Include="Views\CRM_CompanyBankAccount_Audit\Edit.cshtml" />
+    <Content Include="Views\CRM_CompanyBankAccount_Audit\Index.cshtml" />
+    <Content Include="Views\CRM_Company_Audit\Create.cshtml" />
+    <Content Include="Views\CRM_Company_Audit\Details.cshtml" />
+    <Content Include="Views\CRM_Company_Audit\Edit.cshtml" />
+    <Content Include="Views\CRM_Company_Audit\Index.cshtml" />
+    <Content Include="Views\CRM_ZD_HY\Create.cshtml" />
+    <Content Include="Views\CRM_ZD_HY\Details.cshtml" />
+    <Content Include="Views\CRM_ZD_HY\Edit.cshtml" />
+    <Content Include="Views\CRM_ZD_HY\Index.cshtml" />
+    <Content Include="Views\EmployeeAddHistory\Create.cshtml" />
+    <Content Include="Views\EmployeeAddHistory\Details.cshtml" />
+    <Content Include="Views\EmployeeAddHistory\Edit.cshtml" />
+    <Content Include="Views\EmployeeAddHistory\Index.cshtml" />
+    <Content Include="Views\EmployeeAdd\Create.cshtml" />
+    <Content Include="Views\EmployeeAdd\CustomerModify.cshtml" />
+    <Content Include="Views\EmployeeAdd\CustomerModifyList.cshtml" />
+    <Content Include="Views\EmployeeAdd\Edit.cshtml" />
+    <Content Include="Views\EmployeeAdd\Index.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment2\Create.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment2\Details.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment2\Edit.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment2\Index.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment3adsa\Create.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment3adsa\Details.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment3adsa\Edit.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment3adsa\Index.cshtml" />
+    <Content Include="Views\EmployeeGoonPaymentHistory\Create.cshtml" />
+    <Content Include="Views\EmployeeGoonPaymentHistory\Details.cshtml" />
+    <Content Include="Views\EmployeeGoonPaymentHistory\Edit.cshtml" />
+    <Content Include="Views\EmployeeGoonPaymentHistory\Index.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\Create.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\Details.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\Edit.cshtml" />
+    <Content Include="Views\EmployeeGoonPayment\Index.cshtml" />
+    <Content Include="Views\EmployeeInsuranceAttachment\Create.cshtml" />
+    <Content Include="Views\EmployeeInsuranceAttachment\Details.cshtml" />
+    <Content Include="Views\EmployeeInsuranceAttachment\Edit.cshtml" />
+    <Content Include="Views\EmployeeInsuranceAttachment\Index.cshtml" />
+    <Content Include="Views\EmployeeMiddle\Create.cshtml" />
+    <Content Include="Views\EmployeeMiddle\Index.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentHistory\Create.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentHistory\Details.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentHistory\Edit.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentHistory\Index.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\Create.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\Details.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\Edit.cshtml" />
+    <Content Include="Views\EmployeeStopPayment\Index.cshtml" />
+    <Content Include="Views\Index.cshtml" />
+    <Content Include="Views\InsuranceKind\Create.cshtml" />
+    <Content Include="Views\InsuranceKind\Details.cshtml" />
+    <Content Include="Views\InsuranceKind\Edit.cshtml" />
+    <Content Include="Views\InsuranceKind\Index.cshtml" />
+    <Content Include="Views\PoliceAccountNature\Create.cshtml" />
+    <Content Include="Views\PoliceAccountNature\Details.cshtml" />
+    <Content Include="Views\PoliceAccountNature\Edit.cshtml" />
+    <Content Include="Views\PoliceAccountNature\Index.cshtml" />
+    <Content Include="Views\PoliceCascadeRelationship\Create.cshtml" />
+    <Content Include="Views\PoliceCascadeRelationship\Details.cshtml" />
+    <Content Include="Views\PoliceCascadeRelationship\Edit.cshtml" />
+    <Content Include="Views\PoliceCascadeRelationship\Index.cshtml" />
+    <Content Include="Views\PoliceInsurance\Create.cshtml" />
+    <Content Include="Views\PoliceInsurance\Details.cshtml" />
+    <Content Include="Views\PoliceInsurance\Edit.cshtml" />
+    <Content Include="Views\PoliceInsurance\Index.cshtml" />
+    <Content Include="Views\PoliceMasterRelationship\Create.cshtml" />
+    <Content Include="Views\PoliceMasterRelationship\Details.cshtml" />
+    <Content Include="Views\PoliceMasterRelationship\Edit.cshtml" />
+    <Content Include="Views\PoliceMasterRelationship\Index.cshtml" />
+    <Content Include="Views\PoliceOperationPoliceInsurancePoliceAccountNature2\Create.cshtml" />
+    <Content Include="Views\PoliceOperationPoliceInsurancePoliceAccountNature2\Details.cshtml" />
+    <Content Include="Views\PoliceOperationPoliceInsurancePoliceAccountNature2\Edit.cshtml" />
+    <Content Include="Views\PoliceOperationPoliceInsurancePoliceAccountNature2\Index.cshtml" />
+    <Content Include="Views\PoliceOperation\Create.cshtml" />
+    <Content Include="Views\PoliceOperation\Details.cshtml" />
+    <Content Include="Views\PoliceOperation\Edit.cshtml" />
+    <Content Include="Views\PoliceOperation\Index.cshtml" />
+    <Content Include="Views\PoliceRejectRelationship\Create.cshtml" />
+    <Content Include="Views\PoliceRejectRelationship\Details.cshtml" />
+    <Content Include="Views\PoliceRejectRelationship\Edit.cshtml" />
+    <Content Include="Views\PoliceRejectRelationship\Index.cshtml" />
+    <Content Include="Views\PRD_Product\Create.cshtml" />
+    <Content Include="Views\PRD_Product\Details.cshtml" />
+    <Content Include="Views\PRD_Product\Edit.cshtml" />
+    <Content Include="Views\PRD_Product\Index.cshtml" />
+    <Content Include="Views\Shared\Create.cshtml" />
+    <Content Include="Views\Shared\Details.cshtml" />
+    <Content Include="Views\Shared\Edit.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\Index.cshtml" />
+    <Content Include="Views\Shared\ManyTree.cshtml" />
+    <Content Include="Views\up\b.xls" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\EmployeeStopPaymentPlat\Index.cshtml" />
+    <Content Include="Views\COST_PayGongJiJin\Create.cshtml" />
+    <Content Include="Views\COST_PayGongJiJin\Details.cshtml" />
+    <Content Include="Views\COST_PayGongJiJin\Edit.cshtml" />
+    <Content Include="Views\COST_PayGongJiJin\Index.cshtml" />
+    <Content Include="Views\COST_PayGongShang\Create.cshtml" />
+    <Content Include="Views\COST_PayGongShang\Details.cshtml" />
+    <Content Include="Views\COST_PayGongShang\Edit.cshtml" />
+    <Content Include="Views\COST_PayGongShang\Index.cshtml" />
+    <Content Include="Views\COST_PayRecordStatus\Create.cshtml" />
+    <Content Include="Views\COST_PayRecordStatus\Details.cshtml" />
+    <Content Include="Views\COST_PayRecordStatus\Edit.cshtml" />
+    <Content Include="Views\COST_PayRecordStatus\Index.cshtml" />
+    <Content Include="Views\COST_PayRecord\Create.cshtml" />
+    <Content Include="Views\COST_PayRecord\Details.cshtml" />
+    <Content Include="Views\COST_PayRecord\Edit.cshtml" />
+    <Content Include="Views\COST_PayRecord\Index.cshtml" />
+    <Content Include="Views\COST_PayShengYu\Create.cshtml" />
+    <Content Include="Views\COST_PayShengYu\Details.cshtml" />
+    <Content Include="Views\COST_PayShengYu\Edit.cshtml" />
+    <Content Include="Views\COST_PayShengYu\Index.cshtml" />
+    <Content Include="Views\COST_PayShiYe\Create.cshtml" />
+    <Content Include="Views\COST_PayShiYe\Details.cshtml" />
+    <Content Include="Views\COST_PayShiYe\Edit.cshtml" />
+    <Content Include="Views\COST_PayShiYe\Index.cshtml" />
+    <Content Include="Views\COST_PayYangLao\Create.cshtml" />
+    <Content Include="Views\COST_PayYangLao\Details.cshtml" />
+    <Content Include="Views\COST_PayYangLao\Edit.cshtml" />
+    <Content Include="Views\COST_PayYangLao\Index.cshtml" />
+    <Content Include="Views\COST_PayYiLiao\Create.cshtml" />
+    <Content Include="Views\COST_PayYiLiao\Details.cshtml" />
+    <Content Include="Views\COST_PayYiLiao\Edit.cshtml" />
+    <Content Include="Views\COST_PayYiLiao\Index.cshtml" />
+    <Content Include="Views\EmployeeAdd\FeedbackList.cshtml" />
+    <Content Include="Views\EmployeeAdd\FeedbackListModify.cshtml" />
+    <Content Include="Views\COST_PayRecord_Confirm\Index.cshtml" />
+    <Content Include="Views\EmployeeAdd\EmployeeAddViewList.cshtml" />
+    <Content Include="Views\COST_PayCreate\Index.cshtml" />
+    <Content Include="Template\Excel\社保支出导入模板.xlsx" />
+    <Content Include="Views\COST_PayGongJiJinBC\Create.cshtml" />
+    <Content Include="Views\COST_PayGongJiJinBC\Details.cshtml" />
+    <Content Include="Views\COST_PayGongJiJinBC\Edit.cshtml" />
+    <Content Include="Views\COST_PayGongJiJinBC\Index.cshtml" />
+    <Content Include="Views\COST_PayTemporary\Create.cshtml" />
+    <Content Include="Views\COST_PayTemporary\Details.cshtml" />
+    <Content Include="Views\COST_PayTemporary\Edit.cshtml" />
+    <Content Include="Views\COST_PayTemporary\Index.cshtml" />
+    <Content Include="Views\COST_PayYiLiaoDaE\Create.cshtml" />
+    <Content Include="Views\COST_PayYiLiaoDaE\Details.cshtml" />
+    <Content Include="Views\COST_PayYiLiaoDaE\Edit.cshtml" />
+    <Content Include="Views\COST_PayYiLiaoDaE\Index.cshtml" />
+    <Content Include="Views\EmployeeAdd\EmployeeAddByExcel.cshtml" />
+    <Content Include="Template\Excel\报增模板.xlsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\CRM\Views\CRM_CompanyBankAccount\Create.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyBankAccount\Edit.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyBankAccount\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyLinkMan\Create.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyLinkMan\Edit.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_CompanyLinkMan\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Employee\Details.cshtml" />
+    <Content Include="Areas\CRM\Views\CRM_Employee\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\AttachmentApiController.cs" />
+    <Compile Include="Controllers\AttachmentController.cs" />
+    <Compile Include="Controllers\CityApiController.cs" />
+    <Compile Include="Controllers\CityController.cs" />
+    <Compile Include="Controllers\CompanyEmployeeRelationApiController.cs" />
+    <Compile Include="Controllers\CompanyEmployeeRelationController.cs" />
+    <Compile Include="Controllers\COST_CostTableApiController.cs" />
+    <Compile Include="Controllers\COST_CostTableController.cs" />
+    <Compile Include="Controllers\COST_CostTableInsuranceApiController.cs" />
+    <Compile Include="Controllers\COST_CostTableInsuranceController.cs" />
+    <Compile Include="Controllers\COST_CostTableOtherApiController.cs" />
+    <Compile Include="Controllers\COST_CostTableOtherController.cs" />
+    <Compile Include="Controllers\COST_CostTableServiceApiController.cs" />
+    <Compile Include="Controllers\COST_CostTableServiceController.cs" />
+    <Compile Include="Controllers\COST_ExpenditureInsuranceApiController.cs" />
+    <Compile Include="Controllers\COST_ExpenditureInsuranceController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyBankAccountApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyBankAccountController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyBankAccount_AuditApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyFinance_Payment_AuditApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyLadderPriceApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyLadderPriceController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyLadderPrice_AuditApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyLinkManController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyLinkMan_AuditApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyPriceApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_CompanyPrice_AuditApiController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\EmployeeAddController.cs" />
+    <Compile Include="Controllers\EmployeeAddHistoryApiController.cs" />
+    <Compile Include="Controllers\EmployeeAddHistoryController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_EmployeeApiController.cs" />
+    <Compile Include="Areas\CRM\Controllers\CRM_EmployeeController.cs" />
+    <Compile Include="Controllers\EmployeeGoonPayment2ApiController.cs" />
+    <Compile Include="Controllers\EmployeeGoonPayment2Controller.cs" />
+    <Compile Include="Controllers\EmployeeGoonPayment3adsaApiController.cs" />
+    <Compile Include="Controllers\EmployeeGoonPayment3adsaController.cs" />
+    <Compile Include="Controllers\EmployeeGoonPaymentApiController.cs" />
+    <Compile Include="Controllers\EmployeeGoonPaymentController.cs" />
+    <Compile Include="Controllers\EmployeeGoonPaymentHistoryApiController.cs" />
+    <Compile Include="Controllers\EmployeeGoonPaymentHistoryController.cs" />
+    <Compile Include="Controllers\EmployeeInsuranceAttachmentApiController.cs" />
+    <Compile Include="Controllers\EmployeeInsuranceAttachmentController.cs" />
+    <Compile Include="Controllers\EmployeeMiddleApiController.cs" />
+    <Compile Include="Controllers\EmployeeMiddleController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentApiController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentHistoryApiController.cs" />
+    <Compile Include="Controllers\EmployeeStopPaymentHistoryController.cs" />
+    <Compile Include="Controllers\InsuranceKindApiController.cs" />
+    <Compile Include="Controllers\InsuranceKindController.cs" />
+    <Compile Include="Controllers\PoliceAccountNatureApiController.cs" />
+    <Compile Include="Controllers\PoliceAccountNatureController.cs" />
+    <Compile Include="Controllers\PoliceCascadeRelationshipApiController.cs" />
+    <Compile Include="Controllers\PoliceCascadeRelationshipController.cs" />
+    <Compile Include="Controllers\PoliceInsuranceApiController.cs" />
+    <Compile Include="Controllers\PoliceInsuranceController.cs" />
+    <Compile Include="Controllers\PoliceMasterRelationshipApiController.cs" />
+    <Compile Include="Controllers\PoliceMasterRelationshipController.cs" />
+    <Compile Include="Controllers\PoliceOperationApiController.cs" />
+    <Compile Include="Controllers\PoliceOperationController.cs" />
+    <Compile Include="Controllers\PoliceOperationPoliceInsurancePoliceAccountNature2ApiController.cs" />
+    <Compile Include="Controllers\PoliceOperationPoliceInsurancePoliceAccountNature2Controller.cs" />
+    <Compile Include="Controllers\PoliceRejectRelationshipApiController.cs" />
+    <Compile Include="Controllers\PoliceRejectRelationshipController.cs" />
+    <Compile Include="Controllers\PRD_ProductApiController.cs" />
+    <Compile Include="Controllers\PRD_ProductController.cs" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>55977</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:55977/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

@@ -1,0 +1,456 @@
+﻿@using Langben.DAL;
+@model Langben.DAL.EmployeeAdd
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+    Langben.DAL.Employee Enployee = ViewBag.Employee;
+
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+    社保申报
+}
+<script src="~/Res/jquery.uploadify-v2.1.4/jquery-1.4.2.min.js"></script>
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        $("#Citylist").val("@ViewBag.CityId");
+        $("#PoliceAccountNaturelist").val("@ViewBag.PoliceAccountNatureId")
+        $("#CRM_Companylist").val("@ViewBag.CompanyId");
+        var Cid = '@ViewBag.CompanyEmployeeRelationid ';
+
+
+
+
+
+
+
+        $.ajax({
+            url: "../api/EmployeeStopPaymentApi/EmploeeStopInfo?companyEmployeeRelationId="+Cid,
+            type: "POST",
+           
+            success: function (res) {
+
+                for (var i = 0; i < res.length;i++)
+                {
+                    
+                   
+                    if (res[i].InsuranceKindName == '养老')
+                    {
+                        $("#YANGLAO_stoppaymenttype option").remove();
+                        myAjax("/api/EmployeeStopPaymentApi/getPoliceOperationList", 'ID=' + res[i].InsuranceKindId, function (data) {
+                            $("#YANGLAO_stoppaymenttype").append("<option value=>请选择</option>");
+                            $.each(data, function (i, item1) {
+                                $("#YANGLAO_stoppaymenttype").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                            });
+                        });
+                        $("#YANGLAO_stoppaymenttype").val(res[i].PoliceOperationId);
+                        $("#YANGLAO_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                      
+                        $("#yanglao_id").val(res[i].ID);
+                        $("#YANGLAO_endtime").attr("disabled", false);
+
+                    }
+                    if (res[i].InsuranceKindName == '医疗') {
+
+                        $("#YILIAO_stoppaymenttype option").remove();
+                        myAjax("/api/EmployeeStopPaymentApi/getPoliceOperationList", 'ID=' + res[i].InsuranceKindId, function (data) {
+                            $("#YILIAO_stoppaymenttype").append("<option value=>请选择</option>");
+                            $.each(data, function (i, item1) {
+                                $("#YILIAO_stoppaymenttype").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                            });
+                        });
+                        $("#YILIAO_stoppaymenttype").val(res[i].PoliceOperationId);
+                        $("#YILIAO_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                        $("#yiliao_id").val(res[i].ID);
+                        $("#YILIAO_endtime").attr("disabled", false);
+
+                    }
+                    if (res[i].InsuranceKindName == '生育') {
+
+                        $("#SHENGYU_stoppaymenttype option").remove();
+                        myAjax("/api/EmployeeStopPaymentApi/getPoliceOperationList", 'ID=' + res[i].InsuranceKindId, function (data) {
+                            $("#SHENGYU_stoppaymenttype").append("<option value=>请选择</option>");
+                            $.each(data, function (i, item1) {
+                                $("#SHENGYU_stoppaymenttype").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                            });
+                        });
+                        $("#SHENGYU_stoppaymenttype").val(res[i].PoliceOperationId);
+                        $("#SHENGYU_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                        $("#shengyu_id").val(res[i].ID);
+                        $("#SHENGYU_endtime").attr("disabled", false);
+
+                    }
+                    if (res[i].InsuranceKindName == '失业') {
+
+                        $("#SHIYE_stoppaymenttype option").remove();
+                        myAjax("/api/EmployeeStopPaymentApi/getPoliceOperationList", 'ID=' + res[i].InsuranceKindId, function (data) {
+                            $("#SHIYE_stoppaymenttype").append("<option value=>请选择</option>");
+                            $.each(data, function (i, item1) {
+                                $("#SHIYE_stoppaymenttype").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                            });
+                        });
+                        $("#SHIYE_stoppaymenttype").val(res[i].PoliceOperationId);
+                        $("#SHIYE_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                        $("#shiye_id").val(res[i].ID);
+                        $("#SHIYE_endtime").attr("disabled", false);
+
+                    }
+                    if (res[i].InsuranceKindName == '工伤') {
+
+                        $("#GONGSHANG_stoppaymenttype option").remove();
+                        myAjax("/api/EmployeeStopPaymentApi/getPoliceOperationList",'ID=' + res[i].InsuranceKindId, function (data) {
+                            $("#GONGSHANG_stoppaymenttype").append("<option value=>请选择</option>");
+                            $.each(data, function (i, item1) {
+                                $("#GONGSHANG_stoppaymenttype").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                            });
+                        });
+                        $("#GONGSHANG_stoppaymenttype").val(res[i].PoliceOperationId);
+                        $("#GONGSHANG_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                        $("#gongshang_id").val(res[i].ID);
+                        $("#GONGSHANG_endtime").attr("disabled", false);
+                    }
+                    if (res[i].InsuranceKindName == '公积金') {
+
+                        $("#GONGJIJIN_stoppaymenttype option").remove();
+                        myAjax("/api/EmployeeStopPaymentApi/getPoliceOperationList", 'ID=' + res[i].InsuranceKindId, function (data) {
+                            $("#GONGJIJIN_stoppaymenttype").append("<option value=>请选择</option>");
+                            $.each(data, function (i, item1) {
+                                $("#GONGJIJIN_stoppaymenttype").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                            });
+                        });
+                        $("#GONGJIJIN_stoppaymenttype").val(res[i].PoliceOperationId);
+                        $("#GONGJIJIN_endtime").val(res[i].InsuranceMonth.substr(0, 10));
+                        $("#gongjijin_id").val(res[i].ID);
+                        $("#GONGJIJIN_endtime").attr("disabled", false);
+
+                    }
+                  
+                }
+            },
+            error: function () {
+
+                alert('初始化失败！');
+
+
+            }
+
+        })
+
+
+        $("#Modify").click(function () {
+
+           
+
+            //养老
+            var yanglao_id = $("#yanglao_id").val();
+            var YANGLAO_endtime = $("#YANGLAO_endtime").val();//养老社保时间
+            //if (YANGLAO_endtime != "") {
+            //    var YANGLAO_stoppaymenttype = $("#YANGLAO_stoppaymenttype").val();//政策手续
+            //    if (YANGLAO_stoppaymenttype == "") {
+            //        alert("请输入政策手续！");
+            //        return false;
+            //    }              
+            //}
+
+            //医疗
+            var yiliao_id = $("#yiliao_id").val();
+            var YILIAO_endtime = $("#YILIAO_endtime").val();//医疗社保时间
+            //if (YILIAO_endtime != "") {
+            //    var YILIAO_stoppaymenttype = $("#YILIAO_stoppaymenttype").val();//政策手续
+            //    if (YILIAO_stoppaymenttype == "") {
+            //        alert("请输入政策手续！");
+            //        return false;
+            //    }
+            //}
+
+            //生育
+            var shengyu_id = $("#shengyu_id").val();
+            var SHENGYU_endtime = $("#SHENGYU_endtime").val();//生育社保时间
+            //if (Pension_PaymentTime != "") {
+            //    var Pension_PoliceOperation = $("#SHENGYU_stoppaymenttype").val();//政策手续
+            //    if (Pension_PoliceOperation == "") {
+            //        alert("请输入政策手续！");
+            //        return false;
+            //    }
+            //}
+
+
+
+            //失业
+            var shiye_id = $("#shiye_id").val();
+            var SHIYE_endtime = $("#SHIYE_endtime").val();//失业社保时间
+            //if (SHIYE_endtime != "") {
+            //    var SHIYE_stoppaymenttype = $("#SHIYE_stoppaymenttype").val();//政策手续
+            //    if (SHIYE_stoppaymenttype == "") {
+            //        alert("请输入政策手续！");
+            //        return false;
+            //    }
+            //}
+
+            //工伤
+            var gongshang_id = $("#gongshang_id").val();
+            var GONGSHANG_endtime = $("#GONGSHANG_endtime").val();//工伤社保时间
+            //if (GONGSHANG_endtime != "") {
+            //    var GONGSHANG_stoppaymenttype = $("#GONGSHANG_stoppaymenttype").val();//政策手续
+            //    if (GONGSHANG_stoppaymenttype == "") {
+            //        alert("请输入政策手续！");
+            //        return false;
+            //    }
+            //}
+
+
+            //公积金
+            var gongjijin_id = $("#gongjijin_id").val();
+            var GONGJIJIN_endtime = $("#GONGJIJIN_endtime").val();//工伤社保时间
+            //if (GONGJIJIN_endtime != "") {
+            //    var GONGJIJIN_stoppaymenttype = $("#GONGJIJIN_stoppaymenttype").val();//政策手续
+            //    if (GONGJIJIN_stoppaymenttype == "") {
+            //        alert("请输入政策手续！");
+            //        return false;
+            //    }
+            //}
+
+       
+
+        
+
+
+
+            $.ajax({
+                type: 'POST',
+                url: "../api/EmployeeStopPaymentApi/FeedbackModify?yanglao_id=" + yanglao_id + "&yiliao_id=" + yiliao_id + "&gongshang_id=" + gongshang_id + "&shiye_id=" + shiye_id + "&gongjijin_id=" + gongjijin_id + "&shengyu_id=" + shengyu_id,
+                // data: { "ids": ids, "message": msg },  //最正确的Ajax传参
+                dataType: 'json',
+                async: true, //异步
+                    data: {
+
+                        Pension_PaymentTime: YANGLAO_endtime,
+                        Medical_PaymentTime: YILIAO_endtime,
+                        WorkInjury_PaymentTime: GONGSHANG_endtime,
+                        Unemployment_PaymentTime: SHIYE_endtime,
+                        HousingFund_PaymentTime: GONGJIJIN_endtime,
+                        Maternity_PaymentTime: SHENGYU_endtime
+
+                    },
+                    success: function (msg) {
+                        if (msg.Code == 1) {
+                            alert(msg.Message);
+                            window.location.href = "../EmployeeStopPayment/StopCustomerModifyList";
+                        }
+
+
+                    },
+                error: function () {
+                    alert(msg.Message);
+                }
+            });
+          
+
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: "/api/EmployeeStopPaymentApi/FeedbackModify?yanglao_id=" + yanglao_id + "&yiliao_id=" + yiliao_id + "&gongshang_id=" + gongshang_id + "&shiye_id=" + shiye_id + "&gongjijin_id=" + gongjijin_id + "&shengyu_id=" + shengyu_id,
+            //    async: false,
+            //    data: {
+
+            //        Pension_PaymentTime: YANGLAO_endtime,
+            //        Medical_PaymentTime: YILIAO_endtime,
+            //        WorkInjury_PaymentTime: GONGSHANG_endtime,
+            //        Unemployment_PaymentTime: SHIYE_endtime,
+            //        HousingFund_PaymentTime: GONGJIJIN_endtime,
+            //        Maternity_PaymentTime: SHENGYU_endtime
+
+            //    },
+            //    success: function (msg) {
+            //        if (msg.Code == 1) {
+            //            alert(msg.Message);
+            //        }
+            //        else {
+            //            alert("失败");
+            //        }
+            //    }
+            //});
+
+
+
+
+           
+
+        });
+
+
+       
+    });
+
+    
+
+</script>
+@using (Html.BeginForm("", "api/EmployeeStopPaymentApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" value="修改" id="Modify" />
+            <input class="a2 f2" type="button" onclick="BackList('/EmployeeStopPayment/StopCustomerModifyList')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+            <input type="hidden" id="EmployeeId" value="@Enployee.Id" />
+            <input type="hidden" id="EmployeeName" value="@Enployee.Name" />
+            <input type="hidden" id="CertificateNumber" value="@Enployee.CertificateNumber" />
+
+
+
+            <input type="hidden" id="yanglao_id" value="" />
+            <input type="hidden" id="yiliao_id" value="" />
+            <input type="hidden" id="gongshang_id" value="" />
+            <input type="hidden" id="shiye_id" value="" />
+            <input type="hidden" id="gongjijin_id" value="" />
+            <input type="hidden" id="shengyu_id" value="" />
+
+            <div class="editor-label">
+                人员姓名：
+            </div>
+            <div class="editor-field">
+
+                @Enployee.Name
+            </div>
+            <div class="editor-label">
+                证件号码：
+            </div>
+            <div class="editor-field">
+
+                @Enployee.CertificateNumber
+            </div>
+            <div class="editor-label">
+                缴纳地：
+            </div>
+            <div class="editor-field">
+                @{
+    List<City> City = new List<City>();
+    City = ViewBag.Citylist;
+    ViewData["Citylist"] = new SelectList(City, "Id", "Name");
+                }
+                @Html.DropDownList("Citylist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+
+            </div>
+            <div class="editor-label">
+                户口性质：
+            </div>
+            <div class="editor-field">
+                @{
+    List<PoliceAccountNature> PoliceAccountNature = new List<PoliceAccountNature>();
+    PoliceAccountNature = ViewBag.PoliceAccountNaturelist;
+    ViewData["PoliceAccountNaturelist"] = new SelectList(PoliceAccountNature, "Id", "Name");
+                }
+                @Html.DropDownList("PoliceAccountNaturelist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+
+            </div>
+            <div class="editor-label">
+                报增企业：
+            </div>
+            <div class="editor-field">
+                @{
+    List<CRM_Company> CRM_Company = new List<CRM_Company>();
+    CRM_Company = ViewBag.CRM_Companylist;
+    ViewData["CRM_Companylist"] = new SelectList(CRM_Company, "ID", "CompanyName");
+                }
+                @Html.DropDownList("CRM_Companylist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+
+            </div>
+
+
+
+            <div class="editor-label">
+
+            </div>
+            <div class="editor-field">
+
+            </div>
+            <table style="padding-left:100px;">
+                <tr>
+                    <th>险种</th>
+                    <th>社保月</th>
+                    <th>报减类型</th>                  
+                </tr>
+                <tr>
+                    <td>养老</td>                 
+                   
+                    <td>
+                        <input type="text" id="YANGLAO_endtime" onclick="WdatePicker()" disabled="disabled" />
+
+                    </td>
+                    <td><select id="YANGLAO_stoppaymenttype" disabled="disabled"></select></td>
+                    
+                </tr>
+                <tr>
+                    <td>医疗</td>
+
+                    <td>
+                        <input type="text" id="YILIAO_endtime" onclick="WdatePicker()" disabled="disabled" />
+
+                    </td>
+                    <td><select id="YILIAO_stoppaymenttype" disabled="disabled"></select></td>
+
+                </tr>
+                <tr>
+                    <td>生育</td>
+
+                    <td>
+                        <input type="text" id="SHENGYU_endtime" onclick="WdatePicker()" disabled="disabled" />
+
+                    </td>
+                    <td><select id="SHENGYU_stoppaymenttype" disabled="disabled"></select></td>
+
+                </tr>
+                <tr>
+                    <td>失业</td>
+
+                    <td>
+                        <input type="text" id="SHIYE_endtime" onclick="WdatePicker()" disabled="disabled" />
+
+                    </td>
+                    <td><select id="SHIYE_stoppaymenttype" disabled="disabled"></select></td>
+
+                </tr>
+                <tr>
+                    <td>工伤</td>
+
+                    <td>
+                        <input type="text" id="GONGSHANG_endtime" onclick="WdatePicker()" disabled="disabled" />
+
+                    </td>
+                    <td><select id="GONGSHANG_stoppaymenttype" disabled="disabled"></select></td>
+
+                </tr>
+                <tr>
+                    <td>公积金</td>
+
+                    <td>
+                        <input type="text" id="GONGJIJIN_endtime" onclick="WdatePicker()" disabled="disabled" />
+
+                    </td>
+                    <td><select id="GONGJIJIN_stoppaymenttype" disabled="disabled"></select></td>
+
+                </tr>
+              
+            </table>
+
+            <div class="editor-label">
+
+            </div>
+            <div class="editor-field">
+
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+
+

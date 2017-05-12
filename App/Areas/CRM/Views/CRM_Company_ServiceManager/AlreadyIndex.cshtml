@@ -1,0 +1,160 @@
+﻿@model Langben.DAL.CRM_Company
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+<div id="divQuery" data-options="region:'north',border:false" style="height:40px">
+
+    <div class='input_search'>
+        企业名称：<input id="searchName" type="text" class="easyui-textbox" style="height:26px" />
+        责任客服：@Html.DropDownList("searchUser", (SelectList)ViewData["listUser"], "请选择", new { ID = "searchUser", @class = "easyui-combobox", @style = "font-size:14px;height:26px" })
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+
+
+<script type="text/javascript" language="javascript">
+    var tmpParam = null;
+    var sParam = null;
+    var returnParam = '';
+
+    var opt = {
+        title: '责任客服重新分配', //列表的标题
+        iconCls: 'icon-site',
+        width: 'auto',
+        height: 'auto',
+        //nowrap: false,
+        striped: true,
+        fit:true,
+        collapsible: false,
+        url: '/api/CRM_Company_ServiceManagerApi/YPostData', //获取数据的url
+        sortName: 'ID',
+        sortOrder: 'desc',
+        idField: 'ID',
+            @*queryParams: { search: "EmployeeIdDDL_Int&@ViewBag.Id" },*@
+        toolbar: [
+             {
+                 text: '分配客服',
+                 iconCls: 'icon-fenpei',
+                 handler: function () {
+                     return clicks();
+                 }
+             }],
+        columns: [[
+            { field: 'ck', checkbox: true },
+            { field: 'CompanyCode', title: '企业编号', align: 'center', width: 100 },
+            {
+                field: 'CompanyName', title: '企业名称', align: 'center', width: 300,
+                //添加超级链
+                formatter: function (value, row, index) {//function里面的三个参数代表当前字段值，当前行数据对象，行号（行号从0开始）
+                    //alert(rowData.Name);
+                    return '<a href="#" onclick="detailInfo(' + row.CRM_Company_ID + ')" >' + row.CompanyName + '</a>';
+                }
+            },
+            { field: 'UserID_XS_Name', title: '销售人员', align: 'center', width: 100 },
+            {
+                field: 'OperateStatus', title: '状态', width: 100, align: 'center', formatter: function (value, row, index) {
+                    var a = "";
+                    if (value == 1) {
+                        a = '启用';
+                    }
+                    else if (value == 2) {
+                        a = '修改中';
+                    }
+                    return a;
+                }
+            },
+            { field: 'CreateTime', title: '创建时间', align: 'center', width: 100, formatter: formatDatebox },
+            { field: 'UserID_ZR_Name', title: '责任客服', align: 'center', width: 100 }
+        ]],
+        pagination: true,
+        rownumbers: true,
+        singleSelect: false, //允许选择多行
+        selectOnCheck: true,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+        checkOnSelect: true, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+        onClickRow: function (rowIndex, rowData) {
+            $(this).datagrid('unselectRow', rowIndex);
+        },
+        onBeforeLoad: function (param) {
+            tmpParam = param;
+            sParam = null;
+
+            return true;
+        },
+        onLoadSuccess: function (data) {
+            sParam = tmpParam;
+            if (sParam.search == undefined) {
+                sParam.search = '^';
+            }
+        }
+    };
+    $(function () {
+        $("#searchUser").combobox({
+            onSelect: function () {
+                //如果不写onSelect方法，就无法获取下拉框选择的值
+            },
+            onChange: function () {
+                //alert($('#searchUser').combobox('getValue'));
+            }
+        });
+
+        returnParam = '@Request.QueryString["tmp"]';
+
+        if (returnParam != '') {
+            var rparam = returnParam.split('_');
+            opt.pageNumber = rparam[1];
+            opt.pageSize = rparam[2];
+            opt.queryParams = { search: rparam[0] };
+
+            var search = rparam[0].split('^');
+            $('#searchName').val(search[0]);
+            $('#searchUser').combobox('setValue', search[1]);
+        }
+        $('#flexigridData').datagrid(opt);
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+        }
+    });
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        //将查询条件按照分隔符拼接成字符串
+        var search = $('#searchName').val() + "^" + $('#searchUser').combobox('getValue');
+        //执行查询
+        $('#flexigridData').datagrid('load', { search: search });
+    };
+
+    //分配责任客服
+    function clicks() {
+        var checkedItems = $('#flexigridData').datagrid('getChecked');
+        var names = [];
+        $.each(checkedItems, function (index, item) {
+            names.push(item.CRM_Company_ID);
+        });
+        if (names.length >= 1) {
+            return CommonSelect("/CRM/CRM_Company_ServiceManager/ServiceAssigned/" + names+"?menuid=@ViewBag.menuid", '分配客服', 300, 400);
+
+        } else {
+            $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+        }
+    }
+    //跳转到详情页
+    function detailInfo(company_ID) {
+        var tmp = '';
+        if (sParam != null) {
+            tmp = sParam.search + '_' + sParam.page + '_' + sParam.rows;
+        }
+        window.location.href = "/CRM/CRM_Company/CompanyDetail/" + company_ID + "?path=AlreadyIndex&tmp=" + tmp;
+    }
+</script>

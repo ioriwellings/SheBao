@@ -1,0 +1,150 @@
+﻿@{
+    Layout = "~/Views/Shared/Index.cshtml";
+}
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#flexigridData").datagrid({
+                url: '/MenuOp/GetData', //获取数据的url
+                method: "GET",
+                title: '菜单功能列表',
+                //fit: true,
+                fitColumns: false,//是否自适应列宽
+                rownumbers: true, //是否加行号
+                pagination: true, //是否显式分页
+                pageSize: 10, //页容量，必须和pageList对应起来，否则会报错
+                pageNumber: 1, //默认显示第几页
+                pageList: [10, 30, 50],//分页中下拉选项的数值
+                singleSelect: false, //允许选择多行
+                selectOnCheck: true,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+                checkOnSelect: true, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+                onClickRow: function (rowIndex, rowData) {
+                    $(this).datagrid('unselectRow', rowIndex);
+                }
+            });
+        });
+        function add() {
+            return CommonSelect("/Authority/MenuOp/Create", '创建', 920, 500);
+        }
+
+        function edit() {
+            var checkedItems = $('#flexigridData').datagrid('getChecked');
+            var ids = [];
+            $.each(checkedItems, function (index, item) {
+                ids.push(item.ID);
+            });
+            if (ids.length == 0 || ids.length > 1) {
+                window.parent.$.messager.alert("警告", "请先选择一条数据", "warning");
+            } else {
+
+                return CommonSelect("/Authority/MenuOp/Edit/"+ids, '编辑', 920, 500);
+            }
+        }
+
+        function del() {
+            var checkedItems = $('#flexigridData').datagrid('getChecked');
+            var ids = [];
+            $.each(checkedItems, function (index, item) {
+                if (ids == "") {
+                    ids = "" + item.ID + "";
+                }
+                else {
+                    ids += "," + item.ID + "";
+                }
+            });
+            if (ids.length == 0) {
+                window.parent.$.messager.alert("警告", "请先选择一条数据", "warning");
+                return;
+            }
+            window.parent.$.messager.confirm('提示', '确认删除选中数据？', function (r) {
+                if (r) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Delete", "MenuOp")',
+                        data: { ids: ids },
+                        dataType: 'json',
+                        async: false, //同步
+                        success: function (data) {
+                            if (data.Code == "ok") {
+                                $("#flexigridData").datagrid("reload");
+                            } else {
+                                window.parent.$.messager.alert("错误", data.Message, "error");
+                            }
+                        },
+                        error: function () {
+                            alert("操作失败");
+                        }
+                    });
+                }
+            });
+        }
+
+        function search() {
+            //$("#flexigridData").datagrid("options").pageNumber = 1;
+            //参数名为reload时，刷新的是当前页；为load时，刷新的是第一页
+            $("#flexigridData").datagrid("load", {
+                menuID: $.trim($("#ORG_Menu_ID").val())
+            });
+        }
+</script>
+
+<div data-options="region:'north',border:false" style="height: 90px; overflow:hidden; padding:5px;">
+    <div class="easyui-panel" title="查询条件" data-options="iconcls:'icon-search',fit:true"
+         style="padding:10px; overflow:hidden;">
+        <table>
+            <tr>
+                <td>所属菜单：</td>
+                @* <td><input type="text" id="txtMenuOpName" /></td>*@
+                <td>
+                    @Html.DropDownList("ORG_Menu_ID", (SelectList)ViewData["ddlMenu"], "--请选择--", new { style = "width:204px" })
+                </td>
+                <td>
+                    <a href="javascript:search()" class="easyui-linkbutton" iconcls="icon-search" style=" margin-left :10px; margin-right:10px ">查询</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div data-options="region:'center',title:'',iconCls:'icon-ok',border:false"
+     style="padding:5px;">
+    <div id="toolbar" class="datagrid-toolbar">
+        @{
+            if (ViewBag.AddButton)
+            {
+                <a href="javascript:void(0);" class="easyui-linkbutton"
+                   data-options="plain:true,iconCls:'icon-add'" onclick="add()">添加</a>
+            }
+        }
+        @{
+            if (ViewBag.EditButton)
+            {
+                <a href="javascript:void(0);" class="easyui-linkbutton"
+                   data-options="plain:true,iconCls:'icon-edit'" onclick="edit()">编辑</a>
+            }
+        }
+        @{
+            if (ViewBag.DeleteButton)
+            {
+                <a href="javascript:void(0);" class="easyui-linkbutton"
+                   data-options="plain:true,iconCls:'icon-cancel'" onclick="del()">删除</a>
+            }
+        }
+    </div>
+</div>
+<table id="flexigridData" class="easyui-datagrid" title="列表" style=""
+       data-options="toolbar:'#toolbar'@*,singleSelect:true,collapsible:false,url:'datagrid_data1.json',method:'get'*@">
+    <thead>
+        <tr>
+            <th data-options="field:'Code',checkbox:true"></th>
+            <th data-options="field:'ID',width:80,align:'center'">ID</th>
+            <th data-options="field:'MenuOpName',width:200,align:'center'">功能名称</th>
+            <th data-options="field:'MenuName',width:200,align:'center'">所属菜单</th>
+            <th data-options="field:'Sort',width:80,align:'center'">排序</th>
+        </tr>
+    </thead>
+</table>
+

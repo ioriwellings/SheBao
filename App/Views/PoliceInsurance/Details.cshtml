@@ -1,0 +1,141 @@
+﻿@model Langben.DAL.PoliceInsurance
+
+@{
+    Layout = "~/Views/Shared/Details.cshtml";
+}
+@using Common
+ @section CurentPlace {
+    详细  
+}
+ 
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" onclick="window.location.href = 'javascript:history.go(-1)';" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                  
+                <div class="display-label">
+                      @Html.LabelFor(model => model.Name) :
+                </div>
+                <div class="display-field" id='Name'>
+                </div>        
+                <div class="display-label">
+                      @Html.LabelFor(model => model.InsuranceKindId) :
+                </div>
+                <div class="display-field">
+                    @if (Model.InsuranceKind != null)
+                       {
+                    @Model.InsuranceKind.Name
+                    } 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.StartTime) :
+                </div>
+                <div class="display-field" id='StartTime'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.EndTime) :
+                </div>
+                <div class="display-field" id='EndTime'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.MaxPayMonth) :
+                </div>
+                <div class="display-field" id='MaxPayMonth'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.InsuranceAdd) :
+                </div>
+                <div class="display-field" id='InsuranceAdd'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.InsuranceReduce) :
+                </div>
+                <div class="display-field" id='InsuranceReduce'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyPercent) :
+                </div>
+                <div class="display-field" id='CompanyPercent'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyLowestNumber) :
+                </div>
+                <div class="display-field" id='CompanyLowestNumber'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.EmployeeLowestNumber) :
+                </div>
+                <div class="display-field" id='EmployeeLowestNumber'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyHighestNumber) :
+                </div>
+                <div class="display-field" id='CompanyHighestNumber'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.EmployeeHighestNumber) :
+                </div>
+                <div class="display-field" id='EmployeeHighestNumber'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.EmployeePercent) :
+                </div>
+                <div class="display-field" id='EmployeePercent'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.IsDefault) :
+                </div>
+                <div class="display-field" id='IsDefault'>
+                </div>
+                <br style="clear: both;" />
+                <div class="display-label">
+                    @Html.LabelFor(model => model.Remark) :
+                </div>
+                <div class="textarea-box">
+                    @Html.TextAreaFor(model => model.Remark, new {  @readonly=true})                   
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.State) :
+                </div>
+                <div class="display-field" id='State'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateTime) :
+                </div>
+                <div class="display-field" id='CreateTime'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreatePerson) :
+                </div>
+                <div class="display-field" id='CreatePerson'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.UpdateTime) :
+                </div>
+                <div class="display-field" id='UpdateTime'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.UpdatePerson) :
+                </div>
+                <div class="display-field" id='UpdatePerson'>
+                </div>
+        </div>
+    </fieldset>
+
+<script type="text/javascript">
+
+    $(function () {
+        // 获取内容并显示
+        var id = '@ViewBag.Id';
+        $.ajax({
+            url: "/api/PoliceInsuranceApi/" + id,
+            type: "POST",
+            // async: false,
+            success: function (res) {
+		$("#Name").html(res.Name);$("#StartTime").html(res.StartTime);$("#EndTime").html(res.EndTime);$("#MaxPayMonth").html(res.MaxPayMonth);$("#InsuranceAdd").html(res.InsuranceAdd);$("#InsuranceReduce").html(res.InsuranceReduce);$("#CompanyPercent").html(res.CompanyPercent);$("#CompanyLowestNumber").html(res.CompanyLowestNumber);$("#EmployeeLowestNumber").html(res.EmployeeLowestNumber);$("#CompanyHighestNumber").html(res.CompanyHighestNumber);$("#EmployeeHighestNumber").html(res.EmployeeHighestNumber);$("#EmployeePercent").html(res.EmployeePercent);$("#IsDefault").html(res.IsDefault);$("#Remark").val(res.Remark);$("#State").html(res.State);$("#CreateTime").html(res.CreateTime);$("#CreatePerson").html(res.CreatePerson);$("#UpdateTime").html(res.UpdateTime);$("#UpdatePerson").html(res.UpdatePerson);
+            }
+        })
+    });
+</script>
+

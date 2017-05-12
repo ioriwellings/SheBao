@@ -1,0 +1,201 @@
+﻿@model Langben.DAL.CRM_CompanyContract
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+
+<br style="clear: both;" />
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+<script src="~/Scripts/JScriptIndex.js"></script>
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        $('#flexigridData').datagrid({
+            title: '客户_企业合同信息', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            fit:true,
+            queryParams: { search: "CRM_Company_IDDDL_Int&@ViewBag.CompanyID" },
+            url: '/api/CRM_CompanyContractAPI/PostData', //获取数据的url
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+
+            toolbar: [
+
+                  {
+                      text: '创建',
+                      iconCls: 'icon-add',
+                      handler: function () {
+                          return flexiCreate();
+                      }
+                  }, {
+                      text: '返回',
+                      iconCls: 'icon-back',
+                      handler: function () {
+                         return GoBack('@ViewBag.Path');
+                      }
+                  }],
+            columns: [[
+
+
+                @*{ field: 'CRM_Company_ID', title: '@Html.DisplayNameFor(model => model.CRM_Company_ID)', width: 159 }*@
+                 { field: 'BillDay', title: '@Html.DisplayNameFor(model => model.BillDay)', width: 100 }
+                , { field: 'ReceivedDay', title: '@Html.DisplayNameFor(model => model.ReceivedDay)', width: 100 }
+                , { field: 'FeesCycle', title: '@Html.DisplayNameFor(model => model.FeesCycle)', width: 100 }
+                , { field: 'ChangeDay', title: '@Html.DisplayNameFor(model => model.ChangeDay)', width: 100 }
+                , { field: 'DatumDay', title: '@Html.DisplayNameFor(model => model.DatumDay)', width: 100 }
+                , {
+                    field: 'ServceEndDay', title: '@Html.DisplayNameFor(model => model.ServceEndDay)', formatter: formatDatebox, width: 100
+
+                }
+                , { field: 'SendBillDay', title: '@Html.DisplayNameFor(model => model.SendBillDay)', width: 100 }
+                , {
+                    field: 'ServiceBeginDay', title: '@Html.DisplayNameFor(model => model.ServiceBeginDay)', formatter: formatDatebox, width: 100
+
+                }
+                , { field: 'Status', title: '状态', formatter: FormatterStatus, width: 100 }
+                , {
+                    field: 'CreateTime', title: '@Html.DisplayNameFor(model => model.CreateTime)', width: 100, formatter: formatDatebox
+                }
+                , { field: 'CreateUserName', title: '@Html.DisplayNameFor(model => model.CreateUserName)', width: 80 }
+                 , {
+                     field: 'ID', title: '操作', width: 111,
+                     formatter: function (value, row, index) {
+                         var a = '';
+                         if (row.Status == 1) {
+                             a += '<a href="#" onclick="flexiModify(' + row.ID + ')">修改</a> ';
+                         }
+                         return a;
+                     }
+                 }
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+
+    //“选择”按钮，在其他（与此页面有关联）的页面中，此页面以弹出框的形式出现，选择页面中的数据
+    function flexiSelect() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].ID);
+        }
+        arr.push("^");
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].CRM_Company_ID);
+        }
+        //主键列和显示列之间用 ^ 分割   每一项用 , 分割
+        if (arr.length > 0) {//一条数据和多于一条
+            returnParent(arr.join("&")); //每一项用 & 分割
+        }
+    }
+    //导航到查看详细的按钮
+    function getView() {
+
+        var arr = $('#flexigridData').datagrid('getSelections');
+
+        if (arr.length == 1) {
+            window.location.href = "/CRM/CRM_CompanyContract/Details/" + arr[0].ID;
+
+        } else {
+            $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+        }
+        return false;
+    }
+    //导航到创建的按钮
+    function flexiCreate() {
+        var data = $('#flexigridData').datagrid('getData');
+        var isCreate = '@ViewBag.IsCreate'; 
+        if(!isCreate){
+            return CommonSelect('/CRM/CRM_CompanyContract/Create/@ViewBag.companyID', '创建', 920, 500);
+            return false;
+        }
+        else
+            $.messager.alert('操作提示', '企业只能有一条合同信息!', 'warning');
+    }
+    //导航到修改的按钮
+    function flexiModify(ID) {
+        return CommonSelect('/CRM/CRM_CompanyContract/Edit/' + ID, '修改', 920, 500);
+    };
+    //删除的按钮
+    function flexiDelete() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].ID);
+        }
+
+        $.messager.confirm('操作提示', "确认删除这 " + arr.length + " 项吗？", function (r) {
+            if (r) {
+                $.post("/CRM/CRM_CompanyContract/Delete", { query: arr.join(",") }, function (res) {
+                    if (res == "OK") {
+                        //移除删除的数据
+
+                        $.messager.alert('操作提示', '删除成功!', 'info');
+                        $("#flexigridData").datagrid("reload");
+                        $("#flexigridData").datagrid("clearSelections");
+                    }
+                    else {
+                        if (res == "") {
+                            $.messager.alert('操作提示', '删除失败!请查看该数据与其他模块下的信息的关联，或联系管理员。', 'info');
+                        }
+                        else {
+                            $.messager.alert('操作提示', res, 'info');
+                        }
+                    }
+                });
+            }
+        });
+
+    };
+    // 状态
+    function FormatterStatus(value, row, index) {
+        var a = "";
+        if (value == 0) {
+            a = '停用';
+        }
+        else if (value == 1) {
+            a = '启用';
+        }
+        else if (value == 2) {
+            a = '修改中';
+        }
+        return a;
+    }
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/" + path + "/Index/?tmp=" + tmp;
+    }
+</script>

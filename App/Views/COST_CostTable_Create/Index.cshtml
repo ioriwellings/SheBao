@@ -1,0 +1,96 @@
+﻿
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>费用表测算</title>
+    <script src="~/Scripts/jquery.min.js"></script>
+    <link href="~/Res/easyui/themes/bootstrap/easyui.css" rel="stylesheet" />
+    <link href="~/Res/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="~/Content/Default.css" rel="stylesheet" />
+    <link href="~/Content/StyleSheet.css" rel="stylesheet" />
+    <script src="~/Res/easyui/jquery.easyui.min.js"></script>
+    <link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+    <script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+</head>
+<body>
+    <div>
+        <div class="input_search">
+            <div class="input_search-label">
+                企业：
+            </div>
+            <div class="input_search-field">
+                <select id="CRM_Company_ID"></select>
+            </div>
+        </div>
+        <div class="input_search">
+            <div class="input_search-label">
+                年月：
+            </div>
+            <div class="input_search-field">
+                <input id="yearMonth" value="" class="yearMonth" style="width:auto" />
+            </div>
+        </div>
+        <div class='input_search' style="padding-top:10px;">
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="create()">创建</a>
+        </div>
+        <br style="clear: both;" />
+        <div id="error" style="color:red;"></div>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    $(".yearMonth").simpleCanleder();
+
+    $(function () {
+        getCompany();
+    });
+
+
+    function create() {
+        var cid = $("#CRM_Company_ID option:selected").val();
+        if (cid == "0") {
+            alert("生成企业不能为空！");
+            return;
+        }
+        if ($("#yearMonth").val() == "") {
+            alert("生成年月不能为空！");
+            return;
+        }
+        var ym = $("#yearMonth").val().replace("-", "");
+        $.ajax({
+            url: "/api/COST_CostTableApi/PostCreate?CRM_Company_ID=" + cid + "&yearMonth=" + ym,
+            type: "Post",
+            //data: { CRM_Company_ID: aa, yearMonth: bb },
+            anysc: false,
+            //dataType: "json",
+            success: function (data) {
+                if (data.Code == 1) {
+                    alert(data.Message)
+                }
+                else {
+                    $("#error").html(data.Message)
+                }
+            }
+        });
+    };
+    function getCompany() {
+
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/COST_CostTableApi/GetCompany?menuID=1042",
+            async: true,
+            success: function (data) {
+                $("#CRM_Company_ID").append("<option value='0'>请选择</option>");
+                $.each(data.rows, function (i, item) {
+
+                    $("#CRM_Company_ID").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                })
+            }
+        })
+    }
+</script>

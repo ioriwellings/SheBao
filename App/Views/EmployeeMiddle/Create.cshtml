@@ -1,0 +1,220 @@
+﻿@model Langben.DAL.EmployeeMiddle
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+}
+@using Common
+@using Models
+ <script src="~/Scripts/JScriptIndex.js"></script>
+<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+
+@section CurentPlace {
+ 
+      创建  
+ 
+ }
+@using (Html.BeginForm("", "api/EmployeeMiddleApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" id="Create" value="创建" />
+            <input class="a2 f2" type="button" onclick="BackList('EmployeeMiddle')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+            <input id="CompanyEmployeeRelationId" name="CompanyEmployeeRelationId" style="display:none" value="@ViewBag.CompanyEmployeeRelationId" /> @*企业员工关系编号*@
+            <input id="CityId" name="CityId" style="display:none" value="@ViewBag.CityId" /> @*缴纳地编号*@
+
+            <div class="editor-label">
+                企业名称：
+            </div>
+            <div class="editor-field">
+                @ViewBag.CompanyName
+            </div>
+            <div class="editor-label">
+                人员姓名：
+            </div>
+            <div class="editor-field">
+                @ViewBag.EmployeeName
+            </div>
+            <div class="editor-label">
+                证件号码：
+            </div>
+            <div class="editor-field">
+                @ViewBag.CardId
+            </div>
+            <div class="editor-label">
+                种类：
+            </div>
+            <div class="editor-field">
+                <select id="InsuranceKindId" name="InsuranceKindId" onchange="GetPaymentStyle();">
+                    <option value="0">--请选择--</option>
+                    <option value="1">养老</option>
+                    <option value="2">医疗</option>
+                    <option value="3">工伤</option>
+                    <option value="4">失业</option>
+                    <option value="5">公积金</option>
+                    <option value="6">生育</option>
+                    <option value="9">大病</option>
+                    <option value="8">补充公积金</option>
+                    <option value="11">其他费用</option>
+                    <option value="12">其他社保费用</option>
+                </select>
+            </div>
+            <div class="editor-label">
+                费用类型：
+            </div>
+            <div class="editor-field">
+                <select id="PaymentStyle" name="PaymentStyle">
+                    <option value="0">--请选择--</option>
+                </select>
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PaymentBetween)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PaymentBetween)
+                @Html.ValidationMessageFor(model => model.PaymentBetween)
+            </div>
+            <div class="editor-label">
+                单位基数：
+            </div>
+            <div class="editor-field">
+                <input type="text" id="CompanyBasePayment" name="CompanyBasePayment" onchange="isNumber(CompanyBasePayment)" />
+            </div>
+            <div class="editor-label">
+                单位承担金额：
+            </div>
+            <div class="editor-field">
+                <input type="text" id="CompanyPayment" name="CompanyPayment" onchange="isNumber(CompanyPayment)" />
+            </div>     
+            <div class="editor-label">
+                个人基数：
+            </div>
+            <div class="editor-field">
+                <input type="text" id="EmployeeBasePayment" name="EmployeeBasePayment" onchange="isNumber(EmployeeBasePayment)" />
+            </div>     
+            <div class="editor-label">
+                个人承担金额：
+            </div>
+            <div class="editor-field">
+                <input type="text" id="EmployeePayment" name="EmployeePayment" onchange="isNumber(EmployeePayment)" />
+            </div>
+            <div class="editor-label">
+                缴纳月数 ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.PaymentMonth, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.PaymentMonth) 
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.StartDate) ：
+            </div>
+            <div class="editor-field">
+                <input id="StartDate1" name="StartDate1" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" disabled="disabled" />
+                <input id="StartDate" name="StartDate" style="display:none" />
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EndedDate) ：
+            </div>
+            <div class="editor-field">
+                <input id="EndedDate1" name="EndedDate1" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" disabled="disabled" />
+                <input id="EndedDate" name="EndedDate" style="display:none" />
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>
+        </div>
+    </fieldset>
+} 
+
+
+    
+    <script type="text/javascript">
+        $(".yearMonth").simpleCanleder();
+
+        // 根据种类获取费用类型
+        function GetPaymentStyle() {
+            var insurance = $("#InsuranceKindId").val();
+            switch (insurance) {
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                case "5":
+                case "6":
+                case "7":
+                case "8":
+                    $("#PaymentStyle").html("");
+                    $("#PaymentStyle").append("<option value='3'>退费</option>"); 
+                    $("#PaymentStyle").append("<option value='4'>补收</option>"); 
+                    $("#PaymentStyle").append("<option value='5'>补差</option>"); 
+                    $("#PaymentStyle").append("<option value='6'>调整</option>");
+
+                    // 设置时间段是否可选
+                    $("#StartDate1").attr("disabled", true);
+                    $("#EndedDate1").attr("disabled", true);
+                    break;
+                case "11":
+                case "12":
+                    $("#PaymentStyle").html("");
+                    $("#PaymentStyle").append("<option value='1'>正常</option>"); 
+                    $("#PaymentStyle").append("<option value='2'>补缴</option>"); 
+                    $("#PaymentStyle").append("<option value='3'>退费</option>"); 
+                    $("#PaymentStyle").append("<option value='4'>补收</option>"); 
+                    $("#PaymentStyle").append("<option value='5'>补差</option>"); 
+                    $("#PaymentStyle").append("<option value='6'>调整</option>");
+
+                    // 设置时间段是否可选
+                    $("#StartDate1").attr("disabled", false);
+                    $("#EndedDate1").attr("disabled", false);
+                    break;
+            }
+        }
+
+
+        $(function () {
+            $("#Create").click(function () {
+                var insuranceKindId = $("#InsuranceKindId").val();  // 种类
+                if (insuranceKindId == "0") {
+                    $.messager.alert('操作提示', '请选择种类', 'warning');
+                    return false;
+                }
+                var paymentStyle = $("#PaymentStyle").val();  // 费用类型
+                if (paymentStyle == "0") {
+                    $.messager.alert('操作提示', '请选择费用类型', 'warning');
+                    return false;
+                }
+                var startDate = $("#StartDate1").val();  // 开始时间段
+                if (startDate == "") {
+                    $.messager.alert('操作提示', '请选择开始时间', 'warning');
+                    return false;
+                }
+                var endDate = $("#EndedDate1").val();  // 结束时间段
+                if (endDate == "") {
+                    $.messager.alert('操作提示', '请选择结束时间段', 'warning');
+                    return false;
+                }
+
+                // 将时间段转换为int形式
+                var start = $("#StartDate1").val().replace('-', '');
+                var end = $("#EndedDate1").val().replace('-', '');
+                $("#StartDate").val(start);
+                $("#EndedDate").val(end);
+
+                if (start > end) {
+                    $.messager.alert('操作提示', '结束时间段不能早于开始时间段', 'warning');
+                    return false;
+                }
+            })
+        });
+              
+
+    </script>
+
+

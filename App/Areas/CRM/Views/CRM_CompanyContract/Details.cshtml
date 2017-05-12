@@ -1,0 +1,104 @@
+﻿@model Langben.DAL.CRM_CompanyContract
+
+@{
+    Layout = "~/Views/Shared/Details.cshtml";
+}
+@using Common
+ @section CurentPlace {
+    详细  
+}
+ 
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" onclick="window.location.href = 'javascript:history.go(-1)';" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                  
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CRM_Company_ID) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CRM_Company_ID) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.BillDay) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.BillDay) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.ReceivedDay) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.ReceivedDay) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.FeesCycle) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.FeesCycle) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.ChangeDay) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.ChangeDay) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.DatumDay) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.DatumDay) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.ServceEndDay) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.ServceEndDay) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.SendBillDay) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.SendBillDay) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.ServiceBeginDay) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.ServiceBeginDay) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.Status) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.Status) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.BranchID) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.BranchID) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateTime) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CreateTime) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateUserID) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CreateUserID) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateUserName) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CreateUserName) 
+                </div>
+        </div>
+    </fieldset>
+
+

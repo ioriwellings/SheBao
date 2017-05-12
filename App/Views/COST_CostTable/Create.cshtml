@@ -1,0 +1,49 @@
+﻿@{ Layout = "~/Views/Shared/Create.cshtml"; }
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>生成费用表</title>
+</head>
+<body>
+    <div>
+        <input type="text" value="2" id="CRM_Company_ID" />
+        <input type="text" value="201508" id="yearMonth" />
+        <input class="a2 f2" type="button" value="创建" onclick="dd()" />
+    </div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+
+    function dd() {
+        $.ajax({
+            url: "/api/COST_CostTableApi/PostCreate",
+            type: "Post",
+            data: { CRM_Company_ID: "2", yearMonth: "201508" },
+            dataType: "json",
+
+            success: function (data) {
+                if (data.Code == 0) { $.messager.alert('操作提示', data.Message, 'info'); }
+                else {
+                    if ($.messager) {
+                        $.messager.defaults.ok = '继续';
+                        $.messager.defaults.cancel = '返回';
+
+                        $.messager.confirm('操作提示', data.Message, function (r) {
+                            if (!r) {
+                                window.location.href = 'javascript:history.go(-1)';
+                            }
+                        });
+                    }
+                }
+
+
+            }
+        });
+    };
+</script>

@@ -1,0 +1,336 @@
+﻿@using Langben.DAL;
+@model Langben.DAL.EmployeeAdd
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+    Langben.DAL.Employee Enployee = ViewBag.Employee;
+    object Parameter = ViewBag.Parameter;
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+    社保补缴修改页面
+}
+<script src="~/Res/jquery.uploadify-v2.1.4/jquery-1.4.2.min.js"></script>
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#PoliceAccountNaturelist").val("@ViewBag.PoliceAccountNatureId")
+        $("#Citylist").val("@ViewBag.CityId")
+        $("#CRM_Companylist").val("@ViewBag.CompanyId")
+        var Cityid = $('#Citylist').val();
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=1&Parameter=1",
+            async: false,
+            data: "",
+            success: function (data) {
+                if (data != null) {
+                    $("#YANGLAObujiao_id").val(data.Id);
+                    $("#YANGLAO_Wage").val(data.Wage);
+                    $("#YANGLAO_StartTime").val(data.StartTime.substr(0, 10));
+                    $('#YANGLAO_EndTime').val(data.EndTime.substr(0, 10));
+                }
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=2&Parameter=1",
+            async: false,
+            data: "",
+            success: function (data) {
+                if (data != null) {
+                    $("#YILIAObujiao_id").val(data.Id);
+                    $("#YILIAO_Wage").val(data.Wage);
+                    $('#YILIAO_StartTime').val(data.StartTime.substr(0, 10));
+                    $('#YILIAO_EndTime').val(data.EndTime.substr(0, 10));
+                }
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=3&Parameter=1",
+            async: false,
+            data: "",
+            success: function (data) {
+                if (data != null) {
+                    $("#GONGSHANGbujiao_id").val(data.Id);
+                    $("#GONGSHANG_Wage").val(data.Wage);
+                    $('#GONGSHANG_StartTime').val(data.StartTime.substr(0, 10));
+                    $('#GONGSHANG_EndTime').val(data.EndTime.substr(0, 10));
+                }
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=4&Parameter=1",
+            async: false,
+            data: "",
+            success: function (data) {
+                if (data != null) {
+                    $("#SHIYEbujiao_id").val(data.Id);
+                    $("#SHIYE_Wage").val(data.Wage);
+                    $('#SHIYE_StartTime').val(data.StartTime.substr(0, 10));
+                    $('#SHIYE_EndTime').val(data.EndTime.substr(0, 10));
+                }
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=6&Parameter=1",
+            async: false,
+            data: "",
+            success: function (data) {
+                if (data != null) {
+                    $("#SHENGYUbujiao_id").val(data.Id);
+                    $("#SHENGYU_Wage").val(data.Wage);
+                    $('#SHENGYU_StartTime').val(data.StartTime.substr(0, 10));
+                    $('#SHENGYU_EndTime').val(data.EndTime.substr(0, 10));
+                }
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=5&Parameter=1",
+            async: false,
+            data: "",
+            success: function (data) {
+                if (data != null) {
+                    $("#GONGJIJINbujiao_id").val(data.Id);
+                    $("#GONGJIJIN_Wage").val(data.Wage);
+                    $('#GONGJIJIN_StartTime').val(data.StartTime.substr(0, 10));
+                    $('#GONGJIJIN_EndTime').val(data.EndTime.substr(0, 10));
+                }
+            }
+        });
+        $("#Modify").click(function () {
+
+            //养老
+            var YANGLAObujiao_id = $("#YANGLAObujiao_id").val();
+            alert(YANGLAObujiao_id)
+            var YANGLAO_StartTime = $("#YANGLAO_StartTime").val();//养老补缴开始时间
+            var YANGLAO_EndTime = $("#YANGLAO_EndTime").val();//养老补缴结束时间
+            if (YANGLAObujiao_id != "") {
+
+                if (YANGLAO_StartTime == "" || YANGLAO_EndTime == "") {
+                    alert("请输入养老补缴时间！");
+                    return false;
+                }
+            }
+            //医疗
+            var YILIAObujiao_id = $("#YILIAObujiao_id").val();
+
+            var YILIAO_StartTime = $("#YILIAO_StartTime").val();//医疗补缴开始时间
+            var YILIAO_EndTime = $("#YILIAO_EndTime").val();//医疗补缴结束时间
+            if (YILIAObujiao_id != "") {
+
+                if (YILIAO_StartTime == "" || YILIAO_EndTime == "") {
+                    alert("请输入医疗补缴时间！");
+                    return false;
+                }
+            }
+
+            //工伤
+            var GONGSHANGbujiao_id = $("#GONGSHANGbujiao_id").val();
+
+            var GONGSHANG_StartTime = $("#GONGSHANG_StartTime").val();//工伤补缴开始时间
+            var GONGSHANG_EndTime = $("#GONGSHANG_EndTime").val();//工伤补缴结束时间
+            if (GONGSHANGbujiao_id != "") {
+
+                if (GONGSHANG_StartTime == "" || GONGSHANG_EndTime == "") {
+                    alert("请输入工伤补缴时间！");
+                    return false;
+                }
+            }
+
+            //失业
+            var SHIYEbujiao_id = $("#SHIYEbujiao_id").val();
+
+            var SHIYE_StartTime = $("#SHIYE_StartTime").val();//失业补缴开始时间
+            var SHIYE_EndTime = $("#SHIYE_EndTime").val();//失业补缴结束时间
+            if (SHIYEbujiao_id != "") {
+
+                if (SHIYE_StartTime == "" || SHIYE_EndTime == "") {
+                    alert("请输入失业补缴时间！");
+                    return false;
+                }
+            }
+
+            //公积金
+            var GONGJIJINbujiao_id = $("#GONGJIJINbujiao_id").val();
+
+            var GONGJIJIN_StartTime = $("#GONGJIJIN_StartTime").val();//公积金补缴开始时间
+            var GONGJIJIN_EndTime = $("#GONGJIJIN_EndTime").val();//公积金补缴结束时间
+            if (GONGJIJINbujiao_id != "") {
+
+                if (GONGJIJIN_StartTime == "" || GONGJIJIN_EndTime == "") {
+                    alert("请输入公积金补缴时间！");
+                    return false;
+                }
+            }
+
+            //生育
+            var SHENGYUbujiao_id = $("#SHENGYUbujiao_id").val();
+
+            var SHENGYU_StartTime = $("#SHENGYU_StartTime").val();//生育补缴开始时间
+            var SHENGYU_EndTime = $("#SHENGYU_EndTime").val();//生育补缴结束时间
+            if (SHENGYUbujiao_id != "") {
+
+                if (SHENGYU_StartTime == "" || SHENGYU_EndTime == "") {
+                    alert("请输入生育补缴时间！");
+                    return false;
+                }
+            }
+
+           
+            $.ajax({
+                type: "POST",
+                url: "/api/EmployeeGoonPaymentApi/POSTEmployeeAddModify?YANGLAObujiao_id=" + YANGLAObujiao_id + "&YILIAObujiao_id=" + YILIAObujiao_id + "&GONGSHANGbujiao_id=" + GONGSHANGbujiao_id + "&SHIYEbujiao_id=" + SHIYEbujiao_id + "&GONGJIJINbujiao_id=" + GONGJIJINbujiao_id + "&SHENGYUbujiao_id=" + SHENGYUbujiao_id,
+                async: false,
+                data: {
+                    YANGLAO_StartTime: YANGLAO_StartTime, YANGLAO_EndTime: YANGLAO_EndTime, YILIAO_StartTime: YILIAO_StartTime, YILIAO_EndTime: YILIAO_EndTime,
+                    GONGSHANG_StartTime: GONGSHANG_StartTime, GONGSHANG_EndTime: GONGSHANG_EndTime, SHIYE_StartTime: SHIYE_StartTime, SHIYE_EndTime: SHIYE_EndTime,
+                    GONGJIJIN_StartTime: GONGJIJIN_StartTime, GONGJIJIN_EndTime: GONGJIJIN_EndTime, SHENGYU_StartTime: SHENGYU_StartTime, SHENGYU_EndTime: SHENGYU_EndTime
+                },
+                success: function (msg) {
+                    if (msg.Code == 1) {
+                        alert(msg.Message);
+                    }
+                    else {
+                        alert(msg.Message);
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" id="Modify" value="修改" />
+        <input class="a2 f2" type="button" onclick="history.go(-1)" value="返回" />
+    </legend>
+    <div class="bigdiv">
+        <input type="hidden" id="YANGLAObujiao_id" />
+        <input type="hidden" id="YILIAObujiao_id" />
+        <input type="hidden" id="GONGSHANGbujiao_id" />
+        <input type="hidden" id="SHIYEbujiao_id" />
+        <input type="hidden" id="GONGJIJINbujiao_id" />
+        <input type="hidden" id="SHENGYUbujiao_id" />
+        <div class="editor-label">
+            人员姓名：
+        </div>
+        <div class="editor-field">
+            @Enployee.Name
+        </div>
+        <div class="editor-label">
+            证件号码：
+        </div>
+        <div class="editor-field">
+            @Enployee.CertificateNumber
+        </div>
+        <div class="editor-label">
+            报增企业：
+        </div>
+        <div class="editor-field">
+            @{
+                List<CRM_Company> CRM_Company = new List<CRM_Company>();
+                CRM_Company = ViewBag.CRM_Companylist;
+                ViewData["CRM_Companylist"] = new SelectList(CRM_Company, "ID", "CompanyName");
+            }
+            @Html.DropDownList("CRM_Companylist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+        </div>
+        <div class="editor-label">
+            岗位：
+        </div>
+        <div class="editor-field">
+            @ViewBag.Station
+        </div>
+        <div class="editor-label">
+            社保缴纳地：
+        </div>
+        <div class="editor-field">
+            @{
+                List<City> City = new List<City>();
+                City = ViewBag.Citylist;
+                ViewData["Citylist"] = new SelectList(City, "Id", "Name");
+            }
+            @Html.DropDownList("Citylist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+        </div>
+        <div class="editor-label">
+            户口性质：
+        </div>
+        <div class="editor-field">
+            @{
+                List<PoliceAccountNature> PoliceAccountNature = new List<PoliceAccountNature>();
+                PoliceAccountNature = ViewBag.PoliceAccountNaturelist;
+                ViewData["PoliceAccountNaturelist"] = new SelectList(PoliceAccountNature, "Id", "Name");
+            }
+            @Html.DropDownList("PoliceAccountNaturelist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+        </div>
+        <table style="padding-left:100px;">
+            <tr>
+                <th>险种</th>
+                <th>补缴开始时间</th>
+                <th>补缴结束时间</th>
+                <th>补缴基数</th>
+            </tr>
+            <tr>
+                <td>养老</td>
+                <td>
+                    <input type="text" id="YANGLAO_StartTime" onclick="WdatePicker()" />
+                </td>
+                <td>
+                    <input type="text" id="YANGLAO_EndTime" onclick="WdatePicker({minDate: '#F{$dp.$D(\'YANGLAO_StartTime\')}' })" />
+                </td>
+                <td>
+                    <input type="text" id="YANGLAO_Wage" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>医疗</td>
+                <td><input type="text" id="YILIAO_StartTime" onclick="WdatePicker()" /></td>
+                <td><input type="text" id="YILIAO_EndTime" onclick="WdatePicker({ minDate: '#F{$dp.$D(\'YILIAO_StartTime\')}' })" /></td>
+                <td>
+                    <input type="text" id="YILIAO_Wage" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>工伤</td>
+                <td><input type="text" id="GONGSHANG_StartTime" onclick="WdatePicker()" /></td>
+                <td><input type="text" id="GONGSHANG_EndTime" onclick="WdatePicker({  minDate: '#F{$dp.$D(\'GONGSHANG_StartTime\')}' })" /></td>
+                <td>
+                    <input type="text" id="GONGSHANG_Wage" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>失业</td>
+                <td><input type="text" id="SHIYE_StartTime" onclick="WdatePicker()" /></td>
+                <td><input type="text" id="SHIYE_EndTime" onclick="WdatePicker({minDate: '#F{$dp.$D(\'SHIYE_StartTime\')}' })" /></td>
+                <td>
+                    <input type="text" id="SHIYE_Wage" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>生育</td>
+                <td><input type="text" id="SHENGYU_StartTime" onclick="WdatePicker()" /></td>
+                <td><input type="text" id="SHENGYU_EndTime" onclick="WdatePicker({ minDate: '#F{$dp.$D(\'SHENGYU_StartTime\')}' })" /></td>
+                <td>
+                    <input type="text" id="SHENGYU_Wage" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>公积金</td>
+                <td><input type="text" id="GONGJIJIN_StartTime" onclick="WdatePicker()" /></td>
+                <td><input type="text" id="GONGJIJIN_EndTime" onclick="WdatePicker({minDate: '#F{$dp.$D(\'GONGJIJIN_StartTime\')}' })" /></td>
+                <td>
+                    <input type="text" id="GONGJIJIN_Wage" disabled="disabled" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</fieldset>
+
+

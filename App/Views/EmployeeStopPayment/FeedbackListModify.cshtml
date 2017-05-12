@@ -1,0 +1,671 @@
+﻿@using Langben.DAL;
+@model Langben.DAL.EmployeeAdd
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+    Langben.DAL.Employee Enployee = ViewBag.Employee;
+
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+    社保申报
+}
+<script src="~/Res/jquery.uploadify-v2.1.4/jquery-1.4.2.min.js"></script>
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#PoliceAccountNaturelist").val("@ViewBag.PoliceAccountNatureId")
+        $("#Citylist").val("@ViewBag.CityId")
+        var Cityid = "@ViewBag.CityId";
+        $("#CRM_Companylist").val("@ViewBag.CompanyId")
+
+
+
+
+
+   //加载的时候根据各项内容加载 政策手续
+        myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + Cityid, function (data) {
+       
+            $.each(data, function (i, item1) {
+                if (item1["Name"] == "养老") {
+                    $('#Pension_PaymentTime').removeAttr("disabled");
+                    $("#YANGLAO_STATTE").text("可申报");
+                    myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item1["ID"], function (data) {
+                        $("#Pension_PoliceOperation").append("<option value=>请选择</option>");
+                        $.each(data, function (i, item1) {
+                            $("#Pension_PoliceOperation").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                        });
+                    });
+                }
+                if (item1["Name"] == "医疗") {
+                    $('#Medical_PaymentTime').removeAttr("disabled");
+                    $("#YILIAO_STATTE").text("可申报");
+                    myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item1["ID"], function (data) {
+                        $("#Medical_PoliceOperation").append("<option value=>请选择</option>");
+                        $.each(data, function (i, item1) {
+                            $("#Medical_PoliceOperation").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                        });
+                    });
+                }
+                if (item1["Name"] == "工伤") {
+                    $('#WorkInjury_PaymentTime').removeAttr("disabled");
+                    $("#GONGSHANG_STATTE").text("可申报");
+                    myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item1["ID"], function (data) {
+                        $("#WorkInjury_PoliceOperation").append("<option value=>请选择</option>");
+                        $.each(data, function (i, item1) {
+                            $("#WorkInjury_PoliceOperation").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                        });
+                    });
+                }
+                if (item1["Name"] == "失业") {
+                    $('#Unemployment_PaymentTime').removeAttr("disabled");
+                    $("#SHIYE_STATTE").text("可申报");
+                    myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item1["ID"], function (data) {
+                        $("#Unemployment_PoliceOperation").append("<option value=>请选择</option>");
+                        $.each(data, function (i, item1) {
+                            $("#Unemployment_PoliceOperation").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                        });
+                    });
+                }
+                if (item1["Name"] == "公积金") {
+                    $('#HousingFund_PaymentTime').removeAttr("disabled");
+                    $("#GONGJIJIN_STATTE").text("可申报");
+                    myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item1["ID"], function (data) {
+                      
+                        $("#HousingFund_PoliceOperation").append("<option value=>请选择</option>");
+                        $.each(data, function (i, item1) {
+                         
+                            $("#HousingFund_PoliceOperation").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                        });
+                    });
+                }
+                if (item1["Name"] == "生育") {
+                    $('#Maternity_PaymentTime').removeAttr("disabled");
+                    $("#SHENGYU_STATTE").text("可申报");
+                    myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item1["ID"], function (data) {
+                        $("#Maternity_PoliceOperation").append("<option value=>请选择</option>");
+                        $.each(data, function (i, item1) {
+                            $("#Maternity_PoliceOperation").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                        });
+                    });
+                }
+
+            });
+        });
+
+
+
+
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeAddApi/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=1",
+            success: function (data) {
+                $("#yanglao_id").val(data.yanglao_id);
+                $("#Pension_Wage").val(data.Wage);
+                $("#Pension_PaymentTime").val(data.StartTime.substr(0, 10));
+                $("#Pension_PoliceOperation").val(data.PoliceOperationId);
+                $("#Pension_Percentage").append("<option value='" + data.PoliceInsuranceId + "'>" + data.PoliceInsuranceName + "</option>");
+                $("#Pension_InsuranceNumber").val(data.InsuranceCode);
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeAddApi/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=2",
+            success: function (data) {
+                $("#yiliao_id").val(data.yiliao_id);
+                $("#YILIAO_Wage").val(data.Wage);
+                $("#Medical_PaymentTime").val(data.StartTime.substr(0, 10));
+                //$("#Medical_PoliceOperation").append("<option value='" + data.PoliceOperationId + "'>" + data.PoliceOperationName + "</option>");
+                $("#Medical_PoliceOperation").val(data.PoliceOperationId);
+                $("#Medical_Percentage").append("<option value='" + data.PoliceInsuranceId + "'>" + data.PoliceInsuranceName + "</option>");
+                $("#Medical_InsuranceNumber").val(data.InsuranceCode);
+            }
+
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeAddApi/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=3",
+            success: function (data) {
+                $("#gongshang_id").val(data.gongshang_id);
+                $("#GONGSHANG_Wage").val(data.Wage);
+                $("#WorkInjury_PaymentTime").val(data.StartTime.substr(0, 10));
+                //$("#WorkInjury_PoliceOperation").append("<option value='" + data.PoliceOperationId + "'>" + data.PoliceOperationName + "</option>");
+                $("#WorkInjury_PoliceOperation").val(data.PoliceOperationId);
+                $("#WorkInjury_Percentage").append("<option value='" + data.PoliceInsuranceId + "'>" + data.PoliceInsuranceName + "</option>");
+                $("#WorkInjury_InsuranceNumber").val(data.InsuranceCode);
+            }
+
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeAddApi/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=4",
+            success: function (data) {
+                $("#shiye_id").val(data.shiye_id);
+                $("#SHIYE_Wage").val(data.Wage);
+                $("#Unemployment_PaymentTime").val(data.StartTime.substr(0, 10));
+                //$("#Unemployment_PoliceOperation").append("<option value='" + data.PoliceOperationId + "'>" + data.PoliceOperationName + "</option>");
+                $("#Unemployment_PoliceOperation").val(data.PoliceOperationId);
+                $("#Unemployment_Percentage").append("<option value='" + data.PoliceInsuranceId + "'>" + data.PoliceInsuranceName + "</option>");
+                $("#Unemployment_InsuranceNumber").val(data.InsuranceCode);
+            }
+
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeAddApi/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=5",
+            success: function (data) {
+                $("#gongjijin_id").val(data.gongjijin_id);
+                $("#GONGJIJIN_Wage").val(data.Wage);
+                $("#HousingFund_PaymentTime").val(data.StartTime.substr(0, 10));
+                //$("#HousingFund_PoliceOperation").append("<option value='" + data.PoliceOperationId + "'>" + data.PoliceOperationName + "</option>");
+                $("#HousingFund_PoliceOperation").val(data.PoliceOperationId);
+                $("#HousingFund_Percentage").append("<option value='" + data.PoliceInsuranceId + "'>" + data.PoliceInsuranceName + "</option>");
+                $("#HousingFund_InsuranceNumber").val(data.InsuranceCode);
+            }
+
+        });
+
+        $.ajax({
+            type: "get",
+            url: "/api/EmployeeAddApi/getEmployeeAddList",
+            async: false,
+            data: "CompanyEmployeeRelationId=" + @ViewBag.CompanyEmployeeRelationid + "&type=6",
+            success: function (data) {
+
+                $("#shengyu_id").val(data.shengyu_id);
+                $("#SHENGYU_Wage").val(data.Wage);
+                $("#Maternity_PaymentTime").val(data.StartTime.substr(0, 10));
+                //$("#Maternity_PoliceOperation").append("<option value='" + data.PoliceOperationId + "'>" + data.PoliceOperationName + "</option>");
+                $("#Maternity_PoliceOperation").val(data.PoliceOperationId);
+                $("#Maternity_Percentage").append("<option value='" + data.PoliceInsuranceId + "'>" + data.PoliceInsuranceName + "</option>");
+                $("#Maternity_InsuranceNumber").val(data.InsuranceCode);
+            }
+
+
+
+
+
+
+        });
+        $("#Modify").click(function () {
+
+            //养老
+            var yanglao_id = $("#yanglao_id").val();
+
+
+            var Pension_PaymentTime = $("#Pension_PaymentTime").val();//养老起缴时间
+            if (Pension_PaymentTime!="")
+            {   var Pension_PoliceOperation = $("#Pension_PoliceOperation").val();//政策手续
+            if (Pension_PoliceOperation == "") {
+                alert("请输入政策手续！");
+                return false;
+            }
+           
+            var Pension_Percentage = $("#Pension_Percentage").val();//养老政策
+            if (Pension_Percentage == "") {
+                alert("请输入养老政策！");
+                return false;
+            }
+            }
+
+         
+
+            //医疗
+
+
+
+            var yiliao_id = $("#yiliao_id").val();
+            var Medical_PaymentTime = $("#Medical_PaymentTime").val();//医疗起缴时间
+            if (Medical_PaymentTime != "") {
+                var Medical_PoliceOperation = $("#Medical_PoliceOperation").val();//政策手续
+                if (Medical_PoliceOperation == "") {
+                    alert("请输入医疗政策手续！");
+                    return false;
+                }
+                var Medical_Percentage = $("#Medical_Percentage").val();//医疗政策
+                if (Medical_Percentage == "") {
+                    alert("请输入医疗政策！");
+                    return false;
+                }
+            }
+
+            //工伤
+            var gongshang_id = $("#gongshang_id").val();
+            var WorkInjury_PaymentTime = $("#WorkInjury_PaymentTime").val();//工伤起缴时间
+            if (WorkInjury_PaymentTime != "") {
+               
+           
+            var WorkInjury_PoliceOperation = $("#WorkInjury_PoliceOperation").val();//政策手续
+            if (WorkInjury_PoliceOperation == "") {
+                alert("请输入政策手续！");
+                return false;
+            }
+        
+
+            var WorkInjury_Percentage = $("#WorkInjury_Percentage").val();//工伤政策
+            if (WorkInjury_Percentage == "") {
+                alert("请输入工伤政策！");
+                return false;
+            }
+            }
+            //失业
+            var shiye_id = $("#shiye_id").val();
+
+            var Unemployment_PaymentTime = $("#Unemployment_PaymentTime").val();//失业起缴时间
+            if (Unemployment_PaymentTime != "") {
+            
+           
+
+
+            var Unemployment_PoliceOperation = $("#Unemployment_PoliceOperation").val();//政策手续
+            if (Unemployment_PoliceOperation == "") {
+                alert("请输入政策手续！");
+                return false;
+            }
+           
+            var Unemployment_Percentage = $("#Unemployment_Percentage").val();//失业政策
+            if (Unemployment_Percentage == "") {
+                alert("请输入失业政策！");
+                return false;
+            }
+            }
+            //公积金
+            var gongjijin_id = $("#gongjijin_id").val();
+
+            var HousingFund_PaymentTime = $("#HousingFund_PaymentTime").val();//公积金起缴时间
+            if (HousingFund_PaymentTime != "") {
+              
+          
+            var HousingFund_PoliceOperation = $("#HousingFund_PoliceOperation").val();//政策手续
+            if (HousingFund_PoliceOperation == "") {
+                alert("请输入政策手续！");
+                return false;
+            }
+         
+
+            var HousingFund_Percentage = $("#HousingFund_Percentage").val();//公积金政策
+            if (HousingFund_Percentage == "") {
+                alert("请输入公积金政策！");
+                return false;
+            }
+            }
+            //生育
+            var shengyu_id = $("#shengyu_id").val();
+            var Maternity_PaymentTime = $("#Maternity_PaymentTime").val();//生育起缴时间
+            if (Maternity_PaymentTime != "") {
+               
+           
+            var Maternity_PoliceOperation = $("#Maternity_PoliceOperation").val();//政策手续
+            if (Maternity_PoliceOperation == "") {
+                alert("请输入政策手续！");
+                return false;
+            }
+           
+
+            var Maternity_Percentage = $("#Maternity_Percentage").val();//生育政策
+            if (Maternity_Percentage == "") {
+                alert("请输入生育政策！");
+                return false;
+            }
+            }
+            //养老
+            var Pension_PoliceOperation = $("#Pension_PoliceOperation").val();
+            var Pension_PaymentTime = $("#Pension_PaymentTime").val();
+            var Pension_Percentage = $("#Pension_Percentage").val();
+
+            //医疗
+            var Medical_PaymentTime = $("#Medical_PaymentTime").val();
+            var Medical_PoliceOperation = $("#Medical_PoliceOperation").val();
+            var Medical_Percentage = $("#Medical_Percentage").val();
+
+            //工伤
+            var WorkInjury_PaymentTime = $("#WorkInjury_PaymentTime").val();
+            var Medical_PoliceOperation = $("#Medical_PoliceOperation").val();
+            var WorkInjury_Percentage = $("#WorkInjury_Percentage").val();
+
+            //失业
+            var Unemployment_PaymentTime = $("#Unemployment_PaymentTime").val();
+            var Unemployment_PoliceOperation = $("#Unemployment_PoliceOperation").val();
+            var Unemployment_Percentage = $("#Unemployment_Percentage").val();
+
+            //公积金
+            var HousingFund_PaymentTime = $("#HousingFund_PaymentTime").val();
+            var HousingFund_PoliceOperation = $("#HousingFund_PoliceOperation").val();
+            var HousingFund_Percentage = $("#HousingFund_Percentage").val();
+
+            //生育
+            var Maternity_PaymentTime = $("#Maternity_PaymentTime").val();
+            var Maternity_PoliceOperation = $("#Maternity_PoliceOperation").val();
+            var Maternity_Percentage = $("#Maternity_Percentage").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/api/EmployeeAddApi/POSTFeedbackModify?yanglao_id=" + yanglao_id + "&yiliao_id=" + yiliao_id + "&gongshang_id=" + gongshang_id + "&shiye_id=" + shiye_id + "&gongjijin_id=" + gongjijin_id + "&shengyu_id=" + shengyu_id,
+                async: false,
+                data: {
+                    Pension_PoliceOperation: Pension_PoliceOperation, Pension_PaymentTime: Pension_PaymentTime, Pension_Percentage: Pension_Percentage,
+                    Medical_PaymentTime: Medical_PaymentTime, Medical_PoliceOperation: Medical_PoliceOperation, Medical_Percentage: Medical_Percentage,
+                    WorkInjury_PaymentTime: WorkInjury_PaymentTime, WorkInjury_PoliceOperation: WorkInjury_PoliceOperation, WorkInjury_Percentage: WorkInjury_Percentage,
+                    Unemployment_PaymentTime: Unemployment_PaymentTime, Unemployment_PoliceOperation: Unemployment_PoliceOperation, Unemployment_Percentage: Unemployment_Percentage,
+                    HousingFund_PaymentTime: HousingFund_PaymentTime, HousingFund_PoliceOperation: HousingFund_PoliceOperation, HousingFund_Percentage: HousingFund_Percentage,
+                    Maternity_PaymentTime: Maternity_PaymentTime, Maternity_PoliceOperation: Maternity_PoliceOperation, Maternity_Percentage: Maternity_Percentage
+                },
+                success: function (msg) {
+                    if (msg.Code == 1) {
+                        alert(msg.Message);
+                    }
+                    else {
+                        alert("失败");
+                    }
+                }
+            });
+        });
+    });
+    //缴纳地
+
+    //养老政策手续
+    function Pension_PoliceOperation1() {
+        $("#Pension_Percentage option").remove();
+        var Pension_PoliceOperation = $("#Pension_PoliceOperation").val();
+        var PoliceAccountNatureid = $("#PoliceAccountNaturelist").val();
+        if (PoliceAccountNatureid == "") {
+            alert("请选择户口性质");
+        }
+        else {
+            myAjax("/api/EmployeeAddApi/getPoliceInsuranceList", 'ID=' + Pension_PoliceOperation + "&PoliceAccountNatureid=" + PoliceAccountNatureid, function (data) {
+
+                $("#Pension_Percentage").append("<option value=>请选择</option>");
+                $.each(data, function (i, item1) {
+                    $("#Pension_Percentage").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                });
+            });
+        }
+
+    }
+    //医疗政策手续
+    function Medical_PoliceOperation1() {
+        $("#Medical_Percentage option").remove();
+        var YILIAO_PoliceOperationid = $("#Medical_PoliceOperation").val();
+        var PoliceAccountNatureid = $("#PoliceAccountNaturelist").val();
+
+        if (PoliceAccountNatureid == "") {
+            alert("请选择户口性质");
+        }
+        else {
+            myAjax("/api/EmployeeAddApi/getPoliceInsuranceList", 'ID=' + YILIAO_PoliceOperationid + "&PoliceAccountNatureid=" + PoliceAccountNatureid, function (data) {
+
+                $("#Medical_Percentage").append("<option value=>请选择</option>");
+                $.each(data, function (i, item1) {
+                    $("#Medical_Percentage").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                });
+            });
+        }
+
+    }
+    //工伤政策手续
+    function GONGSHANG_PoliceOperationlist1() {
+        $("#WorkInjury_Percentage option").remove();
+        var GONGSHANG_PoliceOperationid = $("#GONGSHANG_PoliceOperationlist").val();
+        var PoliceAccountNatureid = $("#PoliceAccountNaturelist").val();
+
+        if (PoliceAccountNatureid == "") {
+            alert("请选择户口性质");
+        }
+        else {
+            myAjax("/api/EmployeeAddApi/getPoliceInsuranceList", 'ID=' + GONGSHANG_PoliceOperationid + "&PoliceAccountNatureid=" + PoliceAccountNatureid, function (data) {
+
+                $("#WorkInjury_Percentage").append("<option value=>请选择</option>");
+                $.each(data, function (i, item1) {
+                    $("#WorkInjury_Percentage").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                });
+            });
+        } 
+
+    }
+    //失业政策手续
+    function Unemployment_PoliceOperation1() {
+        $("#Unemployment_Percentage option").remove();
+        var SHIYE_PoliceOperationid = $("#Unemployment_PoliceOperation").val();
+        var PoliceAccountNatureid = $("#PoliceAccountNaturelist").val();
+
+        if (PoliceAccountNatureid == "") {
+            alert("请选择户口性质");
+        }
+        else {
+            myAjax("/api/EmployeeAddApi/getPoliceInsuranceList", 'ID=' + SHIYE_PoliceOperationid + "&PoliceAccountNatureid=" + PoliceAccountNatureid, function (data) {
+
+                $("#Unemployment_Percentage").append("<option value=>请选择</option>");
+                $.each(data, function (i, item1) {
+                    $("#Unemployment_Percentage").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                });
+            });
+        }
+
+    }
+    //公积金政策手续
+    function HousingFund_PoliceOperation1() {
+        $("#HousingFund_Percentage option").remove();
+        var GONGJIJIN_PoliceOperationid = $("#HousingFund_PoliceOperation").val();
+        var PoliceAccountNatureid = $("#PoliceAccountNaturelist").val();
+
+        if (PoliceAccountNatureid == "") {
+            alert("请选择户口性质"); 
+        }
+        else {
+            myAjax("/api/EmployeeAddApi/getPoliceInsuranceList", 'ID=' + GONGJIJIN_PoliceOperationid + "&PoliceAccountNatureid=" + PoliceAccountNatureid, function (data) {
+
+                $("#HousingFund_Percentage").append("<option value=>请选择</option>");
+                $.each(data, function (i, item1) {
+                    $("#HousingFund_Percentage").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                });
+            });
+        }
+
+    }
+    ///生育
+    function Maternity_PoliceOperation1() {
+        $("#Maternity_Percentage option").remove();
+        var SHENGYU_PoliceOperationid = $("#Maternity_PoliceOperation").val();
+        var PoliceAccountNatureid = $("#PoliceAccountNaturelist").val();
+
+        if (PoliceAccountNatureid == "") {
+            alert("请选择户口性质");
+        }
+        else {
+            myAjax("/api/EmployeeAddApi/getPoliceInsuranceList", 'ID=' + SHENGYU_PoliceOperationid + "&PoliceAccountNatureid=" + PoliceAccountNatureid, function (data) {
+
+                $("#Maternity_Percentage").append("<option value=>请选择</option>");
+                $.each(data, function (i, item1) {
+                    $("#Maternity_Percentage").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                });
+            });
+        }
+
+    }
+
+</script>
+@using (Html.BeginForm("", "api/EmployeeAddApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" value="修改" id="Modify" />
+            <input class="a2 f2" type="button" onclick="BackList('/EmployeeAdd/FeedbackList')" value="返回" />
+        </legend>
+        <div class="bigdiv">
+            <input type="hidden" id="EmployeeId" value="@Enployee.Id" />
+            <input type="hidden" id="EmployeeName" value="@Enployee.Name" />
+            <input type="hidden" id="CertificateNumber" value="@Enployee.CertificateNumber" />
+
+
+
+            <input type="hidden" id="yanglao_id" value="" />
+            <input type="hidden" id="yiliao_id" value="" />
+            <input type="hidden" id="gongshang_id" value="" />
+            <input type="hidden" id="shiye_id" value="" />
+            <input type="hidden" id="gongjijin_id" value="" />
+            <input type="hidden" id="shengyu_id" value="" />
+            <div class="editor-label">
+                人员姓名：
+            </div>
+            <div class="editor-field">
+
+                @Enployee.Name
+            </div>
+            <div class="editor-label">
+                证件号码：
+            </div>
+            <div class="editor-field">
+
+                @Enployee.CertificateNumber
+            </div>
+            <div class="editor-label">
+                缴纳地：
+            </div>
+            <div class="editor-field">
+                @{
+    List<City> City = new List<City>();
+    City = ViewBag.Citylist;
+    ViewData["Citylist"] = new SelectList(City, "Id", "Name");
+                }
+                @Html.DropDownList("Citylist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+
+            </div>
+            <div class="editor-label">
+                户口性质：
+            </div>
+            <div class="editor-field">
+                @{
+    List<PoliceAccountNature> PoliceAccountNature = new List<PoliceAccountNature>();
+    PoliceAccountNature = ViewBag.PoliceAccountNaturelist;
+    ViewData["PoliceAccountNaturelist"] = new SelectList(PoliceAccountNature, "Id", "Name");
+                }
+                @Html.DropDownList("PoliceAccountNaturelist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+
+            </div>
+            <div class="editor-label">
+                报增企业：
+            </div>
+            <div class="editor-field">
+                @{
+    List<CRM_Company> CRM_Company = new List<CRM_Company>();
+    CRM_Company = ViewBag.CRM_Companylist;
+    ViewData["CRM_Companylist"] = new SelectList(CRM_Company, "ID", "CompanyName");
+                }
+                @Html.DropDownList("CRM_Companylist", (SelectList)ViewData[""], "请选择", new { @style = "font-size:14px;", disabled = "disabled" })
+
+            </div>
+
+
+
+            <div class="editor-label">
+
+            </div>
+            <div class="editor-field">
+
+            </div>
+            <table style="padding-left:100px;">
+                <tr>
+                    <th>险种</th>
+                    <th>政策手续</th>
+                    <th>工资</th>
+                    <th>起缴时间</th>
+                    <th>政策</th>
+                    <th>保险编号</th>
+                </tr>
+                <tr>
+                    <td>养老</td>
+                    <td><select id="Pension_PoliceOperation" onchange="Pension_PoliceOperation1()"></select></td>
+                    <td><input type="text" id="Pension_Wage" disabled="disabled" /></td>
+                    <td>
+                        <input type="text" id="Pension_PaymentTime" onclick="WdatePicker({ maxDate: '#F{$dp.$D(\'Pension_PaymentTime\');}' })" />
+
+                    </td>
+                    <td><select id="Pension_Percentage" disabled="disabled"></select></td>
+                    <td><input type="text" id="Pension_InsuranceNumber" readonly="readonly" /></td>
+                </tr>
+                <tr>
+                    <td>医疗</td>
+                    <td><select id="Medical_PoliceOperation" onchange="Medical_PoliceOperation1()"></select></td>
+                    <td><input type="text" id="YILIAO_Wage" disabled="disabled"  /></td>
+                    <td>
+                        <input type="text" id="Medical_PaymentTime" onclick="WdatePicker({ maxDate: '#F{$dp.$D(\'Medical_PaymentTime\');}' })" />
+
+                    </td>
+                    <td><select id="Medical_Percentage" disabled="disabled"></select></td>
+                    <td><input type="text" id="Medical_InsuranceNumber" readonly="readonly" /></td>
+                </tr>
+                <tr>
+                    <td>工伤</td>
+                    <td><select id="WorkInjury_PoliceOperation"  onchange="WorkInjury_PoliceOperation1()"></select></td>
+                    <td><input type="text" id="GONGSHANG_Wage" disabled="disabled" /></td>
+                    <td>
+                        <input type="text" id="WorkInjury_PaymentTime" onclick="WdatePicker({ maxDate: '#F{$dp.$D(\'WorkInjury_PaymentTime\');}' })" />
+
+                    </td>
+                    <td><select id="WorkInjury_Percentage" disabled="disabled"></select></td>
+                    <td><input type="text" id="WorkInjury_InsuranceNumber" readonly="readonly" /></td>
+                </tr>
+                <tr>
+                    <td>失业</td>
+                    <td><select id="Unemployment_PoliceOperation"  onchange="Unemployment_PoliceOperation1()"></select></td>
+                    <td><input type="text" id="SHIYE_Wage" disabled="disabled" /></td>
+                    <td>
+                        <input type="text" id="Unemployment_PaymentTime" onclick="WdatePicker({ maxDate: '#F{$dp.$D(\'Unemployment_PaymentTime\');}' })" />
+
+                    </td>
+                    <td><select id="Unemployment_Percentage" disabled="disabled"></select></td> 
+                    <td><input type="text" id="Unemployment_InsuranceNumber" readonly="readonly" /></td>
+                </tr>
+
+                <tr>
+                    <td>生育</td>
+                    <td><select id="Maternity_PoliceOperation"onchange="Maternity_PoliceOperation1()"></select></td>
+                    <td><input type="text" id="SHENGYU_Wage" disabled="disabled" /></td>
+                    <td>
+                        <input type="text" id="Maternity_PaymentTime" onclick="WdatePicker({ maxDate: '#F{$dp.$D(\'Maternity_PaymentTime\');}' })" />
+
+                    </td>
+                    <td><select id="Maternity_PaymentTime" disabled="disabled"></select></td>
+                    <td><input type="text" id="Maternity_InsuranceNumber" readonly="readonly" /></td>
+                </tr>
+                <tr>
+                    <td>公积金</td>
+                    <td><select id="HousingFund_PoliceOperation" onchange="HousingFund_PoliceOperation1()" ></select></td>
+                    <td><input type="text" id="GONGJIJIN_Wage" disabled="disabled" /></td>
+                    <td>
+                        <input type="text" id="HousingFund_PaymentTime" onclick="WdatePicker({ maxDate: '#F{$dp.$D(\'HousingFund_PaymentTime\');}' })" />
+
+                    </td>
+                    <td><select id="HousingFund_Percentage" disabled="disabled"></select></td>
+                    <td><input type="text" id="HousingFund_InsuranceNumber" readonly="readonly" /></td>
+                </tr>
+            </table>
+           
+            <div class="editor-label">
+
+            </div>
+            <div class="editor-field">
+
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+
+

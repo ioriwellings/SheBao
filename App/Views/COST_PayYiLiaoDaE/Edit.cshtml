@@ -1,0 +1,134 @@
+﻿@model Langben.DAL.COST_PayYiLiaoDaE
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+ @section CurentPlace {
+    修改  
+}
+
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('COST_PayYiLiaoDaE')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.ID )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.COST_PayRecordStatusID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.COST_PayRecordStatusID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.COST_PayRecordStatusID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EmployeeName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.EmployeeName)
+                @Html.ValidationMessageFor(model => model.EmployeeName)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CertificateNumber)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CertificateNumber)
+                @Html.ValidationMessageFor(model => model.CertificateNumber)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PaymentSocialMonth)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PaymentSocialMonth)
+                @Html.ValidationMessageFor(model => model.PaymentSocialMonth)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.YearMonth) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.YearMonth, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.YearMonth) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Radix)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Radix)
+                @Html.ValidationMessageFor(model => model.Radix)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PersonCost)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PersonCost)
+                @Html.ValidationMessageFor(model => model.PersonCost)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyCost)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CompanyCost)
+                @Html.ValidationMessageFor(model => model.CompanyCost)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Total)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Total)
+                @Html.ValidationMessageFor(model => model.Total)
+            </div>@Html.HiddenFor(model => model.CreateTime )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CreateUserID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CreateUserID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CreateUserName)
+                @Html.ValidationMessageFor(model => model.CreateUserName)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.BranchID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BranchID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.BranchID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CertificateNumberSB)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CertificateNumberSB)
+                @Html.ValidationMessageFor(model => model.CertificateNumberSB)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CompanyId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CompanyId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CompanyId) 
+            </div>
+        </div>
+    </fieldset>
+
+
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            
+
+        });
+        
+
+    </script>
+
+
+

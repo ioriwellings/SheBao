@@ -1,0 +1,157 @@
+﻿@model Langben.DAL.COST_CostTableInsurance
+
+@{
+    Layout = "~/Views/Shared/Details.cshtml";
+}
+@using Common
+ @section CurentPlace {
+    详细  
+}
+ 
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" onclick="window.location.href = 'javascript:history.go(-1)';" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                  
+                <div class="display-label">
+                      @Html.LabelFor(model => model.COST_CostTable_ID) :
+                </div>
+                <div class="display-field" id='COST_CostTable_ID'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PaymentStyle) :
+                </div>
+                <div class="display-field" id='PaymentStyle'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PaymentInterval) :
+                </div>
+                <div class="display-field" id='PaymentInterval'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PaymentSocialMonth) :
+                </div>
+                <div class="display-field" id='PaymentSocialMonth'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PaymentMonth) :
+                </div>
+                <div class="display-field" id='PaymentMonth'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyRadix) :
+                </div>
+                <div class="display-field" id='CompanyRadix'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyCost) :
+                </div>
+                <div class="display-field" id='CompanyCost'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyRatio) :
+                </div>
+                <div class="display-field" id='CompanyRatio'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PersonRadix) :
+                </div>
+                <div class="display-field" id='PersonRadix'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PersonCost) :
+                </div>
+                <div class="display-field" id='PersonCost'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PersonRatio) :
+                </div>
+                <div class="display-field" id='PersonRatio'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CostType) :
+                </div>
+                <div class="display-field" id='CostType'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.Employee_ID) :
+                </div>
+                <div class="display-field" id='Employee_ID'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.EmployName) :
+                </div>
+                <div class="display-field" id='EmployName'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CertificateType) :
+                </div>
+                <div class="display-field" id='CertificateType'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CertificateNumber) :
+                </div>
+                <div class="display-field" id='CertificateNumber'>
+                </div>
+                <br style="clear: both;" />
+                <div class="display-label">
+                    @Html.LabelFor(model => model.Remark) :
+                </div>
+                <div class="textarea-box">
+                    @Html.TextAreaFor(model => model.Remark, new {  @readonly=true})                   
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.Status) :
+                </div>
+                <div class="display-field" id='Status'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.ParentID) :
+                </div>
+                <div class="display-field" id='ParentID'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CRM_Company_ID) :
+                </div>
+                <div class="display-field" id='CRM_Company_ID'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateTime) :
+                </div>
+                <div class="display-field" id='CreateTime'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateUserID) :
+                </div>
+                <div class="display-field" id='CreateUserID'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateUserName) :
+                </div>
+                <div class="display-field" id='CreateUserName'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.BranchID) :
+                </div>
+                <div class="display-field" id='BranchID'>
+                </div>
+        </div>
+    </fieldset>
+
+<script type="text/javascript">
+
+    $(function () {
+        // 获取内容并显示
+        var id = '@ViewBag.Id';
+        $.ajax({
+            url: "/api/COST_CostTableInsuranceApi/" + id,
+            type: "POST",
+            // async: false,
+            success: function (res) {
+		$("#COST_CostTable_ID").html(res.COST_CostTable_ID);$("#PaymentStyle").html(res.PaymentStyle);$("#PaymentInterval").html(res.PaymentInterval);$("#PaymentSocialMonth").html(res.PaymentSocialMonth);$("#PaymentMonth").html(res.PaymentMonth);$("#CompanyRadix").html(res.CompanyRadix);$("#CompanyCost").html(res.CompanyCost);$("#CompanyRatio").html(res.CompanyRatio);$("#PersonRadix").html(res.PersonRadix);$("#PersonCost").html(res.PersonCost);$("#PersonRatio").html(res.PersonRatio);$("#CostType").html(res.CostType);$("#Employee_ID").html(res.Employee_ID);$("#EmployName").html(res.EmployName);$("#CertificateType").html(res.CertificateType);$("#CertificateNumber").html(res.CertificateNumber);$("#Remark").val(res.Remark);$("#Status").html(res.Status);$("#ParentID").html(res.ParentID);$("#CRM_Company_ID").html(res.CRM_Company_ID);$("#CreateTime").html(res.CreateTime);$("#CreateUserID").html(res.CreateUserID);$("#CreateUserName").html(res.CreateUserName);$("#BranchID").html(res.BranchID);
+            }
+        })
+    });
+</script>
+

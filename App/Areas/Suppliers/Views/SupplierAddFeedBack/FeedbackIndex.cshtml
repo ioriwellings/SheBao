@@ -1,0 +1,164 @@
+﻿@{ Layout = null; }
+@using Common
+@using Models
+
+<script src="~/Scripts/Myl.js"></script>
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+<div id="divQuery">
+    <div id="div1">
+
+        <table id="tabRateInfo" style="padding-left:100px;">
+            <tr>
+                <td><input type="checkbox" id='all' value="-1" name="ck" onclick="SetAll()" />全选</td>
+                <td><input type="checkbox" value="养老" name="ck" />养老</td>
+                <td><input type="checkbox" value="医疗" name="ck" />医疗</td>
+                <td><input type="checkbox" value="生育" name="ck" />生育</td>
+                <td><input type="checkbox" value="失业" name="ck" />失业</td>
+                <td><input type="checkbox" value="工伤" name="ck" />工伤</td>
+                <td><input type="checkbox" value="公积金" name="ck" />公积金</td>
+                <td><input type="checkbox" value="大病" name="ck" />大病</td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+<script>
+
+    $(function () {
+
+        var htmlstr="";
+
+
+        htmlstr += "<tr>";
+
+        htmlstr += "<td> 失败原因:</td>";
+        htmlstr += "<td  colspan='7'>  <textarea id=\"htyy\"></textarea></td>";
+        htmlstr += "</tr>";
+        htmlstr += "<tr>";
+
+        htmlstr += "<td colspan='8'> <input type=\"button\" value=\"通过\" onclick=\"FeedBackIndex()\" /><input type=\"button\" value=\"返回\" onclick=\"javascript:history.back(-1);\" />  </td>";
+
+        htmlstr += "</tr>";
+        $("#tabRateInfo").append(htmlstr);
+
+        var datan = $("#divQuery").find(':checkbox');
+        for (var i = 0; i < datan.length; i++) {
+            datan[i].checked = true;
+        }
+
+
+        var ids = '@ViewBag.ids';
+        var Cityid = '@ViewBag.Cityid';
+
+
+        var alltype = '@ViewBag.alltype';
+        var allarr = alltype.split(',');
+        var flag = '@ViewBag.flag';
+
+
+    });
+
+
+    //全选
+    function SetAll() {
+
+        var datan = $("#divQuery").find(':checkbox');
+        var Flag = datan[0].checked;//全选按钮状态
+        for (var i = 0; i < datan.length; i++) {
+
+            if (datan[i].id != "all") {
+
+                datan[i].checked = Flag;
+            }
+        }
+
+    }
+
+    ///联动
+    function liandong(id, boolpd) {
+        var ids = '@ViewBag.ids';
+        var Cityid = '@ViewBag.Cityid';
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            //方法所在页面和方法名
+            url: "/api/EmployeeAddApi/POSTEmployeeAddLinkage?Cityid=" + Cityid + "&yanglao_InsuranceKind1=" + id,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+
+                var type = data.Message;
+                var KindLis = type.split(',');
+                var datan = $("#divQuery").find(':checkbox');
+                for (var i = 0; i < datan.length; i++) {
+                    for (var j = 0; j < KindLis.length; j++) {
+                        if (datan[i].value == KindLis[j]) {
+                            if (datan[i].disabled != 'disabled') {
+                                datan[i].checked = boolpd;
+                            }
+                        }
+                    }
+
+                }
+
+            },
+            error: function (err) {
+
+            }
+        });
+    }
+    function FeedBackIndex() {
+        
+        var datan = $("#divQuery").find("input[name='ck']:checked").length;
+        if (datan == 0)
+        {
+            alert('请选择险种！');
+            return false;
+        }
+        var alltype = '';
+        var datan = $("#divQuery").find(':checkbox');
+        for (var i = 0; i < datan.length; i++) {
+
+            if (datan[i].checked && datan[i].value!="-1") {
+                alltype = alltype + ',' + datan[i].value;
+            }
+        }
+        alltype = escape(alltype);
+        var msg = $("#htyy").val();
+        if (msg.length == 0) {
+            alert('请输入失败信息！');
+            return false;
+        }
+
+        if (msg.length >4000) {
+            alert('最多允许输入4000字！');
+            return false;
+        }
+        var ids = '@ViewBag.ids';
+        var CompanyEmployeeRelationId = '@ViewBag.CompanyEmployeeRelationId';
+        msg = escape(msg);
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            //方法所在页面和方法名
+            url: "/api/SupplierAddFeedBackApi/FeedBackAction1?ids=" + ids + "&alltype=" + alltype + "&CompanyEmployeeRelationId=" + CompanyEmployeeRelationId + "&message=" + msg,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                alert(data);
+                $("#htyy").val("");
+                window.location.href = "/Suppliers/SupplierAddFeedBack/Index";
+
+            },
+            error: function (err) {
+                alert(data);
+            }
+        });
+
+
+
+    }
+</script>
+

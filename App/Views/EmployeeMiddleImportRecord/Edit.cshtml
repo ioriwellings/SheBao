@@ -1,0 +1,83 @@
+﻿@model Langben.DAL.EmployeeMiddleImportRecord
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+ @section CurentPlace {
+    修改  
+}
+
+@using (Html.BeginForm("", "api/EmployeeMiddleImportRecordApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('EmployeeMiddleImportRecord')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.Id )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.URL)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.URL)
+                @Html.ValidationMessageFor(model => model.URL)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.ImportCount) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.ImportCount, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.ImportCount) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.ImportPayment)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.ImportPayment)
+                @Html.ValidationMessageFor(model => model.ImportPayment)
+            </div>@Html.HiddenFor(model => model.CreateTime )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserID) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.CreateUserID, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.CreateUserID) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.CreateUserName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.CreateUserName)
+                @Html.ValidationMessageFor(model => model.CreateUserName)
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            
+
+            // 获取待编辑内容并显示
+            var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/EmployeeMiddleImportRecordApi/" + id,
+                type: "POST",
+                // async: false,
+                success: function (res) {
+                    $("#Id").val(res.Id);$("#URL").val(res.URL);$("#ImportCount").val(res.ImportCount);$("#ImportPayment").val(res.ImportPayment);$("#CreateTime").val(res.CreateTime);$("#CreateUserID").val(res.CreateUserID);$("#CreateUserName").val(res.CreateUserName);
+                }
+            })
+        });
+        
+
+    </script>
+
+
+

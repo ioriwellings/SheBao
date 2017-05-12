@@ -1,0 +1,85 @@
+﻿
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@section CurentPlace {
+    设置停缴终止
+}
+
+<fieldset>
+    <legend>
+        <input class="a2 f2" type="button" onclick="setStop()" value="保存并提交" />
+        <input class="a2 f2" type="button" onclick="BackList('EmployeeStopPaymentForCustomer')" value="返回列表" />
+    </legend>
+    <span>姓名：@Html.Raw(ViewBag.EmpName)</span>
+
+    <br />
+    <span>险种：<span id="span1">@Html.Raw(ViewBag.strHtml)</span></span>
+    <br />
+    原因:<br />
+    <textarea id="txtRemark" style="width :350px" rows="3"></textarea>
+</fieldset>
+
+
+<script type="text/javascript">
+    
+    function setStop() {
+
+        var remark = $("#txtRemark").val(); 
+        var stopIds = "";
+        $("input[id^=cbox_]").each(function (i, value) {
+            if ($(value).is(":checked")) {
+                var stopId = value.id.substring(5);
+                stopIds += stopId + ",";
+            }
+        });
+
+        if (stopIds == "") {
+            $.messager.alert("警告", "请先选择险种", "warning");
+            return false;
+        }
+        if (remark == "") {
+            $.messager.alert("警告", "请填写终止原因", "warning");
+            return false;
+        }
+        
+        $.messager.confirm('操作提示', "确认终止吗？", function (r) {
+            
+            if (r) {
+                $.ajax({
+                    url: "/api/EmployeeStopPaymentForCustomerApi/PassNo?IDs=" + stopIds + "&remark=" + remark,
+                    type: "Get",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //移除删除的数据
+
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            BackList('EmployeeStopPaymentForCustomer');
+                        } else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                });
+            }
+        });
+
+
+        //$.ajax({
+        //    url: "/api/EmployeeStopPaymentFeedbackApi/SetFail?stopIds=" + stopIds + "&remark=" + remark,
+        //    type: "POST",
+        //    async: false,
+        //    success: function (res) {
+        //        if (res.Code == 1) {
+        //            alert(res.Message);
+        //            BackList('EmployeeStopPaymentFeedback');
+        //        }
+        //    },
+        //    error: function (a, b, c) {
+
+        //    }
+        //});
+    }
+
+</script>
+

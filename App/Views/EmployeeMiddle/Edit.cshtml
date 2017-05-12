@@ -1,0 +1,205 @@
+﻿@model Langben.DAL.EmployeeMiddle
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+@section CurentPlace {
+    修改
+}
+
+@using (Html.BeginForm("", "api/EmployeeMiddleApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('EmployeeMiddle')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            <input id="Id" name="Id" type="hidden" value="@ViewBag.EmployeeMiddleShow.Id" />
+            <input id="CompanyEmployeeRelationId" name="CompanyEmployeeRelationId" style="display:none" value="@ViewBag.EmployeeMiddleShow.CompanyEmployeeRelationId" /> @*企业员工关系编号*@
+            <input id="CityId" name="CityId" style="display:none" value="@ViewBag.EmployeeMiddleShow.CityId" /> @*缴纳地编号*@
+
+            <div class="editor-label">
+                企业名称：
+            </div>
+            <div class="editor-field">
+                @ViewBag.EmployeeMiddleShow.CompanyName
+            </div>
+            <div class="editor-label">
+                人员姓名：
+            </div>
+            <div class="editor-field">
+                @ViewBag.EmployeeMiddleShow.EmployeeName
+            </div>
+            <div class="editor-label">
+                证件号码：
+            </div>
+            <div class="editor-field">
+                @ViewBag.EmployeeMiddleShow.CardId
+            </div>
+            <div class="editor-label">
+                种类：
+            </div>
+            <div class="editor-field">
+                其他社保费用
+                <input id="InsuranceKindId" name="InsuranceKindId" type="hidden" value="@ViewBag.EmployeeMiddleShow.InsuranceKindId" />
+                @*<select id="InsuranceKindId" name="InsuranceKindId" onchange="GetPaymentStyle();">
+                        <option value="0">--请选择--</option>
+                        <option value="1">养老</option>
+                        <option value="2">医疗</option>
+                        <option value="3">工伤</option>
+                        <option value="4">失业</option>
+                        <option value="5">公积金</option>
+                        <option value="6">生育</option>
+                        <option value="9">大病</option>
+                        <option value="8">补充公积金</option>
+                        <option value="11">其他费用</option>
+                        <option value="12">其他社保费用</option>
+                    </select>*@
+            </div>
+            <div class="editor-label">
+                费用类型：
+            </div>
+            <div class="editor-field">
+                @((Common.EmployeeMiddle_PaymentStyle)ViewBag.EmployeeMiddleShow.PaymentStyle)
+                @*<select id="PaymentStyle" name="PaymentStyle">
+                    <option value='1'>正常</option>
+                    <option value='2'>补缴</option>
+                    <option value='3'>退费</option>
+                    <option value='4'>补收</option>
+                    <option value='5'>补差</option>
+                    <option value='6'>调整</option>
+                </select>*@
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PaymentBetween)：
+            </div>
+            <div class="editor-field">
+                @ViewBag.EmployeeMiddleShow.PaymentBetween
+            </div>
+            <div class="editor-label">
+                单位基数：
+            </div>
+            <div class="editor-field">
+                @ViewBag.EmployeeMiddleShow.CompanyBasePayment
+            </div>
+            <div class="editor-label">
+                单位承担金额：
+            </div>
+            <div class="editor-field">
+                @*@Html.TextBoxFor(model => model.CompanyPayment, new { onkeyup = "isMoney(this)" })*@
+                <input data-val="true" data-val-required="单位承担金额 字段是必需的。" id="CompanyPayment" name="CompanyPayment" onkeyup="isMoney(this)" type="text" value="">
+                @Html.ValidationMessageFor(model => model.CompanyPayment)
+            </div>
+            <div class="editor-label">
+                个人基数：
+            </div>
+            <div class="editor-field">
+                @ViewBag.EmployeeMiddleShow.EmployeeBasePayment
+            </div>
+            <div class="editor-label">
+                个人承担金额：
+            </div>
+            <div class="editor-field">
+                @*<input type="text" id="EmployeePayment" name="EmployeePayment" onchange="isNumber(EmployeePayment)" />*@
+                <input data-val="true" data-val-required="个人承担金额 字段是必需的。" id="EmployeePayment" name="EmployeePayment" onkeyup="isMoney(this)" type="text" value="">
+                @*<span class="field-validation-valid" data-valmsg-for="CompanyPayment" data-valmsg-replace="true"></span>*@
+                @*@Html.TextBoxFor(model => model.EmployeePayment, new { onkeyup = "isMoney(this)" })*@
+                @Html.ValidationMessageFor(model => model.EmployeePayment)
+            </div>
+            <div class="editor-label">
+                缴纳月数 ：
+            </div>
+            <div class="editor-field">
+                @ViewBag.EmployeeMiddleShow.PaymentMonth
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.StartDate) ：
+            </div>
+            <div class="editor-field">
+                <input id="StartDate1" name="StartDate1" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" disabled="disabled" />
+                <input id="StartDate" name="StartDate" style="display:none" />
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EndedDate) ：
+            </div>
+            <div class="editor-field">
+                <input id="EndedDate1" name="EndedDate1" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" disabled="disabled" />
+                <input id="EndedDate" name="EndedDate" style="display:none" />
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark) ：
+            </div>
+            <div class="textarea-box">
+                @*@Html.TextAreaFor(model => model.Remark)*@
+                &nbsp;<textarea cols="20" style="width:600px;height:60px" data-val="true" data-val-length="长度不可超过4000" data-val-length-max="4000" data-val-required="备注 字段是必需的。" id="Remark" name="Remark" rows="2" class="valid"></textarea>
+                @Html.ValidationMessageFor(model => model.Remark)
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+<script type="text/javascript">
+    $(".yearMonth").simpleCanleder();
+
+    // 根据种类获取费用类型
+    function GetPaymentStyle() {
+        var insurance = $("#InsuranceKindId").val();
+        switch (insurance) {
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+                $("#PaymentStyle").html("");
+                $("#PaymentStyle").append("<option value='3'>退费</option>");
+                $("#PaymentStyle").append("<option value='4'>补收</option>");
+                $("#PaymentStyle").append("<option value='5'>补差</option>");
+                $("#PaymentStyle").append("<option value='6'>调整</option>");
+
+                // 设置时间段是否可选
+                $("#StartDate1").attr("disabled", true);
+                $("#EndedDate1").attr("disabled", true);
+                break;
+            case "11":
+            case "12":
+                $("#PaymentStyle").html("");
+                $("#PaymentStyle").append("<option value='1'>正常</option>");
+                $("#PaymentStyle").append("<option value='2'>补缴</option>");
+                $("#PaymentStyle").append("<option value='3'>退费</option>");
+                $("#PaymentStyle").append("<option value='4'>补收</option>");
+                $("#PaymentStyle").append("<option value='5'>补差</option>");
+                $("#PaymentStyle").append("<option value='6'>调整</option>");
+
+                // 设置时间段是否可选
+                $("#StartDate1").attr("disabled", false);
+                $("#EndedDate1").attr("disabled", false);
+                break;
+        }
+    }
+
+    $(function () {
+        $("#CompanyPayment").val('@ViewBag.EmployeeMiddleShow.CompanyPayment');
+        $("#EmployeePayment").val('@ViewBag.EmployeeMiddleShow.EmployeePayment');
+        $("#StartDate").val('@ViewBag.EmployeeMiddleShow.StartDate');
+        $("#EndedDate").val('@ViewBag.EmployeeMiddleShow.EndedDate');
+        $("#Remark").html('@ViewBag.EmployeeMiddleShow.Remark');
+    });
+
+
+</script>
+
+
+

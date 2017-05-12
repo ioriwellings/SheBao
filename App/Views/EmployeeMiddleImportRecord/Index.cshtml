@@ -1,0 +1,88 @@
+﻿@model Langben.DAL.EmployeeMiddleImportRecord 
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:80px">
+
+    <div class='input_search'>
+        <div class="input_search-label">
+            导入人：
+        </div>
+        <div class="input_search-field">
+            <input id="createUser" type="text" class="easyui-textbox" style="height:26px" />
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            导入时间：
+        </div>
+        <div class="input_search-field" style="white-space:nowrap;width:450px">
+            <input type="text" class="Wdate" id="startTime" onclick="WdatePicker()" />~
+            <input type="text" class="Wdate" id="endTime" onclick="WdatePicker({ minDate: '#F{$dp.$D(\'startTime\')}' })" />
+        </div>
+    </div>
+    <div class="input_search input_search_btn">
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+ <br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        $('#flexigridData').datagrid({
+            title: '导入其他社保费记录', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            fit:true,
+            collapsible: true,
+            url: '/api/EmployeeMiddleImportRecordApi/PostData', //获取数据的url
+            sortName: 'Id',
+            sortOrder: 'desc',
+            idField: 'Id',
+
+            columns: [[
+
+
+                { field: 'URL', title: '@Html.DisplayNameFor(model => model.URL)', width: 155, hidden: true, align: 'center' }
+                , { field: 'ImportCount', title: '@Html.DisplayNameFor(model => model.ImportCount)', width: 155, align: 'center' }
+                , { field: 'ImportPayment', title: '@Html.DisplayNameFor(model => model.ImportPayment)', width: 155, align: 'right' }
+                , { field: 'CreateTime', title: '导入时间', width: 155, formatter: formatDatebox, align: 'center' }
+                , { field: 'CreateUserName', title: '导入人', width: 155, align: 'center' }
+                , { field: 'CreateUserID', title: '导入人ID', width: 155, hidden: true, align: 'center' }
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        var createUser = $("#createUser").val();
+        var startTime = $("#startTime").val();
+        var endTime = $("#endTime").val();
+        //将查询条件按照分隔符拼接成字符串
+        var search = createUser + "^" + startTime + "^" + endTime;
+
+        //执行查询
+        $('#flexigridData').datagrid('load', { search: search });
+    };
+</script>
+

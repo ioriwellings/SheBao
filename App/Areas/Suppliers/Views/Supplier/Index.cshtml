@@ -1,0 +1,257 @@
+﻿@model Langben.DAL.Supplier
+
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+<div id="divQuery" data-options="region:'north',border:false" style="height:40px">
+
+    <div class='input_search '>
+        供应商名称：<input id="searchName" type="text" class="easyui-textbox" style="height:26px" />
+        供应商客服：
+        @Html.DropDownList("searchUser", (SelectList)ViewData["listUser"], "请选择", new { ID = "searchUser", @class = "easyui-combobox", @style = "font-size:14px;height:26px" })
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+    var tmpParam = null;
+    var sParam = null;
+    var returnParam = '';
+
+    var opt = {
+        title: '供应商列表', //列表的标题
+        iconCls: 'icon-site',
+        width: 'auto',
+        height: 'auto',
+        //nowrap: false,
+        fit: true,
+        striped: true,
+        collapsible: false,
+        url: '/api/SupplierApi/PostData', //获取数据的url
+        toolbar: [
+             {
+                 text: '创建',
+                 iconCls: 'icon-add',
+                 handler: function () {
+                     return flexiCreate();
+                 }
+             },
+             {
+                 text: '删除',
+                 iconCls: 'icon-remove',
+                 handler: function () {
+                     return fiexiDelete();
+                 }
+             },
+             {
+                 text: '分配客服',
+                 iconCls: 'icon-edit',
+                 handler: function () {
+                     return fiexiAssign();
+                 }
+             }
+        ],
+        columns: [[
+            { field: 'ck', checkbox: true },
+            { field: 'Code', title: '供应商编号', align: 'center', width: 100 }
+            , {
+                field: 'Name', title: '供应商名称', align: 'center', width: 300,
+                formatter: function (value, row, index) {//function里面的三个参数代表当前字段值，当前行数据对象，行号（行号从0开始）
+                    return '<a href="javascript:void(0)" onclick="detailInfo(' + row.Id + ')" >' + row.Name + '</a>';
+                }
+            }
+            , { field: 'CustomerServiceName', title: '供应商客服', align: 'center', width: 100 }
+            , { field: 'Status', title: '状态', align: 'center', width: 80 }
+            , { field: 'CreateTime', title: '创建时间', width: 100, align: 'center', formatter: formatDatebox }
+            , {
+                field: 'Id', title: '操作', width: 390, align: 'center', formatter: function (value, row, index) {
+                    var a = '';
+                    if('@ViewBag.users'==1){
+                        a += '<a href="#" onclick="basicInfo(' + row.Id + ')">基本信息</a> ';
+                        a += '<a href="#" onclick="linkInfo(' + row.Id + ')">联系人信息</a> ';
+                        a += '<a href="#" onclick="bankInfo(' + row.Id + ')">银行信息</a> ';
+                        a += '<a href="#" onclick="billInfo(' + row.Id + ')">财务信息</a> ';
+                        a += '<a href="#" onclick="priceInfo(' + row.Id + ')">报价信息</a> ';
+                    }
+                    return a;
+                }
+            }
+        ]],
+        pagination: true,
+        rownumbers: true,
+
+        onBeforeLoad: function (param) {
+            tmpParam = param;
+            sParam = null;
+
+            return true;
+        },
+        onLoadSuccess: function (data) {
+            sParam = tmpParam;
+            if (sParam.search == undefined) {
+                sParam.search = '^';
+            }
+        }
+    };
+
+    $(function () {
+        $("#searchUser").combobox({
+            onSelect: function () {
+                //如果不写onSelect方法，就无法获取下拉框选择的值
+            }
+        });
+
+        returnParam = '@Request.QueryString["tmp"]';
+
+        if (returnParam != '') {
+            var rparam = returnParam.split('_');
+            opt.pageNumber = rparam[1];
+            opt.pageSize = rparam[2];
+            opt.queryParams = { search: rparam[0] };
+
+            var search = rparam[0].split('^');
+            $('#searchName').val(search[0]);
+            $('#searchUser').combobox('setValue', search[1]);
+        }
+
+        $('#flexigridData').datagrid(opt);
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+
+        }
+    });
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        //将查询条件按照分隔符拼接成字符串
+        var search = $('#searchName').val() + "^" + $('#searchUser').combobox('getValue');
+
+        //执行查询
+        $('#flexigridData').datagrid('load', { search: search });
+    };
+
+    //删除供应商
+    function fiexiDelete() {
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Id);
+        }
+        $.messager.confirm('操作提示', "确认删除这 " + arr.length + " 个供应商吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "../api/SupplierApi/Delete?query=" + arr,
+                    type: "POST",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //移除删除的供应商数据
+
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+        return false;
+    }
+
+    //分配供应商客服
+    function fiexiAssign() {
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择供应商!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Id);
+        }
+        return CommonSelect("/Suppliers/Supplier/ServiceAssigned/" + arr, '分配供应商客服', 300, 400);
+    }
+
+    //导航到创建的按钮
+    function flexiCreate() {
+        var tmp = '';
+        if (sParam != null) {
+            tmp = sParam.search + '_' + sParam.page + '_' + sParam.rows;
+        }
+
+        window.location.href = "/Suppliers/Supplier/Create?tmp=" + tmp;
+        return false;
+    }
+
+    //供应商详情
+    function detailInfo(supplierID) {
+        var tmp = '';
+        if (sParam != null) {
+            tmp = sParam.search + '_' + sParam.page + '_' + sParam.rows;
+        }
+        window.location.href = "/Suppliers/Supplier/Detail/" + supplierID + "?path=Supplier&tmp=" + tmp;
+    }
+
+
+    //跳转银行信息页
+    function bankInfo(supplierID) {
+        var tmp = '';
+        if (sParam != null) {
+            tmp = sParam.search + '_' + sParam.page + '_' + sParam.rows;
+        }
+        window.location.href = "/Suppliers/SupplierBankAccount/Index/" + supplierID + "?path=Supplier&tmp=" + tmp;
+    }
+    //跳转财务信息页
+    function billInfo(supplierID) {
+        var tmp = '';
+        if (sParam != null) {
+            tmp = sParam.search + '_' + sParam.page + '_' + sParam.rows;
+        }
+        window.location.href = "/Suppliers/SupplierBill/Index/" + supplierID + "?path=Supplier&tmp=" + tmp;
+    }
+    //跳转基本信息页
+    function basicInfo(supplierID) {
+        var tmp = '';
+        if (sParam != null) {
+            tmp = sParam.search + '_' + sParam.page + '_' + sParam.rows;
+        }
+        window.location.href = "/Suppliers/Supplier/Edit/" + supplierID + "?path=Supplier&tmp=" + tmp;
+    }
+    //跳转报价信息页
+    function priceInfo(supplierID) {
+        var tmp = '';
+        if (sParam != null) {
+            tmp = sParam.search + '_' + sParam.page + '_' + sParam.rows;
+        }
+        window.location.href = "/Suppliers/LadderPrice/Index/" + supplierID + "?path=Supplier&tmp=" + tmp;
+    }
+    //联系人信息
+    function linkInfo(supplierID) {
+        var tmp = '';
+        if (sParam != null) {
+            tmp = sParam.search + '_' + sParam.page + '_' + sParam.rows;
+        }
+        window.location.href = "/Suppliers/SupplierLinkMan/Index/" + supplierID + "?path=Supplier&tmp=" + tmp;
+    }
+</script>

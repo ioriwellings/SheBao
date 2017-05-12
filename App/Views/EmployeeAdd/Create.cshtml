@@ -1,0 +1,677 @@
+﻿@using Langben.DAL;
+@model Langben.DAL.EmployeeAdd
+
+@{
+    Layout = "~/Views/Shared/Create.cshtml";
+    Langben.DAL.Employee Enployee = ViewBag.Employee;
+
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+    社保申报
+}
+<script src="~/Scripts/Myl.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        CRM_Companylist();
+        Citylist();
+        $("#Create").click(function () {
+            var yanglao_InsuranceKind1;
+            var yiliao_InsuranceKind1;
+            var gongshang_InsuranceKind1;
+            var shiye_InsuranceKind1;
+            var shengyu_InsuranceKind1;
+            var EmployeeId = $("#EmployeeId").val();//员工id
+            var EmployeeName = $("#EmployeeName").val();//员工名称
+            var CertificateNumber = $("#CertificateNumber").val();//身份证号
+
+            var CRM_Companyid = $("#qiye").val();//公司id
+            if (CRM_Companyid == "") {
+                alert("请选择公司！");
+                return false;
+            }
+            var Cityid = $("#jiaonadi").val();//缴纳地
+            if (Cityid == "") {
+                alert("请选择缴纳地！");
+                return false;
+            } 
+
+            var PoliceAccountNaturelist = $("#PoliceAccountNaturelist").val();//户口性质
+            if (PoliceAccountNaturelist == "") {
+                alert("请选择户口性质！");
+                return false;
+            }
+
+            //var SuplierId = $("#SupplierList").val();//供应商
+            var SuplierId = $('#SupplierList').combobox('getValue');//供应商
+
+
+            var Station = $("#Station").val();//部门
+            var Cityid = $('#Citylist').combobox('getValue');
+
+            var Judge = 1;
+            var InsuranceKind = $("#InsuranceKind").val();//险种
+            myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + Cityid, function (data) {
+                if (data != null) {
+                    $.each(data, function (i, item1) {
+
+                        //var qijiao_time = $("#qijiao_time").val();//社保工资起缴时间
+                        //var sgebao = $("#" + item1["Name"] + "_StartTime").val();
+                        //alert(qijiao_time + "a" + sgebao);
+                        //if (sgebao ==""&& qijiao_time == "") {
+
+                        //    alert("请输入起缴时间！");
+                        //    Judge = 2;
+                        //    return false;
+                        //}
+                        if (item1["Name"] == "公积金" || item1["Name"] == "补充公积金") {
+                            //判断起缴时间
+                            //判断社保工资
+                            var gongjijin_gongzi = $("#" + item1["Name"] + "_Wage").val();//公积金工资
+                            var shebao_gongzi = $("#shebao_gongzi").val();//社保工资
+                            if (gongjijin_gongzi == "" && shebao_gongzi == "") {
+                                alert("请输入工资！");
+                                Judge = 2;
+                                return false;
+                            }
+
+
+
+
+                            var PaymentTime = $("#" + item1["Name"] + "_StartTime").val();//起缴时间
+
+                            var PoliceOperation = $("#" + item1["Name"] + "_PoliceOperationlist").val();//政策手续
+                            var Percentage = $("#" + item1["Name"] + "_PoliceInsurancelist").val();//政策
+                            var Wage = $("#" + item1["Name"] + "_Wage").val()
+                            if (PaymentTime != "") {
+                                InsuranceKind = InsuranceKind + "," + $("#" + item1["Name"] + "_InsuranceKind").val();
+                                if (Wage == "") {
+                                    alert("请输入" + item1["Name"] + "工资！");
+                                    Judge = 2;
+                                    return false;
+                                }
+
+                                if (PoliceOperation == "") {
+                                    alert("请输入" + item1["Name"] + "政策手续！");
+                                    Judge = 2;
+                                    return false;
+                                }
+
+                                if (Percentage == "") {
+                                    alert("请输入" + item1["Name"] + "政策！");
+                                    Judge = 2;
+                                    return false;
+                                }
+                            }
+                        }
+                        else {
+                            var PaymentTime = $("#" + item1["Name"] + "_StartTime").val();//起缴时间
+                            var PoliceOperation = $("#" + item1["Name"] + "_PoliceOperationlist").val();//政策手续
+                            var Percentage = $("#" + item1["Name"] + "_PoliceInsurancelist").val();//政策
+                            var Wage = $("#" + item1["Name"] + "_Wage").val();
+
+                            if (PaymentTime != "") {
+
+                                InsuranceKind = InsuranceKind + "," + $("#" + item1["Name"] + "_InsuranceKind").val();
+
+
+                                if (Wage == "") {
+                                    alert("请输入" + item1["Name"] + "工资！");
+                                    Judge = 2;
+                                    return false;
+                                }
+
+                                if (PoliceOperation == "") {
+                                    alert("请输入" + item1["Name"] + "政策手续！");
+                                    Judge = 2;
+                                    return false;
+                                }
+
+                                if (Percentage == "" || Percentage == null) {
+                                    alert("请输入" + item1["Name"] + "政策！");
+                                    Judge = 2;
+                                    return false;
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+            if (Judge == 2) {
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/api/EmployeeAddApi/POSTEmployeeAddCREATELimit1?Cityid=" + Cityid + "&InsuranceKind=" + InsuranceKind,
+                async: true,
+                data: {
+                },
+                success: function (msg) {
+                    if (msg.Code == 1) {
+                        var array1 = [];
+                        var array = [];
+                        array1.push({
+                            "EmployeeId": EmployeeId, "Name": EmployeeName, "IDNumber": CertificateNumber, "City": Cityid, "PoliceAccountNature": PoliceAccountNaturelist,
+                            "Station": Station
+                        });
+                        $.each($("#tabRateInfo tr:not(:first)"), function () {
+                            array.push({
+                                'InsuranceKind': $(this).children('td').eq(0).text(),
+                                'PoliceOperation': $(this).children('td').eq(1).find('select').first().val(),
+                                'Wage': $(this).children('td').eq(2).find('input').first().val(),
+                                'StartTime': $(this).children('td').eq(3).find('input').first().val(),
+                                'PoliceInsurance': $(this).children('td').eq(4).find('select').first().val(),
+                                'InsuranceNumber': $(this).children('td').eq(5).find('input').first().val(),
+                                'SupplierRemark': $(this).children('td').eq(6).find('input').first().val()
+                            });
+                        });
+                        var submitData = {
+                            "EmployeeId": EmployeeId, "Name": EmployeeName, "IDNumber": CertificateNumber, "City": Cityid, "PoliceAccountNature": PoliceAccountNaturelist,
+                            "Station": Station, 'Insurance': array, "SuppliersId": SuplierId
+                        };
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/EmployeeAddApi/POSTEmployeeAddCREATE1?CompanyId=" + CRM_Companyid + "&Direction=2&Reportedincreasedata=" + JSON.stringify(submitData),
+                            async: true,
+                            data: {},
+                            success: function (msg) {
+                                if (msg.Code == 1) {
+                                    document.getElementById("Create").setAttribute("disabled", true);
+                                    alert(msg.Message);
+                                }
+                                else {
+                                    alert(msg.Message);
+                                }
+                            }
+                        });
+                    }
+                    if (msg.Code == 0) {
+                        alert("请输入任一险种报增起缴时间");
+                    }
+                    if (msg.Code == 2) {
+                        alert("此地市保险" + msg.Message + "应为联动一起报增");
+                    }
+
+                }
+            });
+
+
+
+
+
+        });
+        $("#Citylist").combobox({
+            onSelect: function () {
+                if ($('#CRM_Companylist').combobox('getValue') != '') {
+                    City();
+                    var Cityid = $('#Citylist').combobox('getValue');
+                    $("#jiaonadi").val(Cityid);
+                    GetCitySupplerList(Cityid);
+                }
+                else {
+
+                    alert('请选择企业');
+
+
+                }
+            }
+        });
+        $("#CRM_Companylist").combobox({
+            onSelect: function () {
+                CRM_Company();
+                var Companyid = $('#CRM_Companylist').combobox('getValue');
+                $("#qiye").val(Companyid);
+                City();
+              
+                
+            }
+        });
+    });
+    //缴纳地
+    function City() {
+
+      
+            $("#PoliceAccountNaturelist option").remove();
+
+
+            var Companyid = $("#qiye").val();
+            var Cityid = $('#Citylist').combobox('getValue');
+            var EmployeeId = $("#EmployeeId").val();//员工id
+
+
+
+
+            myAjax("/api/EmployeeAddApi/getPoliceAccountNatureList", 'ID=' + Cityid, function (data) {
+                if (data != null) {
+                    // $("#PoliceAccountNaturelist").append("<option value=>请选择</option>");
+                    $.each(data, function (i, item1) {
+                        $("#PoliceAccountNaturelist").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                    });
+                }
+            });
+            if (Companyid != "") {
+                //户口联动
+                myAjax("/api/EmployeeAddApi/getCompanyEmployeeRelationList", 'ID=' + Cityid + "&CompanyId=" + Companyid + "&EmployeeId=" + EmployeeId, function (data) {
+                    if (data != null && data != "") {
+                        $.each(data, function (i, item1) {
+
+                            document.getElementById("PoliceAccountNaturelist").value = item1["ID"];
+                            document.getElementById("Station").value = item1["Name"];
+                            document.getElementById("PoliceAccountNaturelist").setAttribute("disabled", true);
+                        });
+                    }
+                    else {
+                        $('#PoliceAccountNaturelist').removeAttr("disabled");
+                    }
+                });
+            }
+            myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + Cityid, function (data) {
+                if (data != null) {
+                    var table = "<table id=\"tabRateInfo\" style=\"padding-left:100px;\">";
+                    table += "<tr>";
+                    table += "<th>险种</th><th>政策手续</th><th>工资</th><th>起缴时间</th><th>政策</th><th>保险编号</th><th>供应商备注</th>";
+                    table += "</tr>";
+                    $.each(data, function (i, item1) {
+                        table += "<tr>";
+                        table += "<td>" + item1["Name"] + "</td>";
+                        table += "<td><select id=\"" + item1["Name"] + "_PoliceOperationlist\"  name=\"carlist\"  onchange=\"PoliceOperationlist('" + item1["Name"] + "')\"></select></td>";
+                        if (item1["Name"] == "公积金" || item1["Name"] == "补充公积金") {
+
+                            table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_Wage\" onblur=\"gongjijingongzi()\"      /></td>";
+                            table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_StartTime\"  onclick=\"WdatePicker()\"  /></td>";
+
+                        }
+                        else {
+                            table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_Wage\"   disabled=\"disabled\" /></td>";
+                            table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_StartTime\"  onclick=\"WdatePicker()\"   /></td>";
+                        }
+
+                        table += "<td><select id=\"" + item1["Name"] + "_PoliceInsurancelist\"   name=\"carlists\"  ></select></td>";
+
+                        table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_InsuranceNumber\"  /></td>";
+                        table += "<td><input type=\"text\" id=\"" + item1["Name"] + "_SupplierRemark\"  /></td>";
+                        table += "<td><input type=\"hidden\" id='" + item1["Name"] + "_InsuranceKind' value=\"" + item1["ID"] + "\" /></td>";
+                        table += "</tr>";
+                    });
+                    table += "</table>";
+                    $("#div1").html(table);
+                    $.each(data, function (i, item1) {
+                        $("#" + item1["Name"] + "_InsuranceKind").val(item1["ID"]);
+                        myAjax("/api/EmployeeAddApi/getPoliceOperationList", 'ID=' + item1["ID"], function (data) {
+                            $("#" + item1["Name"] + "_PoliceOperationlist").append("<option value=>请选择</option>");
+                            $.each(data, function (i, item2) {
+
+                                if (item2["Name"] == "新建") {
+
+                                    $("#" + item1["Name"] + "_PoliceOperationlist").append("<option selected='selected' value='" + item2["ID"] + "'>" + item2["Name"] + "</option>");
+                                    PoliceOperationlist(item1["Name"])
+
+                                }
+                                else {
+                                    $("#" + item1["Name"] + "_PoliceOperationlist").append("<option value='" + item2["ID"] + "'>" + item2["Name"] + "</option>");
+                                }
+
+                            });
+
+
+                        });
+
+                    });
+                }
+            });
+      
+    }
+    function PoliceAccountNaturelist1() {
+        $("select[name=carlist]").val("");
+        $("select[name=carlists]").val("");
+
+    }
+    //政策手续显示
+    function PoliceOperationlist(name) {
+        var kindid = $("#" + name + "_InsuranceKind").val();
+        var company = $('#CRM_Companylist').combobox('getValue');
+        
+        $("#" + name + "_PoliceInsurancelist option").remove();
+        var PoliceOperationid = $("#" + name + "_PoliceOperationlist").val();
+        if (PoliceOperationid != "") {
+            var PoliceAccountNatureid = $("#PoliceAccountNaturelist").val();
+
+            if (PoliceAccountNatureid == "") {
+                alert("请选择户口性质");
+                return false;
+            }
+            if (company == '') {
+                alert("请选择报增企业");
+                return false;
+            }
+            else {
+
+                myAjax("/api/EmployeeAddApi/getNewPoliceInsuranceList", 'ID=' + PoliceOperationid + "&PoliceAccountNatureid=" + PoliceAccountNatureid + "&kindid=" + kindid + "&companyID=" + company, function (data) {
+                    if (data == null || data == '') {
+                        alert("该企业下无" + name + "政策");
+                    }
+                    else {
+                        // $("#" + name + "_PoliceInsurancelist").append("<option value=>请选择</option>");
+                        $.each(data, function (i, item1) {
+                            $("#" + name + "_PoliceInsurancelist").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+                        });
+                    }
+                });
+            }
+        }
+    }
+    function qijiaotime() {
+        var aa = $("#qijiao_time").val();
+        var Cityid = $('#Citylist').combobox('getValue');
+        myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + Cityid, function (data) {
+            if (data != null) {
+
+                $.each(data, function (i, item1) {
+                    if (item1["Name"] == "公积金" || item1["Name"] == "补充公积金") {
+
+                    }
+                    else {
+                        $("#" + item1["Name"] + "_StartTime").val(aa);
+                    }
+                });
+            }
+        });
+    }
+    function shebaogongzi() {
+
+        var aa = $("#shebao_gongzi").val();
+
+        if (aa != "") {
+            if (aa <= 0) {
+                alert("社保工资必须大于0");
+                $("#shebao_gongzi").val("");
+                return false;
+            }
+            if (isNaN(aa)) {
+                alert("不全是数字");
+                $("#shebao_gongzi").val("");
+                return false;
+
+            }
+            else {
+                var Cityid = $('#Citylist').combobox('getValue');
+                myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + Cityid, function (data) {
+                    if (data != null) {
+
+                        $.each(data, function (i, item1) {
+                            if (item1["Name"] == "公积金" || item1["Name"] == "补充公积金") {
+
+                            }
+                            else {
+                                $("#" + item1["Name"] + "_Wage").val(aa);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        else {
+            var Cityid = $('#Citylist').combobox('getValue');
+            myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + Cityid, function (data) {
+                if (data != null) {
+
+                    $.each(data, function (i, item1) {
+                        if (item1["Name"] == "公积金" || item1["Name"] == "补充公积金") {
+
+                        }
+                        else {
+                            $("#" + item1["Name"] + "_Wage").val(aa);
+                        }
+                    });
+                }
+            });
+        }
+
+
+    }
+    ///公司初始绑定
+    function CRM_Companylist() {
+        //myAjax("/api/EmployeeAddApi/getCompanyList", '', function (data) {
+        //    $("#CRM_Companylist").append("<option value=>请选择</option>");
+        //    $.each(data, function (i, item1) {
+        //        $("#CRM_Companylist").append("<option value='" + item1["ID"] + "'>" + item1["Name"] + "</option>");
+        //    });
+
+        //    $("#CRM_Companylist").combobox({});
+        //});
+
+
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api/COST_CostTableApi/GetCompany",
+            async: true,
+            success: function (data) {
+                $("#CRM_Companylist").append("<option value=>请选择</option>");
+
+                $.each(data.rows, function (i, item) {
+
+                    $("#CRM_Companylist").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+                })
+                $("#CRM_Companylist").combobox({});
+            }
+        })
+    }
+
+
+
+    ///缴纳地初始绑定
+    function Citylist() {
+        myAjax("/api/EmployeeAddApi/getCitylist", '', function (data) {
+            $("#Citylist").append("<option value=>请选择</option>");
+            $.each(data, function (i, item1) {
+                $("#Citylist").append("<option value='" + item1["Cityid"] + "'>" + item1["Name"] + "</option>");
+            });
+            $("#Citylist").combobox({});
+        });
+    }
+    //公积金工资
+    function gongjijingongzi() {
+        var Cityid = $('#Citylist').combobox('getValue');
+        myAjax("/api/EmployeeAddApi/getInsuranceKindList", 'ID=' + Cityid, function (data) {
+            if (data != null) {
+
+                $.each(data, function (i, item1) {
+                    if (item1["Name"] == "公积金" || item1["Name"] == "补充公积金") {
+                        var aa = $("#" + item1["Name"] + "_Wage").val();
+                        if (aa != "") {
+
+
+
+
+                            if (isNaN(aa)) {
+                                alert("不全是数字");
+                                $("#" + item1["Name"] + "_Wage").val("")
+                            }
+                            else if (aa <= 0) {
+                                alert("公积金工资必须大于0");
+                                $("#" + item1["Name"] + "_Wage").val("")
+                            }
+                            else {
+                                var bb = aa.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+                                $("#" + item1["Name"] + "_Wage").val(bb);
+                            }
+                        }
+                    }
+                    else {
+
+                    }
+                });
+            }
+        });
+
+
+    }
+
+
+
+    function CRM_Company() {
+        var Companyid = $('#CRM_Companylist').combobox('getValue');
+        // var Companyid = $("#qiye").val();
+        var Cityid = $('#Citylist').combobox('getValue');
+        if (Cityid != "" && Companyid != "") {
+            var EmployeeId = $("#EmployeeId").val();//员工id
+
+            //户口联动
+            myAjax("/api/EmployeeAddApi/getCompanyEmployeeRelationList", 'ID=' + Cityid + "&CompanyId=" + Companyid + "&EmployeeId=" + EmployeeId, function (data) {
+                if (data != null && data != "") {
+                    $.each(data, function (i, item1) {
+
+                        document.getElementById("PoliceAccountNaturelist").value = item1["ID"];
+                        document.getElementById("Station").value = item1["Name"];
+
+                        document.getElementById("PoliceAccountNaturelist").setAttribute("disabled", true);
+                    });
+                }
+                else {
+                    $('#PoliceAccountNaturelist').removeAttr("disabled");
+                }
+            });
+        }
+    }
+
+    function GetCitySupplerList(cityId) {
+        if (cityId) {
+            var apiUrl = "/api/SupplierApi/GetSuppliers/" + cityId;
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: apiUrl,
+                async: false,
+                success: function (data) {
+                    $("#SupplierList").html('<option value="">无</option>');
+                    if (data != null && data.total != 0) {
+                        for (i = 0; i < data.total; i++) {
+                            $("#SupplierList").append("<option value='" + data.rows[i].ID + "'>" + data.rows[i].Name + "</option>");
+                        }
+                    }
+                    SetSupplierList();
+                },
+                error: function () {
+                    $("#SupplierList").html('<option value="">无</option>');
+                    SetSupplierList();
+                    //$.messager.alert('操作提示', "获取供应商失败", 'error');
+                }
+            });
+        }
+        else {
+            $("#SupplierList").html('<option value="">无</option>');
+            SetSupplierList();
+        }
+    }
+
+    function SetSupplierList()
+    {
+        $("#SupplierList").combobox({
+            onSelect: function () {
+                //如果不写onSelect方法，就无法获取下拉框选择的值
+            }
+        });
+    }
+    //选择企业初始化缴纳地
+    function Inijnd()
+    {
+        $("#Citylist").val("请选择");
+        alert();
+    }
+</script>
+@using (Html.BeginForm("", "api/EmployeeAddApi/Post"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" value="创建" id="Create" />
+            <input class="a2 f2" type="button" onclick="history.go(-1)" value="返回" />
+        </legend>
+        <div class="bigdiv">
+            <input type="hidden" id="EmployeeId" value="@Enployee.Id" />
+            <input type="hidden" id="EmployeeName" value="@Enployee.Name" />
+            <input type="hidden" id="CertificateNumber" value="@Enployee.CertificateNumber" />
+
+            <input type="hidden" id="InsuranceKind" />
+            @*<input type="hidden" id="yiliao_InsuranceKind" />
+                <input type="hidden" id="gongshang_InsuranceKind" />
+                <input type="hidden" id="shiye_InsuranceKind" />
+                <input type="hidden" id="shengyu_InsuranceKind" />
+                <input type="hidden" id="gongjijin_InsuranceKind" />*@
+            <input type="hidden" id="qiye" value="" />
+            <input type="hidden" id="jiaonadi" value="" />
+            <div class="editor-label">
+                人员姓名：
+            </div>
+            <div class="editor-field">
+                @Enployee.Name
+            </div>
+            <div class="editor-label">
+                证件号码：
+            </div>
+            <div class="editor-field">
+
+                @Enployee.CertificateNumber
+            </div>
+            <div class="editor-label">
+                报增企业：
+            </div>
+            <div class="editor-field">
+                <select id="CRM_Companylist"  class="easyui-combobox" ></select>
+            </div>
+            <div class="editor-label">
+                岗位:
+            </div>
+            <div class="editor-field">
+                <input type="text" id="Station" />
+            </div>
+
+            <div class="editor-label">
+                社保缴纳地：
+            </div>
+            <div class="editor-field">
+                <select id="Citylist" class="easyui-combobox"></select>
+            </div>
+            <div class="editor-label">
+                户口性质：
+            </div>
+            <div class="editor-field">
+                <select id="PoliceAccountNaturelist"></select>
+            </div>
+            <div class="editor-label">
+                供应商：
+            </div>
+            <div class="editor-field">
+                <select id="SupplierList" class="easyui-combobox">
+                    <option value="">无</option>
+                </select>
+            </div>
+            <div class="editor-label">
+            </div>
+            <div class="editor-field">
+            </div>
+            <div class="editor-label">
+                社保起缴时间：
+            </div>
+            <div class="editor-field">
+                <input type="text" id="qijiao_time" onchange="qijiaotime()" onclick="WdatePicker()" />
+            </div>
+            <div class="editor-label">
+                社保工资：
+            </div>
+            <div class="editor-field">
+                <input type="text" id="shebao_gongzi" onblur="shebaogongzi()" onkeyup="this.value=this.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')" />
+            </div>
+
+
+            <div id="div1"></div>
+        </div>
+    </fieldset>
+}
+
+
+
+

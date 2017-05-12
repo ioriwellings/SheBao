@@ -1,0 +1,416 @@
+﻿@model Langben.DAL.EmployeeAddView
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:130px">
+
+    <div class='input_search'>
+        <div class='input_search-label'>
+            <input type="checkbox" id="ckAll" onclick="CheckAll(this)" />
+            @Html.LabelFor(model => model.InsuranceKinds):
+        </div>
+        <div class='input_search-field' style="width:780px">
+            @Html.CheckBoxList("InsuranceKinds", Models.SysFieldModels.GetSelectList(typeof(Common.EmployeeAdd_InsuranceKindId)), new { style = "width:20px", onchange = "InsuranceKindsChange()" })
+        </div>
+    </div>
+    <div class="clearfix" style="clear:both"></div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.YearMonth):
+        </div>
+        <div class='input_search-field'>
+            <input type="text" class="Wdate" id="YearMonth" name="YearMonth" onclick="WdatePicker({dateFmt:'yyyyMM',realDateFmt:'yyyyMM'})" />
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CompanyName):
+        </div>
+        <div class="input_search-field">
+            @Html.TextBox("CompanyName", "", new { @class = "easyui-textbox", @style = "height:26px" })
+        </div>
+    </div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.Name):
+        </div>
+        <div class='input_search-field'>
+            <input id="Name" name="Name" type="text" class="easyui-textbox" style="height:26px" />
+
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CertificateNumber):
+        </div>
+        <div class="input_search-field">
+            <p class="cerNo">
+                @Html.TextArea("CertificateNumber", new { @class = "CertificateNumber" })
+            </p>
+        </div>
+    </div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.State):
+        </div>
+        <div class='input_search-field'>
+            @Html.DropDownList("State", Models.SysFieldModels.GetEnumList(typeof(Common.EmployeeAdd_State)), "请选择")
+        </div>
+    </div>
+    <div class='input_search input_search_btn'>
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        var search = "";
+        $('#divQuery').find(":text,:selected,select,textarea,:checked,:password").each(function () {
+            if (this.name)
+                search = search + this.id + "&" + this.value + "^";
+            //else
+            //    search = search + this.name + "&" + this.value + "^";
+        });
+
+        $('#flexigridData').datagrid({
+            title: '社保报增查询', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            fit:true,
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            queryParams: { search: search },
+            url: '../api/EmployeeAddApi/PostEmployeeAddViewList', //获取数据的url
+            toolbar: [
+
+               {
+                   text: '导出Excel',
+                   iconCls: 'icon-edit',
+                   handler: function () {
+                       return ExportExcel();
+                   }
+               }],
+            columns: [[
+                 { field: 'CompanyCode', title: '@Html.DisplayNameFor(model => model.CompanyCode)', align: 'center', width: 80 }
+               , { field: 'CompanyName', title: '@Html.DisplayNameFor(model => model.CompanyName)', align: 'center', width: 300 }
+                , { field: 'Name', title: '@Html.DisplayNameFor(model => model.Name)', align: 'center', width: 80 }
+                , { field: 'CertificateNumber', title: '@Html.DisplayNameFor(model => model.CertificateNumber)', align: 'center', width: 160 }
+                , { field: 'City', title: '@Html.DisplayNameFor(model => model.City)', align: 'center', width: 80 }
+                , { field: 'PoliceAccountNatureName', title: '@Html.DisplayNameFor(model => model.PoliceAccountNatureName)', align: 'center', width: 160 }
+
+                , { field: 'Wage_1', title: '@Html.DisplayNameFor(model => model.Wage_1)', align: 'center', width: 200 }
+                 , { field: 'PoliceOperationName_1', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_1)', align: 'center', width: 200 }
+                 , { field: 'StartTime_1', title: '@Html.DisplayNameFor(model => model.StartTime_1)', align: 'center', width: 200, formatter: formatDatebox }
+                 //, { field: 'InsuranceCode_1', title: '@Html.DisplayNameFor(model => model.InsuranceCode_1)', width: 200 }
+                 , { field: 'CompanyNumber_1', title: '@Html.DisplayNameFor(model => model.CompanyNumber_1)', align: 'center', width: 200 }
+                 , { field: 'CompanyPercent_1', title: '@Html.DisplayNameFor(model => model.CompanyPercent_1)', align: 'center', width: 200 }
+                 //, { field: 'CompanyMoney_1', title: '@Html.DisplayNameFor(model => model.CompanyMoney_1)', width: 200 }
+                 , { field: 'EmployeeNumber_1', title: '@Html.DisplayNameFor(model => model.EmployeeNumber_1)', align: 'center', width: 200 }
+                 , { field: 'EmployeePercent_1', title: '@Html.DisplayNameFor(model => model.EmployeePercent_1)', align: 'center', width: 200 }
+                 //, { field: 'EmployeeMoney_1', title: '@Html.DisplayNameFor(model => model.EmployeeMoney_1)', width: 200 }
+                 , { field: 'State_1', title: '@Html.DisplayNameFor(model => model.State_1)', width: 200 }
+                 , { field: 'PoliceInsuranceName_1', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_1)', width: 200 }
+                 , { field: 'YearMonth_1', title: '@Html.DisplayNameFor(model => model.YearMonth_1)', width: 200 }
+
+
+                 , { field: 'Wage_2', title: '@Html.DisplayNameFor(model => model.Wage_2)', width: 200 }
+                 , { field: 'PoliceOperationName_2', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_2)', width: 200 }
+                    , { field: 'StartTime_2', title: '@Html.DisplayNameFor(model => model.StartTime_2)', width: 200, formatter: formatDatebox }
+                 //, { field: 'InsuranceCode_2', title: '@Html.DisplayNameFor(model => model.InsuranceCode_2)', width: 200 }
+                 , { field: 'CompanyNumber_2', title: '@Html.DisplayNameFor(model => model.CompanyNumber_2)', width: 200 }
+                 , { field: 'CompanyPercent_2', title: '@Html.DisplayNameFor(model => model.CompanyPercent_2)', width: 200 }
+                 //, { field: 'CompanyMoney_2', title: '@Html.DisplayNameFor(model => model.CompanyMoney_2)', width: 200 }
+                 , { field: 'EmployeeNumber_2', title: '@Html.DisplayNameFor(model => model.EmployeeNumber_2)', width: 200 }
+                 , { field: 'EmployeePercent_2', title: '@Html.DisplayNameFor(model => model.EmployeePercent_2)', width: 200 }
+                 //, { field: 'EmployeeMoney_2', title: '@Html.DisplayNameFor(model => model.EmployeeMoney_2)', width: 200 }
+                 , { field: 'State_2', title: '@Html.DisplayNameFor(model => model.State_2)', width: 200 }
+                 , { field: 'PoliceInsuranceName_2', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_2)', width: 200 }
+                 , { field: 'YearMonth_2', title: '@Html.DisplayNameFor(model => model.YearMonth_2)', width: 200 }
+
+
+                 , { field: 'Wage_3', title: '@Html.DisplayNameFor(model => model.Wage_3)', width: 200 }
+                 , { field: 'PoliceOperationName_3', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_3)', width: 200 }
+                   , { field: 'StartTime_3', title: '@Html.DisplayNameFor(model => model.StartTime_3)', width: 200, formatter: formatDatebox }
+                 //, { field: 'InsuranceCode_3', title: '@Html.DisplayNameFor(model => model.InsuranceCode_3)', width: 200 }
+                 , { field: 'CompanyNumber_3', title: '@Html.DisplayNameFor(model => model.CompanyNumber_3)', width: 200 }
+                 , { field: 'CompanyPercent_3', title: '@Html.DisplayNameFor(model => model.CompanyPercent_3)', width: 200 }
+                 //, { field: 'CompanyMoney_3', title: '@Html.DisplayNameFor(model => model.CompanyMoney_3)', width: 200 }
+                 , { field: 'EmployeeNumber_3', title: '@Html.DisplayNameFor(model => model.EmployeeNumber_3)', width: 200 }
+                 , { field: 'EmployeePercent_3', title: '@Html.DisplayNameFor(model => model.EmployeePercent_3)', width: 200 }
+                 //, { field: 'EmployeeMoney_3', title: '@Html.DisplayNameFor(model => model.EmployeeMoney_3)', width: 200 }
+                 , { field: 'State_3', title: '@Html.DisplayNameFor(model => model.State_3)', width: 200 }
+                 , { field: 'PoliceInsuranceName_3', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_3)', width: 200 }
+                 , { field: 'YearMonth_3', title: '@Html.DisplayNameFor(model => model.YearMonth_3)', width: 200 }
+
+
+
+
+                 , { field: 'Wage_4', title: '@Html.DisplayNameFor(model => model.Wage_4)', width: 200 }
+                 , { field: 'PoliceOperationName_4', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_4)', width: 200 }
+                  , { field: 'StartTime_4', title: '@Html.DisplayNameFor(model => model.StartTime_4)', width: 200, formatter: formatDatebox }
+                 //, { field: 'InsuranceCode_4', title: '@Html.DisplayNameFor(model => model.InsuranceCode_4)', width: 200 }
+                 , { field: 'CompanyNumber_4', title: '@Html.DisplayNameFor(model => model.CompanyNumber_4)', width: 200 }
+                 , { field: 'CompanyPercent_4', title: '@Html.DisplayNameFor(model => model.CompanyPercent_4)', width: 200 }
+                 //, { field: 'CompanyMoney_4', title: '@Html.DisplayNameFor(model => model.CompanyMoney_4)', width: 200 }
+                 , { field: 'EmployeeNumber_4', title: '@Html.DisplayNameFor(model => model.EmployeeNumber_4)', width: 200 }
+                 , { field: 'EmployeePercent_4', title: '@Html.DisplayNameFor(model => model.EmployeePercent_4)', width: 200 }
+                 //, { field: 'EmployeeMoney_4', title: '@Html.DisplayNameFor(model => model.EmployeeMoney_4)', width: 200 }
+                 , { field: 'State_4', title: '@Html.DisplayNameFor(model => model.State_4)', width: 200 }
+                 , { field: 'PoliceInsuranceName_4', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_4)', width: 200 }
+                 , { field: 'YearMonth_4', title: '@Html.DisplayNameFor(model => model.YearMonth_4)', width: 200 }
+
+
+
+
+                 , { field: 'Wage_5', title: '@Html.DisplayNameFor(model => model.Wage_5)', width: 200 }
+                 , { field: 'PoliceOperationName_5', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_5)', width: 200 }
+                  , { field: 'StartTime_5', title: '@Html.DisplayNameFor(model => model.StartTime_5)', width: 200, formatter: formatDatebox }
+                 //, { field: 'InsuranceCode_5', title: '@Html.DisplayNameFor(model => model.InsuranceCode_5)', width: 200 }
+                 , { field: 'CompanyNumber_5', title: '@Html.DisplayNameFor(model => model.CompanyNumber_5)', width: 200 }
+                 , { field: 'CompanyPercent_5', title: '@Html.DisplayNameFor(model => model.CompanyPercent_5)', width: 200 }
+                 //, { field: 'CompanyMoney_5', title: '@Html.DisplayNameFor(model => model.CompanyMoney_5)', width: 200 }
+                 , { field: 'EmployeeNumber_5', title: '@Html.DisplayNameFor(model => model.EmployeeNumber_5)', width: 200 }
+                 , { field: 'EmployeePercent_5', title: '@Html.DisplayNameFor(model => model.EmployeePercent_5)', width: 200 }
+                 //, { field: 'EmployeeMoney_5', title: '@Html.DisplayNameFor(model => model.EmployeeMoney_5)', width: 200 }
+                 , { field: 'State_5', title: '@Html.DisplayNameFor(model => model.State_5)', width: 200 }
+                 , { field: 'PoliceInsuranceName_5', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_5)', width: 200 }
+                 , { field: 'YearMonth_5', title: '@Html.DisplayNameFor(model => model.YearMonth_5)', width: 200 }
+
+
+
+                 , { field: 'Wage_6', title: '@Html.DisplayNameFor(model => model.Wage_6)', width: 200 }
+                 , { field: 'PoliceOperationName_6', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_6)', width: 200 }
+                 , { field: 'StartTime_6', title: '@Html.DisplayNameFor(model => model.StartTime_6)', width: 200, formatter: formatDatebox }
+                 //, { field: 'InsuranceCode_6', title: '@Html.DisplayNameFor(model => model.InsuranceCode_6)', width: 200 }
+                 , { field: 'CompanyNumber_6', title: '@Html.DisplayNameFor(model => model.CompanyNumber_6)', width: 200 }
+                 , { field: 'CompanyPercent_6', title: '@Html.DisplayNameFor(model => model.CompanyPercent_6)', width: 200 }
+                 //, { field: 'CompanyMoney_6', title: '@Html.DisplayNameFor(model => model.CompanyMoney_6)', width: 200 }
+                 , { field: 'EmployeeNumber_6', title: '@Html.DisplayNameFor(model => model.EmployeeNumber_6)', width: 200 }
+                 , { field: 'EmployeePercent_6', title: '@Html.DisplayNameFor(model => model.EmployeePercent_6)', width: 200 }
+                 //, { field: 'EmployeeMoney_6', title: '@Html.DisplayNameFor(model => model.EmployeeMoney_6)', width: 200 }
+                 , { field: 'State_6', title: '@Html.DisplayNameFor(model => model.State_6)', width: 200 }
+                 , { field: 'PoliceInsuranceName_6', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_6)', width: 200 }
+                 , { field: 'YearMonth_6', title: '@Html.DisplayNameFor(model => model.YearMonth_6)', width: 200 }
+
+
+
+                 , { field: 'Wage_7', title: '@Html.DisplayNameFor(model => model.Wage_7)', width: 200 }
+                 , { field: 'PoliceOperationName_7', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_7)', width: 200 }
+                 , { field: 'StartTime_7', title: '@Html.DisplayNameFor(model => model.StartTime_7)', width: 200, formatter: formatDatebox }
+                 //, { field: 'InsuranceCode_7', title: '@Html.DisplayNameFor(model => model.InsuranceCode_7)', width: 200 }
+                 , { field: 'CompanyNumber_7', title: '@Html.DisplayNameFor(model => model.CompanyNumber_7)', width: 200 }
+                 , { field: 'CompanyPercent_7', title: '@Html.DisplayNameFor(model => model.CompanyPercent_7)', width: 200 }
+                 //, { field: 'CompanyMoney_7', title: '@Html.DisplayNameFor(model => model.CompanyMoney_7)', width: 200 }
+                 , { field: 'EmployeeNumber_7', title: '@Html.DisplayNameFor(model => model.EmployeeNumber_7)', width: 200 }
+                 , { field: 'EmployeePercent_7', title: '@Html.DisplayNameFor(model => model.EmployeePercent_7)', width: 200 }
+                 //, { field: 'EmployeeMoney_7', title: '@Html.DisplayNameFor(model => model.EmployeeMoney_7)', width: 200 }
+                 , { field: 'State_7', title: '@Html.DisplayNameFor(model => model.State_7)', width: 200 }
+                 , { field: 'PoliceInsuranceName_7', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_7)', width: 200 }
+                 , { field: 'YearMonth_7', title: '@Html.DisplayNameFor(model => model.YearMonth_7)', width: 200 }
+
+
+
+                 , { field: 'Wage_8', title: '@Html.DisplayNameFor(model => model.Wage_8)', width: 200 }
+                 , { field: 'PoliceOperationName_8', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_8)', width: 200 }
+                 , { field: 'StartTime_8', title: '@Html.DisplayNameFor(model => model.StartTime_8)', width: 200, formatter: formatDatebox }
+                 //, { field: 'InsuranceCode_8', title: '@Html.DisplayNameFor(model => model.InsuranceCode_8)', width: 200 }
+                 , { field: 'CompanyNumber_8', title: '@Html.DisplayNameFor(model => model.CompanyNumber_8)', width: 200 }
+                 , { field: 'CompanyPercent_8', title: '@Html.DisplayNameFor(model => model.CompanyPercent_8)', width: 200 }
+                 //, { field: 'CompanyMoney_8', title: '@Html.DisplayNameFor(model => model.CompanyMoney_8)', width: 200 }
+                 , { field: 'EmployeeNumber_8', title: '@Html.DisplayNameFor(model => model.EmployeeNumber_8)', width: 200 }
+                 , { field: 'EmployeePercent_8', title: '@Html.DisplayNameFor(model => model.EmployeePercent_8)', width: 200 }
+                 //, { field: 'EmployeeMoney_8', title: '@Html.DisplayNameFor(model => model.EmployeeMoney_8)', width: 200 }
+                 , { field: 'State_8', title: '@Html.DisplayNameFor(model => model.State_8)', width: 200 }
+                 , { field: 'PoliceInsuranceName_8', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_8)', width: 200 }
+                 , { field: 'YearMonth_8', title: '@Html.DisplayNameFor(model => model.YearMonth_8)', width: 200 }
+
+
+                   , { field: 'Wage_9', title: '@Html.DisplayNameFor(model => model.Wage_9)', width: 200 }
+                 , { field: 'PoliceOperationName_9', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_9)', width: 200 }
+                 , { field: 'StartTime_9', title: '@Html.DisplayNameFor(model => model.StartTime_9)', width: 200, formatter: formatDatebox }
+                 //, { field: 'InsuranceCode_9', title: '@Html.DisplayNameFor(model => model.InsuranceCode_9)', width: 200 }
+                 , { field: 'CompanyNumber_9', title: '@Html.DisplayNameFor(model => model.CompanyNumber_9)', width: 200 }
+                 , { field: 'CompanyPercent_9', title: '@Html.DisplayNameFor(model => model.CompanyPercent_9)', width: 200 }
+                 //, { field: 'CompanyMoney_9', title: '@Html.DisplayNameFor(model => model.CompanyMoney_9)', width: 200 }
+                 , { field: 'EmployeeNumber_9', title: '@Html.DisplayNameFor(model => model.EmployeeNumber_9)', width: 200 }
+                 , { field: 'EmployeePercent_9', title: '@Html.DisplayNameFor(model => model.EmployeePercent_9)', width: 200 }
+                 //, { field: 'EmployeeMoney_9', title: '@Html.DisplayNameFor(model => model.EmployeeMoney_9)', width: 200 }
+                 , { field: 'State_9', title: '@Html.DisplayNameFor(model => model.State_9)', width: 200 }
+                 , { field: 'PoliceInsuranceName_9', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_9)', width: 200 }
+                 , { field: 'YearMonth_9', title: '@Html.DisplayNameFor(model => model.YearMonth_9)', width: 200 }
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+        for (var i = 1; i <= 9; i++) {
+            doConsoleColumn(i, "hideColumn");
+        }
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+    function ExportExcel()
+    {
+        var search = "";
+        $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+            if (this.name) {
+                search = search + this.name + "&" + this.value + "^";
+                if (this.name == "InsuranceKinds") {
+                    
+                }
+                //if (this.id == "Role" && this.value!="") {
+                //    roleNum += 1;
+                //}
+            }
+            //else {
+            //    search = search + this.name + "&" + this.value + "^";
+            //    if (this.name == "InsuranceKinds") {
+            //        iksNum += 1;
+            //    }
+            //    //if (this.id == "Role" && this.value != "") {
+            //    //    roleNum += 1;
+            //    //}
+            //}
+        });
+        search = escape(search);
+        $.ajax({
+            url: "../api/EmployeeAddApi/PostEmployeeAddViewListForExcel?search=" + search,
+            type: "POST",
+            success: function (res) {
+               
+                if (res.Code == 1) {
+                    window.open("../" + res.URL);
+                    alert(res.Message);
+                  
+                }
+                else {
+                    alert(res.Message);
+                }
+
+            },
+            error: function () {
+
+                alert('导出失败！');
+
+
+            }
+        })
+
+        //$('#flexigridData').datagrid({
+        //    title: '社保报增查询', //列表的标题
+        //    iconCls: 'icon-site',
+        //    width: 'auto',
+        //    height: 'auto',
+        //    fit:true,
+        //    //nowrap: false,
+        //    striped: true,
+        //    collapsible: false,
+        //    queryParams: { search: search },
+        //    url: '../api/EmployeeAddApi/PostEmployeeAddViewList', //获取数据的url
+        //    toolbar: [
+    }
+    function InsuranceKindsChange() {
+        var arr = [];
+        $('#divQuery').find(":text,:selected,select,textarea,:checked,:password").each(function () {
+            if (this.id == "InsuranceKinds") {
+                arr.push(this.value);
+                doConsoleColumn(this.value, "showColumn");
+            }
+        });
+        for (var i = 1; i <= 9; i++) {
+            if (!inArray(i, arr, false)) {
+                doConsoleColumn(i, "hideColumn");
+            }
+        }
+        flexiQuery();
+    }
+    function doConsoleColumn(i, ishide) {
+        $('#flexigridData').datagrid(ishide, 'CompanyNumber_' + i);
+        $('#flexigridData').datagrid(ishide, 'CompanyPercent_' + i);
+        $('#flexigridData').datagrid(ishide, 'EmployeeNumber_' + i);
+        $('#flexigridData').datagrid(ishide, 'EmployeePercent_' + i);
+        $('#flexigridData').datagrid(ishide, 'State_' + i);
+        $('#flexigridData').datagrid(ishide, 'PoliceInsuranceName_' + i);
+        $('#flexigridData').datagrid(ishide, 'YearMonth_' + i);
+        $('#flexigridData').datagrid(ishide, 'StartTime_' + i);
+        $('#flexigridData').datagrid(ishide, 'Wage_' + i);
+        $('#flexigridData').datagrid(ishide, 'PoliceOperationName_' + i);
+    }
+    function inArray(needle, array, bool) {
+        for (var i in array) {
+            if (needle == array[i]) {
+                if (bool) {
+                    return i;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+
+        //将查询条件按照分隔符拼接成字符串
+        var search = "";
+        var iksNum = 0;
+        //var roleNum = 0;
+        $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+            if (this.name) {
+                search = search + this.name + "&" + this.value + "^";
+                if (this.name == "InsuranceKinds") {
+                    iksNum += 1;
+                }
+                //if (this.id == "Role" && this.value!="") {
+                //    roleNum += 1;
+                //}
+            }
+            //else {
+            //    search = search + this.name + "&" + this.value + "^";
+            //    if (this.name == "InsuranceKinds") {
+            //        iksNum += 1;
+            //    }
+            //    //if (this.id == "Role" && this.value != "") {
+            //    //    roleNum += 1;
+            //    //}
+            //}
+        });
+       
+         if (iksNum == 0) {
+            //没有选择险种
+            alert("请选择险种!");
+        } else {
+            //执行查询
+            $('#flexigridData').datagrid('load', { search: search });
+        }
+    };
+    //险种全选
+    function CheckAll(obj) {
+        if ($(obj).prop('checked')) {
+            $("input[name='InsuranceKinds']").prop("checked", true);
+        } else {
+            $("input[name='InsuranceKinds']").prop("checked", false);
+        }
+        InsuranceKindsChange();
+    }
+   
+   
+</script>
+

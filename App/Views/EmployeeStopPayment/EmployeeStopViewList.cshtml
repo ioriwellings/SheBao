@@ -1,0 +1,402 @@
+﻿@model Langben.DAL.EmployeeStopView
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:130px">
+
+
+    <div class='input_search'>
+        <div class='input_search-label'>
+            <input type="checkbox" id="ckAll" onclick="CheckAll(this)" />
+            @Html.LabelFor(model => model.InsuranceKinds):
+        </div>
+        <div class='input_search-field' style="width:750px">
+            @Html.CheckBoxList("InsuranceKinds", Models.SysFieldModels.GetSelectList(typeof(Common.EmployeeAdd_InsuranceKindId)), new { style = "width:20px", onchange = "InsuranceKindsChange()" })
+        </div>
+    </div>
+
+    <div style="clear:both"></div>
+
+
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CompanyName):
+        </div>
+        <div class="input_search-field">
+            @Html.TextBox("CompanyName", "", new { @class = "easyui-textbox", @style = "height:26px" })
+        </div>
+    </div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.Name):
+        </div>
+        <div class='input_search-field'>
+            @Html.TextBox("Name", "", new { @class = "easyui-textbox", @style = "height:26px" })
+        </div>
+    </div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.YearMonth):
+        </div>
+        <div class='input_search-field'>
+            <input type="text" class="Wdate" name="YearMonth" onclick="WdatePicker({dateFmt:'yyyyMM',realDateFmt:'yyyyMM'})" />
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CertificateNumber):
+        </div>
+        <div class="input_search-field">
+            <p class="cerNo">
+                @Html.TextArea("CertificateNumber", new { @class = "CertificateNumber" })
+            </p>
+
+        </div>
+    </div>
+    <div class='input_search'>
+        <div class='input_search-label'>
+            @Html.LabelFor(model => model.State):
+        </div>
+        <div class='input_search-field'>
+            @Html.DropDownList("State", Models.SysFieldModels.GetEnumList(typeof(Common.EmployeeStopPayment_State)), "请选择")
+        </div>
+    </div>
+
+    <div class='input_search input_search_btn'>
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+
+</div>
+<br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        var search = "";
+        $('#divQuery').find(":text,:selected,select,textarea,:checked,:password").each(function () {
+            if (this.name)
+                search = search + this.name + "&" + this.value + "^";
+            //else
+            //    search = search + this.name + "&" + this.value + "^";
+        });
+
+        $('#flexigridData').datagrid({
+            title: '社保报减查询', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            fit:true,
+            collapsible: false,
+            queryParams: { search: search },
+            url: '../api/EmployeeStopPaymentApi/PostEmployeeStopViewList', //获取数据的url
+            toolbar: [
+                {
+                    text: '导出Excel',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        return ExportExcel();
+                    }
+                }],
+            columns: [[
+                 { field: 'CompanyCode', title: '@Html.DisplayNameFor(model => model.CompanyCode)', align: 'center', width: 80 }
+               , { field: 'CompanyName', title: '@Html.DisplayNameFor(model => model.CompanyName)', align: 'center', width: 300 }
+                , { field: 'Name', title: '@Html.DisplayNameFor(model => model.Name)', align: 'center', width: 80 }
+                , { field: 'CertificateNumber', title: '@Html.DisplayNameFor(model => model.CertificateNumber)', align: 'center', width: 160 }
+                , { field: 'City', title: '@Html.DisplayNameFor(model => model.City)', align: 'center', width: 80 }
+                , { field: 'PoliceAccountNatureName', title: '@Html.DisplayNameFor(model => model.PoliceAccountNatureName)', align: 'center', width: 160 }
+
+                , { field: 'PoliceInsuranceName_1', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_1)', align: 'center', width: 100 }
+                , { field: 'InsuranceMonth_1', title: '@Html.DisplayNameFor(model => model.InsuranceMonth_1)', align: 'center', width: 100, formatter: formatDatebox }
+                , { field: 'PoliceOperationName_1', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_1)', align: 'center', width: 100 }
+                , { field: 'State_1', title: '@Html.DisplayNameFor(model => model.State_1)', align: 'center', width: 100 }
+                , { field: 'YearMonth_1', title: '@Html.DisplayNameFor(model => model.YearMonth_1)', align: 'center', width: 100 }
+
+
+
+                , { field: 'PoliceInsuranceName_2', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_2)', align: 'center', width: 100 }
+                , { field: 'InsuranceMonth_2', title: '@Html.DisplayNameFor(model => model.InsuranceMonth_2)', align: 'center', width: 100, formatter: formatDatebox }
+                , { field: 'PoliceOperationName_2', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_2)', align: 'center', width: 100 }
+                , { field: 'State_2', title: '@Html.DisplayNameFor(model => model.State_2)', align: 'center', width: 100 }
+                , { field: 'YearMonth_2', title: '@Html.DisplayNameFor(model => model.YearMonth_2)', align: 'center', width: 100 }
+
+
+
+                , { field: 'PoliceInsuranceName_3', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_3)', align: 'center', width: 100 }
+                , { field: 'InsuranceMonth_3', title: '@Html.DisplayNameFor(model => model.InsuranceMonth_3)', align: 'center', width: 100, formatter: formatDatebox }
+                , { field: 'PoliceOperationName_3', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_3)', align: 'center', width: 100 }
+                , { field: 'State_3', title: '@Html.DisplayNameFor(model => model.State_3)', align: 'center', width: 100 }
+                , { field: 'YearMonth_3', title: '@Html.DisplayNameFor(model => model.YearMonth_3)', align: 'center', width: 100 }
+
+
+
+
+                , { field: 'PoliceInsuranceName_4', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_4)', align: 'center', width: 100 }
+                , { field: 'InsuranceMonth_4', title: '@Html.DisplayNameFor(model => model.InsuranceMonth_4)', align: 'center', width: 100, formatter: formatDatebox }
+                , { field: 'PoliceOperationName_4', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_4)', align: 'center', width: 100 }
+                , { field: 'State_4', title: '@Html.DisplayNameFor(model => model.State_4)', align: 'center', width: 100 }
+                , { field: 'YearMonth_4', title: '@Html.DisplayNameFor(model => model.YearMonth_4)', align: 'center', width: 100 }
+
+
+
+
+                , { field: 'PoliceInsuranceName_5', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_5)', align: 'center', width: 100 }
+                , { field: 'InsuranceMonth_5', title: '@Html.DisplayNameFor(model => model.InsuranceMonth_5)', align: 'center', width: 100, formatter: formatDatebox }
+                , { field: 'PoliceOperationName_5', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_5)', align: 'center', width: 100 }
+                , { field: 'State_5', title: '@Html.DisplayNameFor(model => model.State_5)', align: 'center', width: 100 }
+                , { field: 'YearMonth_5', title: '@Html.DisplayNameFor(model => model.YearMonth_5)', align: 'center', width: 100 }
+
+
+
+
+                , { field: 'PoliceInsuranceName_6', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_6)', align: 'center', width: 100 }
+                , { field: 'InsuranceMonth_6', title: '@Html.DisplayNameFor(model => model.InsuranceMonth_6)', align: 'center', width: 100, formatter: formatDatebox }
+                , { field: 'PoliceOperationName_6', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_6)', align: 'center', width: 100 }
+                , { field: 'State_6', title: '@Html.DisplayNameFor(model => model.State_6)', align: 'center', width: 100 }
+                , { field: 'YearMonth_6', title: '@Html.DisplayNameFor(model => model.YearMonth_6)', align: 'center', width: 100 }
+
+
+
+                , { field: 'PoliceInsuranceName_7', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_7)', align: 'center', width: 100 }
+                , { field: 'InsuranceMonth_7', title: '@Html.DisplayNameFor(model => model.InsuranceMonth_7)', align: 'center', width: 100, formatter: formatDatebox }
+                , { field: 'PoliceOperationName_7', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_7)', align: 'center', width: 100 }
+                , { field: 'State_7', title: '@Html.DisplayNameFor(model => model.State_7)', align: 'center', width: 100 }
+                , { field: 'YearMonth_7', title: '@Html.DisplayNameFor(model => model.YearMonth_7)', align: 'center', width: 100 }
+
+
+
+                , { field: 'PoliceInsuranceName_8', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_8)', align: 'center', width: 100 }
+                , { field: 'InsuranceMonth_8', title: '@Html.DisplayNameFor(model => model.InsuranceMonth_8)', align: 'center', width: 100, formatter: formatDatebox }
+                , { field: 'PoliceOperationName_8', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_8)', align: 'center', width: 100 }
+                , { field: 'State_8', title: '@Html.DisplayNameFor(model => model.State_8)', align: 'center', width: 100 }
+                , { field: 'YearMonth_8', title: '@Html.DisplayNameFor(model => model.YearMonth_8)', align: 'center', width: 100 }
+
+
+
+                 , { field: 'PoliceInsuranceName_9', title: '@Html.DisplayNameFor(model => model.PoliceInsuranceName_9)', align: 'center', width: 100 }
+                , { field: 'InsuranceMonth_9', title: '@Html.DisplayNameFor(model => model.InsuranceMonth_9)', align: 'center', width: 100, formatter: formatDatebox }
+                , { field: 'PoliceOperationName_9', title: '@Html.DisplayNameFor(model => model.PoliceOperationName_9)', align: 'center', width: 100 }
+                , { field: 'State_9', title: '@Html.DisplayNameFor(model => model.State_9)', align: 'center', width: 100 }
+                , { field: 'YearMonth_9', title: '@Html.DisplayNameFor(model => model.YearMonth_9)', align: 'center', width: 100 }
+
+
+
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+    for (var i = 1; i <= 9; i++) {
+        doConsoleColumn(i, "hideColumn");
+    }
+    var parent = window.dialogArguments; //获取父页面
+    if (parent == "undefined" || parent == null) {
+        //    不是在iframe中打开的
+    } else {
+        //隐藏所有的按钮和分隔符
+        $(".l-btn.l-btn-plain").hide();
+        $(".datagrid-btn-separator").hide();
+        //添加选择按钮
+        $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+    }
+    });
+
+    function InsuranceKindsChange() {
+        var a = document.getElementsByName("InsuranceKinds");
+        for (var i = 0; i < a.length; i++) {
+            if (a[i].value >= 1 && a[i].value <= 9) {
+                if (a[i].checked) {
+                    doConsoleColumn(a[i].value, "showColumn");
+                } else {
+                    doConsoleColumn(a[i].value, "hideColumn");
+                }
+            }
+        }
+        flexiQuery();
+    }
+    function doConsoleColumn(i, ishide) {
+        $('#flexigridData').datagrid(ishide, 'PoliceInsuranceName_' + i);
+        $('#flexigridData').datagrid(ishide, 'InsuranceMonth_' + i);
+        $('#flexigridData').datagrid(ishide, 'PoliceOperationName_' + i);
+        $('#flexigridData').datagrid(ishide, 'State_' + i);
+        $('#flexigridData').datagrid(ishide, 'YearMonth_' + i);      
+    }
+    function inArray(needle, array, bool) {
+        for (var i in array) {
+            if (needle == array[i]) {
+                if (bool) {
+                    return i;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+
+        //将查询条件按照分隔符拼接成字符串
+        var search = "";
+        var iksNum = 0;
+        $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+            if (this.name) {
+                search = search + this.name + "&" + this.value + "^";
+                if (this.id == "InsuranceKinds") {
+                    iksNum += 1;
+                }
+            }
+            //else {
+            //    search = search + this.name + "&" + this.value + "^";
+            //    if (this.id == "InsuranceKinds") {
+            //        iksNum += 1;
+            //    }
+            //}
+        });
+        //执行查询
+        if (iksNum == 0) {
+            //没有选择险种
+            alert("请选择险种!");
+        } else {
+            //执行查询
+            $('#flexigridData').datagrid('load', { search: search });
+        }
+    };
+
+    //“选择”按钮，在其他（与此页面有关联）的页面中，此页面以弹出框的形式出现，选择页面中的数据
+    function flexiSelect() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Id);
+        }
+        arr.push("^");
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Wage);
+        }
+        //主键列和显示列之间用 ^ 分割   每一项用 , 分割
+        if (arr.length > 0) {//一条数据和多于一条
+            returnParent(arr.join("&")); //每一项用 & 分割
+        }
+    }
+    //导航到查看详细的按钮
+    function getView() {
+
+        var arr = $('#flexigridData').datagrid('getSelections');
+
+        if (arr.length == 1) {
+            window.location.href = "../EmployeeAdd/Details?id=" + arr[0].CompanyEmployeeRelationId + "&YearMonth=" + arr[0].YearMonth;
+
+        } else {
+            $.messager.alert('操作提示', '请选择一条数据!', 'warning');
+        }
+        return false;
+    }
+
+    //审核通过的按钮
+    function doApproved() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].AddIds);
+        }
+
+        $.messager.confirm('操作提示', "确认审核通过这 " + arr.length + " 项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "../api/EmployeeAddApi/Approved?query=" + arr.join(""),
+                    type: "POST",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //移除审核通过的数据
+
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+    //审核退回的按钮
+    function doBack() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].AddIds);
+        }
+
+        $.messager.confirm('操作提示', "确认审核退回这 " + arr.length + " 项吗？", function (r) {
+            if (r) {
+                window.location.href = "../EmployeeAdd/Fallback?ids=" + arr.join("");
+            }
+        });
+    };
+    //险种全选
+    function CheckAll(obj) {
+        if ($(obj).prop('checked')) {
+            $("input[name='InsuranceKinds']").prop("checked", true);
+        } else {
+            $("input[name='InsuranceKinds']").prop("checked", false);
+        }
+        InsuranceKindsChange();
+    }
+
+    // 导出Excel
+    function ExportExcel() {
+        //将查询条件按照分隔符拼接成字符串
+        var search = "";
+        $('#divQuery').find(":text,:selected,select,textarea,:hidden,:checked,:password").each(function () {
+            if (this.name) {
+                search = search + this.name + "&" + this.value + "^";
+            }
+        });
+        search = escape(search);
+        $.ajax({
+            url: '../api/EmployeeStopPaymentApi/PostEmployeeStopViewListForExcel?search=' + search,
+            type: "POST",
+            success: function (res) {
+                if (res.Code == 1) {
+                    window.open("../" + res.URL);
+                    $.messager.alert('操作提示', res.Message, 'warning');
+                }
+                else {
+                    $.messager.alert('操作提示', res.Message, 'warning');
+                }
+            },
+            error: function () {
+                $.messager.alert('操作提示', res.Message, 'warning');
+            }
+        })
+    }
+</script>
+

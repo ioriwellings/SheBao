@@ -1,0 +1,105 @@
+﻿@model Langben.DAL.PoliceOperationPoliceInsurancePoliceAccountNature2
+
+@{
+    Layout = "~/Views/Shared/Edit.cshtml";
+}
+@using Common
+@using Models
+ @section CurentPlace {
+    修改  
+}
+
+@using (Html.BeginForm("", "api/PoliceOperationPoliceInsurancePoliceAccountNature2Api/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="BackList('PoliceOperationPoliceInsurancePoliceAccountNature2')" value="返回列表" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.Id )      
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PoliceInsuranceId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.PoliceInsuranceId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.PoliceInsuranceId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PoliceOperationId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.PoliceOperationId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.PoliceOperationId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PoliceAccountNatureId) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.PoliceAccountNatureId, new {  onkeyup = "isInt(this)", @class="text-box single-line" })
+                @Html.ValidationMessageFor(model => model.PoliceAccountNatureId) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.IsCompany)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.IsCompany)
+                @Html.ValidationMessageFor(model => model.IsCompany)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Expression)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Expression)
+                @Html.ValidationMessageFor(model => model.Expression)
+            </div>
+            <br style="clear: both;" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Remark)：
+            </div>
+            <div class="textarea-box">
+                @Html.TextAreaFor(model => model.Remark) 
+                @Html.ValidationMessageFor(model => model.Remark) 
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.FeeCost)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.FeeCost)
+                @Html.ValidationMessageFor(model => model.FeeCost)
+            </div>     
+            <div class="editor-label">
+                @Html.LabelFor(model => model.State)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.State)
+                @Html.ValidationMessageFor(model => model.State)
+            </div>@Html.HiddenFor(model => model.CreateTime ) @Html.HiddenFor(model => model.CreatePerson ) 
+        </div>
+    </fieldset>
+}
+
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            
+
+            // 获取待编辑内容并显示
+            var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/PoliceOperationPoliceInsurancePoliceAccountNature2Api/" + id,
+                type: "POST",
+                // async: false,
+                success: function (res) {
+                    $("#Id").val(res.Id);$("#PoliceInsuranceId").val(res.PoliceInsuranceId);$("#PoliceOperationId").val(res.PoliceOperationId);$("#PoliceAccountNatureId").val(res.PoliceAccountNatureId);$("#IsCompany").val(res.IsCompany);$("#Expression").val(res.Expression);$("#Remark").val(res.Remark);$("#FeeCost").val(res.FeeCost);$("#State").val(res.State);$("#CreateTime").val(res.CreateTime);$("#CreatePerson").val(res.CreatePerson);
+                }
+            })
+        });
+        
+
+    </script>
+
+
+

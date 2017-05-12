@@ -1,0 +1,47 @@
+﻿@{
+    Layout = null;
+}
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#updateZR").click(function () {
+            var searchUser = $("input[name='searchUser']").val();
+            if (searchUser != "") {
+                $.ajax({
+                    url: '/api/CRM_Company_ServiceManagerApi/Services?companyId=' + $("#companyId").val() + '&searchUser=' + searchUser,
+                    type: "Post",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.Code == 0) {
+                            $.messager.alert('操作提示', data.Message, 'info');
+                        }
+                        else {
+                            if ($.messager) {
+                                $.messager.defaults.ok = '确定';
+                                $.messager.alert('', '提交成功！', 'info', function (r) {
+                                    window.parent.$("#window").dialog("close");//关闭弹出框
+                                });
+                                window.parent.$("#flexigridData").datagrid("reload");
+                            }
+                        }
+                    }
+                });
+            }
+            else {
+                alert("请选择责任客服！");
+            }
+        });
+    });
+</script>
+<div id="divQuery">
+
+    <div class='input_search' style="padding-top:10px;">
+        <input id="companyId" name="companyId" value="@ViewBag.ID" hidden />
+        客服人员：
+        @Html.DropDownList("searchUser", (SelectList)ViewData["listUser"], "请选择", new { ID = "searchUser", @class = "easyui-combobox", @style = "font-size:14px;" })
+    </div>
+    <input type="submit" id="updateZR" value="确定" />
+</div>

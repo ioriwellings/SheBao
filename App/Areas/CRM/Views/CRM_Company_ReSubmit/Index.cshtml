@@ -1,0 +1,122 @@
+﻿@{ Layout = "~/Views/Shared/Index.cshtml"; }
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery">
+
+    <div class='input_search' style="padding-top:10px;">
+        企业名称：<input id="searchName" type="text" />
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+</div>
+<br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        $('#flexigridData').datagrid({
+            title: '客户_企业信息', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            url: "/api/CRM_Company_AuditApi/PostReSubmitData",
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            columns: [[
+                 { field: 'CompanyCode', title: '企业编号', width: 100 }
+                , { field: 'CompanyName', title: '企业名称', width: 300 }
+                , { field: 'CreateUserName', title: '销售人员', width: 100 }
+                , {
+                    field: 'OperateStatus', title: '状态', width: 100, formatter: function (value, row, index) {
+                        var a = "";
+                        if (value == 0) {
+                            a = '审核失败';
+                        }
+                        else if (value == 1) {
+                            a = '待处理';
+                        }
+                        else if (value == 2) {
+                            a = '审核成功';
+                        }
+                        return a;
+                    }
+                }
+                , { field: 'CreateTime', title: '创建时间', width: 200, formatter: formatDatebox }
+                , {
+                    field: 'ID', title: '操作', width: 500, formatter: function (value, row, index) {
+                        var a = '';
+                        a += '<a href="#" onclick="baseInfo(' + value + ')">基本信息</a> ';
+                        a += '<a href="#" onclick="linkManInfo(' + value + ')">联系人信息</a> ';
+                        a += '<a href="#" onclick="bankInfo(' + value + ')">银行信息</a> ';
+                        a += '<a href="#" onclick="priceInfo(' + value + ')">报价信息</a> ';
+                        a += '<a href="#" onclick="financeInfo(' + value + ')">财务信息</a> ';
+                        a += '<a href="#" onclick="reSubmit(' + value + ')">重新提交</a> ';
+                        a += '<a href="#" onclick="delete(' + value + ')">删除</a> ';
+                        return a;
+                    }
+                }
+            ]],
+            pagination: true,
+            rownumbers: true,
+            singleSelect: false, //允许选择多行
+            selectOnCheck: true,//true勾选会选择行，false勾选不选择行, 1.3以后有此选项
+            checkOnSelect: true, //true选择行勾选，false选择行不勾选, 1.3以后有此选项
+            onClickRow: function (rowIndex, rowData) {
+                $(this).datagrid('unselectRow', rowIndex);
+            }
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            //$('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+
+        //将查询条件按照分隔符拼接成字符串
+        var search = $('#searchName').val();
+
+        //执行查询
+        $('#flexigridData').datagrid('load', { search: search });
+    };
+
+    //修改基本信息
+    function baseInfo(ID) {
+        window.location.href = "/CRM/CRM_Company_ReSubmit/EditBaseInfo/" + ID;
+    };
+
+    //跳转到联系人信息页面
+    function linkManInfo(companyAuditID) {
+        window.location.href = "/CRM/CRM_CompanyLinkMan_Audit/Index/" + companyAuditID;
+    }
+
+    //跳转到财务信息页面
+    function financeInfo(companyAuditID) {
+        window.location.href = "/CRM/CRM_CompanyFinance_Audit/Index/" + companyAuditID;
+    }
+    //跳转银行信息页
+    function bankInfo(companyAuditID) {
+        window.location.href = "/CRM/CRM_CompanyBankAccount_Audit/Index/" + companyAuditID;
+    }
+    //跳转到报价信息页
+    function priceInfo(companyAuditID) {
+        window.location.href = "/CRM/CRM_CompanyLadderPrice_Audit/Index/" + companyAuditID;
+    }
+
+</script>
+
+

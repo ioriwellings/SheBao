@@ -1,0 +1,280 @@
+﻿@{ Layout = "~/Views/Shared/CRMIndex.cshtml"; }
+
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery">
+
+    <div class='input_search' style="padding-top:10px;">
+        <a href="#" onclick="GoBack('@ViewBag.Path');" class="easyui-linkbutton" data-options="iconCls:'icon-back'">
+            返回
+        </a>
+    </div>
+</div>
+<input type="text" id="hidGridID" style="display:none" />
+<br style="clear: both;" />
+<table id="gridFinanceBill"></table>
+<div id="window" class="easyui-window" style="position:relative;" data-options="closed:true,modal:true,minimizable:false,maximizable:false,collapsible:false,iconCls:'icon-save'">
+    <iframe id="if1" frameborder="0" src="" scrolling="no" width="100%" height="98%"></iframe>
+</div>
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        $('#flexigridData').datagrid({
+            title: '客户_企业财务信息_付款信息', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            url: '/api/CRM_CompanyFinance_PaymentApi/PostData', //获取数据的url
+            queryParams: {
+                search: '@ViewBag.Company_ID'
+            },
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            toolbar: [
+                    {
+                        text: '创建',
+                        iconCls: 'icon-add',
+                        handler: function () {
+                            return flexiCreate();
+                        }
+                    }
+            ],
+            columns: [[
+                { field: 'CRM_Company_ID', title: '企业ID', align: 'center', width: 100, hidden: true }
+                , { field: 'PaymentName', title: '付款名称', align: 'center', width: 290 }
+                , {
+                    field: 'CreateTime', title: '创建时间', align: 'center', width: 111
+                , formatter: formatDatebox
+                }
+                , { field: 'CreateUserName', title: '创建人', align: 'center', width: 70 }
+                , {
+                    field: 'Status', title: '状态', align: 'center', width: 70,
+                    formatter: function (value, row, index) {
+                        var a = "";
+                        if (value == 0) {
+                            a = '停用';
+                        }
+                        else if (value == 1) {
+                            a = '启用';
+                        }
+                        else if (value == 2) {
+                            a = '修改中';
+                        }
+                        return a;
+                    }
+                }
+                , {
+                    field: 'ID', title: '操作', align: 'center', width: 111,
+                    formatter: function (value, row, index) {
+                        var a = '';
+                        if (row.Status == 1) {
+                            a += '<a href="#" onclick="flexiModify(' + row.ID + ')">修改</a> ';
+                            a += '<a href="#" onclick="flexiStop(' + row.ID + ')">停用</a> ';
+                        }
+                        else if (row.Status == 0) {
+                            a += '<a href="#" onclick="flexiStart(' + row.ID + ')">启用</a> ';
+                        }
+                        return a;
+                    }
+                }
+            ]],
+            rownumbers: true
+
+        });
+
+        $('#gridFinanceBill').datagrid({
+            title: '客户_企业财务信息_开票信息', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            collapsible: false,
+            url: '/api/CRM_CompanyFinance_BillApi/PostData', //获取数据的url
+            queryParams: {
+                search: '@ViewBag.Company_ID'
+            },
+            sortName: 'ID',
+            sortOrder: 'desc',
+            idField: 'ID',
+            columns: [[
+                { field: 'CRM_Company_ID', title: '企业ID', width: 111, hidden: true }
+                , { field: 'BillName', title: '开票名称', align: 'center', width: 150 }
+                  , { field: 'TaxRegistryNumber', title: '税务登记证号', align: 'center', width: 150 }
+                , {
+                    field: 'CreateTime', title: '创建时间', align: 'center', width: 111
+                , formatter: formatDatebox
+                }
+                , { field: 'CreateUserName', title: '创建人', width: 70 }
+                , {
+                    field: 'Status', title: '状态', align: 'center', width: 70,
+                    formatter: function (value, row, index) {
+                        var a = "";
+                        if (value == 0) {
+                            a = '停用';
+                        }
+                        else if (value == 1) {
+                            a = '启用';
+                        }
+                        else if (value == 2) {
+                            a = '修改中';
+                        }
+                        return a;
+                    }
+                }
+                , {
+                    field: 'ID', title: '操作', align: 'center', width: 111,
+                    formatter: function (value, row, index) {
+                        var a = '';
+                        if (row.Status == 1) {
+                            a += '<a href="#" onclick="flexiModify_Bill(' + row.ID + ')">修改</a> '; 
+                        }
+                        return a;
+                    }
+                }
+            ]],
+            rownumbers: true
+
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            //$('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+    //创建
+    function flexiCreate(id) {
+        return CommonSelect('/CRM/CRM_CompanyFinance/CreatePayment/@ViewBag.Company_ID', '创建', 920, 500);
+    }
+    //修改付款信息
+    function flexiModify(id) {
+        $("#flexigridData").val("gridPrice");
+        return CommonSelect('/CRM/CRM_CompanyFinance/EditPayment/' + id, '修改', 920, 500);
+    }
+    //停用付款信息
+    function flexiStop(id) {
+        $.messager.confirm('操作提示', "确认停用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyFinance_PaymentApi/Stop/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+    //启用付款信息
+    function flexiStart(id) {
+        $.messager.confirm('操作提示', "确认启用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyFinance_PaymentApi/Start/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+
+    //创建开票信息
+    function flexiCreate_Bill() {
+        return CommonSelect('/CRM/CRM_CompanyFinance/CreateBill/@ViewBag.Company_ID' , '修改', 920, 500);
+    }
+    //修改开票信息
+    function flexiModify_Bill(id) {
+        $("#hidGridID").val("gridFinanceBill");
+        return CommonSelect('/CRM/CRM_CompanyFinance/EditBill/' + id, '修改', 920, 500);
+
+    };
+    //停用开票信息
+    function flexiStop_Bill(id) {
+        $.messager.confirm('操作提示', "确认停用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyFinance_BillApi/Stop/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#gridFinanceBill").datagrid("reload");
+                            $("#gridFinanceBill").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+    //启用开票信息
+    function flexiStart_Bill(id) {
+        $.messager.confirm('操作提示', "确认启用这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/api/CRM_CompanyFinance_BillApi/Start/" + id,
+                    type: "Post",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新列表
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#gridFinanceBill").datagrid("reload");
+                            $("#gridFinanceBill").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+
+    };
+
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/CRM/" + path + "/Index/?tmp=" + tmp;
+    }
+</script>
+

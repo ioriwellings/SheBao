@@ -1,0 +1,97 @@
+﻿@{
+    Layout = null;
+}
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/easyui")
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#updateKF").click(function () {
+            //var searchUser = $("input[name='searchUser']").val();
+            debugger;
+            var searchUser = $('input:radio[name="rd"]:checked')[0].id;//客服人员
+            if (searchUser != "") {
+                $.ajax({
+                    url: '/api/SupplierApi/Services?supplierId=' + $("#supplierId").val() + '&searchUser=' + searchUser,
+                    type: "Post",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.Code == 0) {
+                            $.messager.alert('操作提示', data.Message, 'info');
+                        }
+                        else {
+                            if ($.messager) {
+                                $.messager.defaults.ok = '确定';
+                                $.messager.alert('', '提交成功！', 'info', function (r) {
+                                    window.parent.$("#window").dialog("close");//关闭弹出框
+                                });
+                                window.parent.$("#flexigridData").datagrid("reload");
+                            }
+                        }
+                    }
+                });
+            }
+            else {
+                alert("请选择责任客服！");
+            }
+        });
+    });
+</script>
+<script>
+    $(function () {
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            //方法所在页面和方法名
+            url: "/Supplier/kfry",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                var htmlstr = "";
+                for (var i = 0; i < data.length; i++) {
+                    htmlstr += " <input type='radio' name='rd' id=" + data[i]["ID"] + " />" + data[i]["RName"] + "";
+                    htmlstr += getusercount(data[i]["ID"]);
+                }
+                $("#radioclick").append(htmlstr);
+            },
+            error: function (err) {
+                alert(err);
+            }
+        });
+        $("#radioclick").find(':radio').click(function () {
+            var nn = this;
+        });
+    });
+    //获取个数
+    function getusercount(userid) {
+        var htmlstr = "";
+        $.ajax({
+            //要用post方式
+            type: "Post",
+            async: false,
+            //方法所在页面和方法名
+            url: "/api/SupplierApi/Getcount?UserID_GYSKF=" + userid,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (dataa) {
+                htmlstr += "(" + dataa + ") <br/>";
+            },
+            error: function (err) {
+                alert(err);
+            }
+        });
+        return htmlstr;
+    }
+</script>
+
+
+<div id="divQuery">
+    <div>
+        <input id="supplierId" name="supplierId" value="@ViewBag.ID" hidden />
+        <div id="radioclick">
+
+        </div>
+        <input type="submit" id="updateKF" value="分配" />
+    </div>
+</div>

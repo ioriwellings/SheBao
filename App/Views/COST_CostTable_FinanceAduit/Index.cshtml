@@ -1,0 +1,213 @@
+﻿
+@model Langben.DAL.COST_CostTable 
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common 
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
+<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>
+
+<div id="divQuery">
+    <div class="input_search">
+        <div class="input_search-label">
+            年月：
+        </div>
+        <div class="input_search-field">
+           <input id="YearMonth" value="@DateTime.Now.ToString("yyyy-MM")" class="yearMonth" style="width:auto" />
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            状态：
+        </div>
+        <div class="input_search-field">
+            <select id="status">
+                <option value="0">全部</option>
+                <option value="6">待核销</option>
+                <option value="7">财务作废</option>
+                <option value="8">已核销</option>
+                <option value="9">已支付</option>
+            </select>
+        </div>
+    </div>
+    <div class="input_search">
+        <div class="input_search-label">
+            公司名称：
+        </div>
+        <div class="input_search-field">
+        </div>
+    </div> 
+
+    <div class='input_search' style="padding-top:10px;">
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+              查 询
+        </a>
+    </div>
+</div>
+ <br style="clear: both;" />
+
+<script type="text/javascript" language="javascript">
+    $(".yearMonth").simpleCanleder();
+
+    $(function () {
+            $('#flexigridData').datagrid({
+                title: '财务确认费用表', //列表的标题
+                iconCls: 'icon-site',
+                width: 'auto',
+                height: 'auto',
+                //nowrap: false,
+                striped: true,
+                collapsible: true,
+                url: '/api/COST_CostTableApi/PostFinanceAduitData', //获取数据的url
+                sortName: 'ID',
+                sortOrder: 'desc',
+                idField: 'ID',
+                columns: [[
+					{ field: 'No', title: '批次号', width: 86, formatter: Href }
+					, { field: 'CompanyName', title: '公司名称', width: 150 }  // 数据库存储为ID，这里需要Name
+					, { field: 'UserName_ZR', title: '责任客服', width: 86 }
+					, { field: 'StatusName', title: '状态', width: 120 }
+                    , { field: 'Status', title: '', hidden: true }  // 状态列值，用于做判断用
+					,{ field: 'CreateTime', title:  '生成时间', width: 120
+                        , formatter: formatDatebox
+					}
+                    , {
+                        field: 'UpdateTime', title: '客服确认时间', width: 120
+                        , formatter: formatDatebox
+                    }
+					, { field: 'ChargeCost', title: '费用合计', width: 100 }
+                    , { field: 'ID', title: '操作', width: 140, formatter: Operat}
+                ]],
+                pagination: true,
+                rownumbers: true
+
+            });
+
+             var parent = window.dialogArguments; //获取父页面
+            if (parent == "undefined" || parent == null) {
+                //    不是在iframe中打开的
+            } else {
+                //隐藏所有的按钮和分隔符
+                $(".l-btn.l-btn-plain").hide();
+                $(".datagrid-btn-separator").hide();
+                //添加选择按钮
+                $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+            }
+        });
+
+    // 批次号链接到详情页面
+    function Href(val, row) {
+        var id = row.ID;
+
+        return "<a style='text-decoration:none' href='javascript:void(0)' onclick=\"GetView('" + id + "')\" class='easyui-linkbutton' data-options='plain:true,iconCls:'icon-back''>" + row.No + "</a>";
+    }
+
+    //导航到查看详细的按钮
+    function GetView(id) {
+        window.location.href = "../COST_CostTable_FinanceAduit/Details/" + id;
+        return false;
+    }
+
+    // 添加“操作”列的链接文字（开票、退回客服、作废）
+    function Operat(val, row) {
+        var id = row.ID;
+        var html = "";
+        if (row.Status == '@Convert.ToInt32(Common.COST_Table_Status.待核销)') {  // 若费用表状态为“待核销”，则可以开票
+            html += "<a href='#' onclick=\"Export('" + id + "')\">开票</a>&nbsp;&nbsp;&nbsp;";
+            html += "<a href='#' onclick=\"Reback('" + id + "')\">退回客服</a>";
+        }
+        if (row.Status == '@Convert.ToInt32(Common.COST_Table_Status.已开票)') {  // 若费用表状态为“已开票”，则可以作废
+            html += "<a href='#' onclick=\"Delete('" + id + "')\">作废</a>&nbsp;&nbsp;&nbsp;";
+        }
+        return html;
+    }
+
+    // 作废操作
+    function Delete(id) {
+        $.messager.confirm('操作提示', "确认作废这项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "api/COST_CostTableApi/DeleteCostTable?id=" + id,
+                    type: "DELETE",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //重新加载数据
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                            $("#flexigridData").datagrid("clearChecked");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+                    }
+                })
+            }
+        });
+
+    };
+
+
+    // 导出操作
+    function Export(id) {
+        $.ajax({
+            url: "api/COST_CostTableApi/PostExportToExcel?id=" + id,
+            type: "POST",
+            success: function (res) {
+                window.location.href = res;
+            }
+        })
+
+    };
+        
+    // 查看备注
+    function Remark(id) {
+        window.location.href = "../COST_CostTable/Remark/" + id;
+    }
+
+    //导航到锁定费用表的按钮
+    function LockFee() {
+        var rows = $('#flexigridData').datagrid('getChecked');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].ID);
+        }
+
+        $.messager.confirm('操作提示', "锁定后的费用表不可作废，确认锁定这 " + arr.length + " 项吗？", function (r) {
+            if (r) {
+                $.ajax({
+                    url: "api/COST_CostTableApi/PostLock?query=" + arr.join(","),
+                    type: "POST",
+                    success: function (res) {
+                        if (res.Code == 1) {
+                            //刷新数据
+                            $.messager.alert('操作提示', res.Message, 'info');
+                            $("#flexigridData").datagrid("reload");
+                            $("#flexigridData").datagrid("clearSelections");
+                            $("#flexigridData").datagrid("clearChecked");
+                        }
+                        else {
+                            $.messager.alert('操作提示', res.Message, 'info');
+                        }
+
+                    }
+                })
+            }
+        });
+    }
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        //将查询条件按照分隔符拼接成字符串
+        var search = "";
+        search = "yearMonth&" + $("#YearMonth").val().replace('-', '') + "^status&" + $("#status").val();
+
+        //执行查询
+        $('#flexigridData').datagrid('load', { search: search });
+    };
+</script>
+

@@ -1,0 +1,86 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/css.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.9.1.min.js"></script>
+
+    <title>新外包业务系统</title>
+
+    <script type="text/javascript">
+        function keyLogin(event) {
+            if (event.keyCode == 13)   //回车键的键值为13
+                submit();  //调用登录按钮的登录事件
+        }
+        document.onkeydown = keyLogin;
+        
+        function submit() {
+            var userName = $("#userName").val();
+            var password = $("#password").val();
+            if (userName == "") {
+                alert("用户名不能为空");
+                $("#userName").focus()
+                return false;
+            }
+            if (password == "") {
+                alert("密码不能为空");
+                $("#password").focus()
+                return false;
+            }
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "/Account/Login",
+                data: { lname: userName, pwd: password },
+                async: true,
+                success: function (msg) {
+                    if (msg.Code == "ok") {
+                        window.location.href = "/Home";
+                    }
+                    else {
+                        alert(msg.Message);
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <div class="bg_wb"></div>
+    <div class="wbbg">
+        <div class="yy" style="font-size:xx-large;">欢迎使用外包系统</div>
+        <div class="delu1">
+            <table>
+                <tr>
+                    <td>
+                        <div class="jname">
+
+                            <input type="text" id="userName" name="username" class="jnameinput" maxlength="50" value="请输入用户名" onfocus="if(value==defaultValue){value='';this.style.color='#fff'}" onblur="if(!value){value=defaultValue;this.style.color='#FCC4E3'}" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="jname">
+
+                            <input type="password" id="password" maxlength="30" value="请输入密码" name="password" class="jnameinput" onfocus="if(value==defaultValue){value='';this.style.color='#fff'}" onblur="if(!value){value=defaultValue;this.style.color='#FCC4E3'}" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div>
+                            <input name="" type="submit" class="jloginbtn" id="submitBtn" onclick="return submit()" value="登录" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

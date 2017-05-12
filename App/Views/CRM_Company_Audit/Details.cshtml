@@ -1,0 +1,110 @@
+﻿@model Langben.DAL.CRM_Company_Audit
+
+@{
+    Layout = "~/Views/Shared/Details.cshtml";
+}
+@using Common
+ @section CurentPlace {
+    详细  
+}
+ 
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" onclick="window.location.href = 'javascript:history.go(-1)';" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                  
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CRM_Company_ID) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CRM_Company_ID) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyCode) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CompanyCode) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyName) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CompanyName) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.Dict_HY_Code) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.Dict_HY_Code) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.TaxRegistryNumber) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.TaxRegistryNumber) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.OrganizationCode) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.OrganizationCode) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.RegisterAddress) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.RegisterAddress) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.OfficeAddress) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.OfficeAddress) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.Source) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.Source) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateTime) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CreateTime) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateUserID) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CreateUserID) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateUserName) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.CreateUserName) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.BranchID) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.BranchID) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.OperateStatus) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.OperateStatus) 
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.OperateNode) :
+                </div>
+                <div class="display-field">
+                    @Html.DisplayFor(model => model.OperateNode) 
+                </div>
+        </div>
+    </fieldset>
+
+

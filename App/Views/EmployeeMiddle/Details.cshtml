@@ -1,0 +1,132 @@
+﻿@model Langben.DAL.EmployeeMiddle
+
+@{
+    Layout = "~/Views/Shared/Details.cshtml";
+}
+@using Common
+ @section CurentPlace {
+    详细  
+}
+ 
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" onclick="window.location.href = 'javascript:history.go(-1)';" value="返回" />
+        </legend>
+        <div class="bigdiv">
+                  
+                <div class="display-label">
+                      @Html.LabelFor(model => model.InsuranceKindId) :
+                </div>
+                <div class="display-field" id='InsuranceKindId'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyEmployeeRelationId) :
+                </div>
+                <div class="display-field" id='CompanyEmployeeRelationId'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PaymentBetween) :
+                </div>
+                <div class="display-field" id='PaymentBetween'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PaymentStyle) :
+                </div>
+                <div class="display-field" id='PaymentStyle'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyBasePayment) :
+                </div>
+                <div class="display-field" id='CompanyBasePayment'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CompanyPayment) :
+                </div>
+                <div class="display-field" id='CompanyPayment'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.EmployeeBasePayment) :
+                </div>
+                <div class="display-field" id='EmployeeBasePayment'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.EmployeePayment) :
+                </div>
+                <div class="display-field" id='EmployeePayment'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.PaymentMonth) :
+                </div>
+                <div class="display-field" id='PaymentMonth'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.StartDate) :
+                </div>
+                <div class="display-field" id='StartDate'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.EndedDate) :
+                </div>
+                <div class="display-field" id='EndedDate'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.UseBetween) :
+                </div>
+                <div class="display-field" id='UseBetween'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.BillId) :
+                </div>
+                <div class="display-field" id='BillId'>
+                </div>
+                <br style="clear: both;" />
+                <div class="display-label">
+                    @Html.LabelFor(model => model.Remark) :
+                </div>
+                <div class="textarea-box">
+                    @Html.TextAreaFor(model => model.Remark, new {  @readonly=true})                   
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.State) :
+                </div>
+                <div class="display-field" id='State'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreateTime) :
+                </div>
+                <div class="display-field" id='CreateTime'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.CreatePerson) :
+                </div>
+                <div class="display-field" id='CreatePerson'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.UpdateTime) :
+                </div>
+                <div class="display-field" id='UpdateTime'>
+                </div>      
+                <div class="display-label">
+                      @Html.LabelFor(model => model.UpdatePerson) :
+                </div>
+                <div class="display-field" id='UpdatePerson'>
+                </div>
+        </div>
+    </fieldset>
+
+<script type="text/javascript">
+
+    $(function () {
+        // 获取内容并显示
+        var id = '@ViewBag.Id';
+        $.ajax({
+            url: "/api/EmployeeMiddleApi/" + id,
+            type: "POST",
+            // async: false,
+            success: function (res) {
+		$("#InsuranceKindId").html(res.InsuranceKindId);$("#CompanyEmployeeRelationId").html(res.CompanyEmployeeRelationId);$("#PaymentBetween").html(res.PaymentBetween);$("#PaymentStyle").html(res.PaymentStyle);$("#CompanyBasePayment").html(res.CompanyBasePayment);$("#CompanyPayment").html(res.CompanyPayment);$("#EmployeeBasePayment").html(res.EmployeeBasePayment);$("#EmployeePayment").html(res.EmployeePayment);$("#PaymentMonth").html(res.PaymentMonth);$("#StartDate").html(res.StartDate);$("#EndedDate").html(res.EndedDate);$("#UseBetween").html(res.UseBetween);$("#BillId").html(res.BillId);$("#Remark").val(res.Remark);$("#State").html(res.State);$("#CreateTime").html(res.CreateTime);$("#CreatePerson").html(res.CreatePerson);$("#UpdateTime").html(res.UpdateTime);$("#UpdatePerson").html(res.UpdatePerson);
+            }
+        })
+    });
+</script>
+

@@ -1,0 +1,72 @@
+﻿@model Langben.DAL.ORG_MenuOp
+
+@{
+    Layout = "~/Views/Shared/CRMEdit.cshtml";
+}
+@using Common
+@using Models
+@section CurentPlace {
+    修改
+}
+
+
+@using (Html.BeginForm("", "/MenuOp/Put", FormMethod.Post))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="修改" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.ID)
+            @Html.HiddenFor(model => model.XYBZ)
+            <div class="editor-label">
+                菜单功能ID：
+            </div>
+            <div class="editor-field">
+                @Html.TextBox("txtCode", Model.ID, new { @style = "width:200px", maxlength = "50", disabled = "disabled" })
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.MenuOpName)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.MenuOpName)
+                @Html.ValidationMessageFor(model => model.MenuOpName)
+            </div>
+            <div class="editor-label">
+                所属菜单：
+            </div>
+            <div class="editor-field">
+                @Html.DropDownList("ORG_Menu_ID", (SelectList)ViewData["ddlMenu"], "--请选择--", new { style = "width:204px" })
+            </div>
+            <div class="editor-label">
+                排序：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Sort)
+                @Html.ValidationMessageFor(model => model.Sort)
+            </div>
+        </div>
+    </fieldset>
+}
+<script type="text/javascript">
+    @*$(function () {
+        var id = '@ViewBag.Id';
+        // 获取待编辑内容并显示
+        $.ajax({
+            url: "/MenuOp/GetBank?id=" + id,
+            type: "GET",
+            // async: false,
+            success: function (res) {
+                debugger;
+                var jsonarray = eval("(" + res + ")");
+                $("#EmployeeId").val(@ViewBag.eId);
+                $("#ID").val(jsonarray.bankList[0].Id);
+                $("#MenuOpName").val(jsonarray.bankList[0].AccountName);
+                $("#ORG_Menu_ID").val(jsonarray.bankList[0].Bank);
+
+            }
+        })
+    });*@
+</script>
+

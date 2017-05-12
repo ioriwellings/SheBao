@@ -1,0 +1,165 @@
+﻿@model Langben.DAL.Employee
+@{ Layout = "~/Views/Shared/Index.cshtml"; }
+@using Common
+@using Models
+<script src="~/Scripts/JScriptIndex.js"></script>
+<div id="divQuery" data-options="region:'north',border:false" style="height:80px">
+
+
+    <div class="input_search">
+        <div class="input_search-label">
+            员工姓名:
+        </div>
+        <div class="input_search-field">
+            @Html.TextBoxFor(model => model.Name, new { @style = "height:26px", @class = "easyui-textbox" })
+        </div>
+    </div>
+
+
+    <div class="input_search">
+        <div class="input_search-label">
+            @Html.LabelFor(model => model.CertificateNumber):
+        </div>
+        <div class="input_search-field">
+            <p class="cerNo">
+                @Html.TextArea("CertificateNumber", new { @class = "CertificateNumber" })
+            </p>
+        </div>
+    </div>
+
+
+    <div class='input_search input_search_btn'>
+        <a href="#" onclick="flexiQuery()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">
+            查 询
+        </a>
+    </div>
+
+</div>
+
+
+
+<script type="text/javascript" language="javascript">
+    $(function () {
+        $('#flexigridData').datagrid({
+            title: '员工列表', //列表的标题
+            iconCls: 'icon-site',
+            width: 'auto',
+            height: 'auto',
+            //nowrap: false,
+            striped: true,
+            fit: true,
+            collapsible: false,
+            //url: '/api/CRM_EmployeeApi/PostData', //获取数据的url
+            sortName: 'CreateTime',
+            sortOrder: 'asc',
+            idField: 'Id',
+            columns: [[
+                @*{ field: 'Id', title: '@Html.DisplayNameFor(model => model.Id)', width: 55 },*@
+                {
+                    field: 'Name', title: '@Html.DisplayNameFor(model => model.Name)', align: 'center', width: 110,
+                    //添加超级链
+                    formatter: function (value, rowData, rowIndex) {//function里面的三个参数代表当前字段值，当前行数据对象，行号（行号从0开始）
+                        //alert(rowData.Name);
+                        return '<a href="#" onclick="flexiInfo(' + rowData.Id + ')" >' + rowData.Name + '</a>';
+                    }
+                },
+                { field: 'CertificateNumber', title: '@Html.DisplayNameFor(model => model.CertificateNumber)', align: 'center', width: 160 },
+                { field: 'CreateTime', title: '@Html.DisplayNameFor(model => model.CreateTime)', align: 'center', width: 100, formatter: formatDatebox },
+                {
+                    field: 'action', title: '操作', width: 240, align: 'center',
+                    formatter: function (value, row, index) {
+                        var a = '';
+                        // if ('@ViewBag.Id' == row.ZRKF || '@ViewBag.Id' == row.YGKF) {//企业的服务人员，例如销售和责任客服
+                            var a = '<a href="#" onclick="contactInfo(' + row.Id + ')">联系信息</a> ';
+                            a += '<a href="#" onclick="bankInfo(' + row.Id + ')">银行信息</a> ';
+                            a += '<a href="#" onclick="baseInfo(' + row.Id + ')" >基本信息</a> ';
+                       // }
+                        return a;
+                    }
+
+                }
+            ]],
+            pagination: true,
+            rownumbers: true
+        });
+
+        var parent = window.dialogArguments; //获取父页面
+        if (parent == "undefined" || parent == null) {
+            //    不是在iframe中打开的
+        } else {
+            //隐藏所有的按钮和分隔符
+            $(".l-btn.l-btn-plain").hide();
+            $(".datagrid-btn-separator").hide();
+            //添加选择按钮
+            $('#flexigridData').datagrid("addToolbarItem", [{ "text": "选择", "iconCls": "icon-ok", handler: function () { flexiSelect(); } }]);
+        }
+    });
+
+    //“查询”按钮，弹出查询框
+    function flexiQuery() {
+        //将查询条件按照分隔符拼接成字符串
+        var search = "";
+        $('#divQuery').find(":text,textarea").each(function () {
+            if (this.id)
+                search = search + this.id + "&" + this.value + "^";
+            else
+                search = search + this.name + "&" + this.value + "^";
+        });
+
+        //执行查询
+        var url = '/api/CRM_EmployeeApi/PostData';//获取数据的url
+        $('#flexigridData').datagrid('options').url = url;
+        $('#flexigridData').datagrid('load', { search: search });
+    };
+
+    //“选择”按钮，在其他（与此页面有关联）的页面中，此页面以弹出框的形式出现，选择页面中的数据
+    function flexiSelect() {
+
+        var rows = $('#flexigridData').datagrid('getSelections');
+        if (rows.length == 0) {
+            $.messager.alert('操作提示', '请选择数据!', 'warning');
+            return false;
+        }
+
+        var arr = [];
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Id);
+        }
+        arr.push("^");
+        for (var i = 0; i < rows.length; i++) {
+            arr.push(rows[i].Name);
+        }
+        //主键列和显示列之间用 ^ 分割   每一项用 , 分割
+        if (arr.length > 0) {//一条数据和多于一条
+            returnParent(arr.join("&")); //每一项用 & 分割
+        }
+    }
+
+    //导航到详细信息的按钮
+    function flexiInfo(id) {
+        window.location.href = "/CRM/CRM_Employee/Details/" + id;
+        return false;
+    }
+
+    //导航到基本信息的按钮
+    function baseInfo(id) {
+        window.location.href = "/CRM/CRM_Employee/BaseInfo/" + id;
+        return false;
+    }
+
+    //导航到联系方式信息
+    function contactInfo(id) {
+        //alert(id);
+        window.location.href = "/CRM/CRM_EmployeeContact/Index/" + id;
+        return false;
+    };
+
+    //导航到银行信息
+    function bankInfo(id) {
+        window.location.href = "/CRM/CRM_EmployeeBank/Index/" + id;
+        return false;
+        //alert(id);
+    };
+
+</script>
+

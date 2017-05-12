@@ -1,0 +1,66 @@
+﻿@model Langben.DAL.LadderPrice
+
+@{
+    Layout = "~/Views/Shared/CRMCreate.cshtml";
+}
+@using Common
+@using Models
+
+@section CurentPlace {
+
+    创建
+
+}
+@*@using (Html.BeginForm("", "../api/LadderPriceApi/Post"))
+{*@
+<form action="/api/LadderPriceApi/Post/@ViewBag.SupplierID">
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="submit" value="创建" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            <input type="hidden" value="@ViewBag.SupplierID" name="SupplierId" />
+
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.SinglePrice)：
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.SinglePrice, new { onkeyup = "isMoney(this)", @class = "text-box single-line" })
+                @Html.ValidationMessageFor(model => model.SinglePrice)
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BeginLadder) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.BeginLadder, new { onkeyup = "isInt(this)", @class = "text-box single-line" })
+                @Html.ValidationMessageFor(model => model.BeginLadder)
+            </div>
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.EndLadder) ：
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.EndLadder, new { onkeyup = "isInt(this)", @class = "text-box single-line" })
+                @Html.ValidationMessageFor(model => model.EndLadder)
+            </div>
+        </div>
+    </fieldset>
+    @*}*@
+</form>
+
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#proid').val('@ViewBag.productID');
+    });
+
+</script>
+
+

@@ -1,0 +1,234 @@
+﻿@model Langben.DAL.Model.SupplierView
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head id="MyHead">
+
+    <title></title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui")
+    <script src="~/Scripts/Myl.js"></script>
+   
+
+</head>
+<body>
+    <div class="mbx">
+        修改
+    </div>
+
+    @Html.ValidationSummary(true)
+    @using (Html.BeginForm("", "../api/SupplierApi/PutBasic"))
+    {
+        <fieldset>
+            <legend>
+                <input class="a2 f2" type="button" id="txtModify" onclick="ModifyBase()" value="修改" />
+                <input class="a2 f2" type="button" onclick="GoBack('@Request.QueryString["path"]')" value="返回" />
+            </legend>
+            <div class="bigdiv">
+                @Html.HiddenFor(model => model.Id)
+
+                <div class="editor-label">
+                    编号：
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.Code, new { @style = "height:26px", @class = "easyui-textbox" })
+                    @Html.ValidationMessageFor(model => model.Code)
+                </div>
+                <div class="editor-label">
+                    <span style="color: red; float:none">*</span>名称：
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.Name, new { @onblur = "CheckSupplierName()", @class = "text-box single-line valid" })
+                    @Html.ValidationMessageFor(model => model.Name)
+                    <span id="spCompanyName" style="display:none;color:red" class="">该公司名已存在</span>
+                </div>
+                <div class="editor-label">
+                    组织机构代码：
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.OrganizationCode, new { @style = "height:26px", @class = "easyui-textbox" })
+                    @Html.ValidationMessageFor(model => model.OrganizationCode)
+                </div>
+                <div class="editor-label">
+                    <span style="color: red; float:none">*</span>注册地址：
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.RegisterAddress, new { @style = "height:26px", @class = "easyui-textbox" })
+                    @Html.ValidationMessageFor(model => model.RegisterAddress)
+                </div>
+                <div class="editor-label">
+                    <span style="color: red; float:none">*</span>办公地址：
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.OfficeAddress, new { @style = "height:26px", @class = "easyui-textbox" })
+                    @Html.ValidationMessageFor(model => model.OfficeAddress)
+                </div>
+                <div class="editor-label">
+                    
+                </div>
+                <div class="editor-field">
+                </div>
+                <div class="editor-label">
+                    <span style="color: red; float:none">*</span>缴纳地：
+                    @Html.TextBoxFor(model => model.NatureCityId, new { @style = "display:none" })
+                </div>
+                <div class="editor-field" id="divCity" style="width:480px">
+                    <span id="spCity" style="display:none;color:red" class="">请选择缴纳地</span>
+                </div>
+                
+                </div>
+
+        </fieldset>
+    <input type="hidden" id="Status" name="Status" value="" />
+    <input type="hidden" id="CreateUserID" name="CreateUserID" value="" />
+    <input type="hidden" id="CreateUserName" name="CreateUserName" value="" />
+    <input type="hidden" id="CustomerServiceId" name="CustomerServiceId" value="" />
+    <input type="hidden" id="CreateTime" name="CreateTime" value="" />
+    }
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $(function () { 
+        $("form").submit(function (form) {
+            if (form.result) {
+                ajaxForm(this, this.action);
+            }
+            return false;
+        });
+        //按钮样式
+        $('.a2').mouseover(function () { this.style.color = "#ae1121"; }).mouseout(function () { this.style.color = "#333"; });
+        Citylist();//得到缴纳 地
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Id';
+            $.ajax({
+                url: "/api/SupplierApi/Get/" + id,
+                type: "Get",
+                // async: false,
+                success: function (data) {
+                    var res = eval("(" + data + ")");
+                    $("#Id").val(res.Id); $("#Code").val(res.Code);
+                    $("#Name").val(res.Name);
+                    $("#OrganizationCode").val(res.OrganizationCode);
+                    $("#RegisterAddress").val(res.RegisterAddress);
+                    $("#OfficeAddress").val(res.OfficeAddress);
+                    $("#Status").val(res.Status);
+                    $("#CreateTime").val(res.CreateTime);
+                    $("#CreateUserID").val(res.CreateUserID);
+                    $("#CreateUserName").val(res.CreateUserName);
+                    $("#CustomerServiceId").val(res.CustomerServiceId);
+                    //$("#ddlCitylist").val(res.NatureCityId);
+                    var cityIDList = res.NatureCityId.split(',');
+                    $.each(cityIDList, function (key, val) {
+                        $("input[name ='ckCity']").each(function (i) {
+                            if (this.value == val) {
+                                this.checked = true;
+                            }
+                        }); 
+                    })        
+                }
+            })                
+        });
+       
+        //检查公司名
+        var check = null;
+        function CheckSupplierName() {
+            var supplierID = $("#Id").val();
+            var supplierName = $.trim($("#Name").val());
+            $.ajax({
+                type: 'Post',
+                url: '/api/SupplierApi/CheckSupplierName?supplierID=' + supplierID + "&supplierName=" + supplierName,
+                dataType: 'json',
+                async: false, //同步
+                success: function (data) {
+                    check = data.Code;
+                    if (check == 1) {
+                        $("#spCompanyName").show();
+                        $("#Name").removeClass("valid");
+                        $("#CName").addClass("input-validation-error");
+                        $("#Name").focus();
+                        //$.messager.alert('提示', data.Message, 'info');
+                    }
+                    else {
+                        $("#spCompanyName").hide();
+                        $("#Name").removeClass("input-validation-error");
+                        $("#Name").addClass("valid");
+                    }
+                },
+                error: function () {
+                    $.messager.alert('提示', "系统异常，请稍后再试！", 'info');
+                }
+            });
+        }
+        //提交
+        function ModifyBase() {
+            var cityArray = [];
+            $("#NatureCityId").val('');//重置
+            $("input[name ='ckCity']:checked").each(function(i) {
+            //$('input:checkbox.sys_opt:checked').each(function (i) {
+                cityArray.push(this.value);
+                $("#NatureCityId").val(cityArray);
+            });
+            if (check == 1) {
+                $("#spCompanyName").show();
+                $("#Name").focus();
+                //$.messager.alert('提示', "该公司名已存在！", 'info');
+                return false;
+            }
+            else if (cityArray.length == 0) {
+                $("#spCity").show();
+                return false;
+            }
+            else {
+                $("form").submit();
+            }
+        }
+        function ajaxForm(form, url) {
+
+            $.ajax({
+                url: url,
+                type: "Put",
+                data: $(form).serialize(),
+                dataType: "json",
+
+                success: function (data) {
+                    if (data.Code == 0) { $.messager.alert('操作提示', data.Message, 'info'); }
+                    else {
+                        if ($.messager) {
+                            $.messager.defaults.ok = '确定';
+                            //$.messager.defaults.cancel = '返回';
+
+                            $.messager.alert('', '提交成功！', 'info', function (r) {
+                                GoBack('@Request.QueryString["path"]');
+                            });
+                        }
+                    }
+                }
+            });
+        }
+    //返回
+    function GoBack(path) {
+        var tmp = '@Request.QueryString["tmp"]';
+        window.location.href = "/Suppliers/" + path + "/Index/?tmp=" + tmp;
+    }
+    //获取缴纳地
+    function Citylist() {
+        myAjax("/api/EmployeeAddApi/getCitylist", '', function (data) {
+            for (var i = data.length-1; i >= 0; i--) {
+                $("#divCity").prepend("<input type='checkbox' id='ckCity" + i + "' name='ckCity' value='" + data[i]["Cityid"] + "' /><label for='ckCity" + i + "'>" + data[i]["Name"] + "</label>");
+            }
+        });
+    }
+    //没用了
+    function getData() {
+        //var cityID = $('#ddlCitylist').combobox('getValue');
+        var cityID = $('#ddlCitylist').val();
+        $("#NatureCityId").val(cityID);
+    }
+</script>

@@ -1,0 +1,109 @@
+﻿@model Langben.DAL.CRM_CompanyFinance_Bill
+
+@{
+    Layout = "~/Views/Shared/CRMEdit.cshtml";
+}
+
+@section CurentPlace {
+    修改
+}
+@using (Html.BeginForm("", "../api/CRM_CompanyFinance_Bill_AuditApi/Put"))
+{
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" onclick="ModifyBill()" value="修改" />
+            <input class="a2 f2" type="button" onclick="CloseDialog()" value="关闭" />
+        </legend>
+        <div class="bigdiv">
+            @Html.HiddenFor(model => model.ID)
+            @Html.HiddenFor(model => model.CRM_Company_ID)
+
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.BillName)：
+            </div>
+            <div class="editor-field" style="width:250px">
+                @Html.EditorFor(model => model.BillName)
+                @Html.ValidationMessageFor(model => model.BillName)
+                
+            </div>
+          
+            <div class="editor-label">
+                <span style="color: red; float:none">*</span>
+                @Html.LabelFor(model => model.TaxRegistryNumber)：
+            </div>
+            <div class="editor-field" style="width:200px">
+                @Html.TextBoxFor(model => model.TaxRegistryNumber, new { @class = "text-box single-line valid", @onblur = "CheckTaxNumber()" })
+                @Html.ValidationMessageFor(model => model.TaxRegistryNumber)
+                <span id="spTax" style="display:none;color:red" class="">该税务登记证号已存在</span>
+            </div>
+
+        </div>
+    </fieldset>
+}
+
+<script type="text/javascript">
+
+    $(function () {
+        // 获取待编辑内容并显示
+        var id = '@ViewBag.Id';
+        $.ajax({
+            url: "/api/CRM_CompanyFinance_BillApi/Get/" + id,
+            type: "Get",
+            // async: false,
+            success: function (res) {
+                $("#ID").val(res.ID);
+                $("#CRM_Company_ID").val(res.CRM_Company_ID);
+                $("#TaxRegistryNumber").val(res.TaxRegistryNumber);
+                $("#BillName").val(res.BillName);
+            }
+        })
+    });
+    //验证唯一
+    var check = null;
+    function CheckTaxNumber() {
+        var companyID = $("#CRM_Company_ID").val();
+        var taxNumber = $.trim($("#TaxRegistryNumber").val());
+        if (taxNumber != "") {
+            $.ajax({
+                type: 'Post',
+                url: '/api/CRM_CompanyFinance_BillApi/CheckTaxNumber?companyID=' + companyID + "&taxNumber=" + taxNumber,
+                dataType: 'json',
+                async: false, //同步
+                success: function (data) {
+                    check = data.Code;
+                    if (check != 0) {
+                        $("#spTax").show();
+                        $("#TaxRegistryNumber").removeClass("valid");
+                        $("#TaxRegistryNumber").addClass("input-validation-error");
+                        //$("#BillName").focus();
+                    }
+                    else {
+                        $("#spTax").hide();
+                        $("#TaxRegistryNumber").removeClass("input-validation-error");
+                        $("#TaxRegistryNumber").addClass("valid");
+                    }
+                },
+                error: function () {
+                    $.messager.alert('提示', "系统异常，请稍后再试！", 'info');
+                }
+            });
+        }
+    }
+    //提交
+    function ModifyBill() {
+        if (check > 0) {
+            $("#spTax").show();
+            return false;
+        }
+        else {
+            $("form").submit();
+        }
+    }
+    function Return() {
+        var companyID = $.trim($("#CRM_Company_ID").val());
+        BackList('CRM_CompanyFinance/Index/' + companyID);
+    }
+</script>
+
+
