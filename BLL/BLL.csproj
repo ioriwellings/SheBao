@@ -101,6 +101,7 @@
     <Compile Include="CompanyEmployeeRelationBLL.cs" />
     <Compile Include="EmployeeAddBLL.cs" />
     <Compile Include="EmployeeStopPaymentBLL.cs" />
+    <Compile Include="SCHR\AccountBLL.cs" />
     <Compile Include="SCHR\AllotBLL.cs" />
     <Compile Include="SCHR\COST_PayRecordBLL.cs" />
     <Compile Include="SCHR\COST_PayRecordStatusBLL.cs" />

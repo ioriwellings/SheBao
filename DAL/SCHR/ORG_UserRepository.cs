@@ -11,6 +11,7 @@ namespace Langben.DAL
 {
     public partial class ORG_UserRepository : BaseRepository<ORG_User>, IDisposable
     {
+
         /// <summary>
         /// 查询的数据
         /// </summary>

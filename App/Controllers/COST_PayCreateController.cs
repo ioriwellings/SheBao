@@ -355,8 +355,8 @@ namespace Langben.App.Controllers
                         }
                         else { Error.Append("供应商填写不正确！"); }
                     }
-                    else
-                    { Error.Append("请正确填写供应商！"); }
+                    //else
+                    //{ Error.Append("请正确填写供应商！"); }
                     #endregion
 
                     #region 判断医疗，生育，大病
