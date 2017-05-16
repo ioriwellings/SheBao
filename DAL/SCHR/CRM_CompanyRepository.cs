@@ -496,7 +496,7 @@ namespace Langben.DAL
                              where cc.UserID_ZR == userID
                              select cc);
                 }
-                list = query.OrderBy(o => o.CRM_Company_ID).ToList();
+                list = query.OrderByDescending(o => o.CRM_Company_ID).ToList();
             }
 
             return list;

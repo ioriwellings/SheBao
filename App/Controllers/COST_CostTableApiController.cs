@@ -186,7 +186,7 @@ namespace Langben.App.Controllers
                     ,
                     CertificateNumber = s.CertificateNumber
                     ,
-                    Supplier = string.IsNullOrEmpty(s.SupplierName) == true ? "河北搜才人力资源股份有限公司" : s.SupplierName// 供应商
+                    Supplier = string.IsNullOrEmpty(s.SupplierName) == true ? "创英" : s.SupplierName// 供应商
                     ,
 
                     Operator_CompanyName=s.Operator_CompanyName,
