@@ -3474,19 +3474,19 @@ namespace Langben.App.Controllers
                                         {
                                             //（养老）政策手续
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(uu.PoliceOperationName_2);
+                                            cell.SetCellValue(uu.PoliceOperationName_1);
                                             colNum1++;
                                             //（养老）政策
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(uu.PoliceInsuranceName_2);
+                                            cell.SetCellValue(uu.PoliceInsuranceName_1);
                                             colNum1++;
                                             //（养老）单位比例
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(uu.CompanyPercent_2.ToString());
+                                            cell.SetCellValue(uu.CompanyPercent_1.ToString());
                                             colNum1++;
                                             //（养老）个人比例
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(uu.EmployeePercent_2.ToString());
+                                            cell.SetCellValue(uu.EmployeePercent_1.ToString());
                                             colNum1++;
                                             //（养老）工资
                                             cell = currentRow1.CreateCell(colNum1);
@@ -3494,7 +3494,7 @@ namespace Langben.App.Controllers
                                             colNum1++;
                                             //（养老）起缴时间
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(Convert.ToDateTime(uu.StartTime_2).ToString("yyyyMM"));
+                                            cell.SetCellValue(Convert.ToDateTime(uu.StartTime_1).ToString("yyyyMM"));
                                             colNum1++;
                                             //（养老）户口性质
                                             cell = currentRow1.CreateCell(colNum1);
@@ -3502,23 +3502,23 @@ namespace Langben.App.Controllers
                                             colNum1++;
                                             //（养老）报增自然月
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(uu.YearMonth_2.ToString());
+                                            cell.SetCellValue(uu.YearMonth_1.ToString());
                                             colNum1++;
                                             //（养老）社保月
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(Convert.ToDateTime(uu.InsuranceMonth_2).ToString("yyyyMM"));
+                                            cell.SetCellValue(Convert.ToDateTime(uu.InsuranceMonth_1).ToString("yyyyMM"));
                                             colNum1++;
                                             //（养老）是否单立户
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(uu.IsIndependentAccount_2);
+                                            cell.SetCellValue(uu.IsIndependentAccount_1);
                                             colNum1++;
                                             //（养老）社保编号
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(uu.InsuranceCode_2);
+                                            cell.SetCellValue(uu.InsuranceCode_1);
                                             colNum1++;
                                             //（养老）创建时间
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(uu.CreateTime_2.ToString());
+                                            cell.SetCellValue(uu.CreateTime_1.ToString());
                                             colNum1++;
                                             ids = uu.AddIds + "," + ids;
 

@@ -262,6 +262,7 @@
     </style>
 </head>
 <body class="easyui-layout">
+    
     <noscript>
         <div style="position: absolute; z-index: 100000; height: 2046px; top: 0px; left: 0px;
             width: 100%; background: white; text-align: center;">
@@ -276,7 +277,7 @@
         </div>
         <div id="mainctrl">
             <div class="wel">
-                欢迎您：@ViewBag.BranchName /
+                欢迎您：@*@ViewBag.BranchName /*@
                 @ViewBag.DepartmentName /
                 @ViewBag.RealName
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="@Url.Action("Logout", "Account")">退出</a>
@@ -539,7 +540,7 @@
         <div id="tabs" class="easyui-tabs" fit="true" border="false" style="">
         </div>
     </div>
-   
+    <a href="http://www.hrinto.cn" rel="社会保险信息管理系统">社保管理系统http://www.hrinto.cn</a>
     <div id="mm" class="easyui-menu" style="width: 150px;">
         <div id="mm-tabupdate">
             刷新
