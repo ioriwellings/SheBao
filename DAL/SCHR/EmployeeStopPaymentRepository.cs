@@ -1051,7 +1051,7 @@ namespace Langben.DAL
                                  PoliceAccountNatureName = d.PoliceAccountNature.Name,
                                  d.Wage,
                                  EmployeeAddId = d.Id,
-                                 InsuranceKindId = d.InsuranceKindId,// d.PoliceInsurance.InsuranceKind.Id,
+                                 InsuranceKindId = d.PoliceInsurance.InsuranceKind.Id,// d.InsuranceKindId,//
                                  InsuranceKindName = d.PoliceInsurance.InsuranceKind.Name,
                                  PoliceInsuranceId = d.PoliceInsuranceId,
                                  CompanyEmployeeRelationId = d.CompanyEmployeeRelationId,
@@ -1082,7 +1082,7 @@ namespace Langben.DAL
                     StopPaymentInsuranceKindInfo kindInfo = new StopPaymentInsuranceKindInfo()
                     {
                         EmployeeAddId = q.EmployeeAddId,
-                        InsuranceKindId = q.InsuranceKindId ?? 0,
+                        InsuranceKindId = q.InsuranceKindId,
                         InsuranceKindName = q.InsuranceKindName,
                         PoliceInsuranceId = q.PoliceInsuranceId ?? 0,
                         Wage = q.Wage ?? 0,
