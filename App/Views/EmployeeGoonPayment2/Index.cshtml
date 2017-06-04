@@ -66,12 +66,12 @@
     $(function () {
 
         $('#flexigridData').datagrid({
-            title: '责任客服调基页面列表', //列表的标题
+            title: '责任客服调基页面列表:报减的人员不能调基', //列表的标题
             iconCls: 'icon-site',
             width: 'auto',
             height: 'auto',
             striped: true,
-            fit:true,
+            fit: true,
             collapsible: false,
             url: '../api/EmployeeGoonPayment2Api/PostEmployeeList', //获取数据的url
             //toolbar: [
@@ -86,7 +86,7 @@
                 { field: 'CompanyName', title: '@Html.DisplayNameFor(model => model.CompanyName)', align: 'center', width: 200 }
                 , { field: 'Name', title: '@Html.DisplayNameFor(model => model.Name)', width: 80 }
                 , { field: 'CertificateNumber', title: '@Html.DisplayNameFor(model => model.CertificateNumber)', align: 'center', width: 160 }
-                @*, { field: 'City', title: '@Html.DisplayNameFor(model => model.City)', width: 80 }
+              @*  , { field: 'State', title: '状态', width: 80 }
                 , { field: 'PoliceAccountNature', title: '@Html.DisplayNameFor(model => model.PoliceAccountNature)', width: 100 }*@
                 , { field: 'InsuranceKindName', title: '@Html.DisplayNameFor(model => model.InsuranceKindName)', align: 'center', width: 200 }
                 , {

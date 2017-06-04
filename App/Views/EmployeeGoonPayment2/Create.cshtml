@@ -11,47 +11,47 @@
 <link href="~/Res/easyui/themes/icon.css" rel="stylesheet" />
 <script src="~/Res/easyui/jquery.easyui.min.js"></script>
 @*<link href="~/Res/SimpleCanleder/SimpleCanleder.css" rel="stylesheet" />
-<script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>*@
+    <script src="~/Res/SimpleCanleder/SimpleCanleder.js"></script>*@
 
 @using (Html.BeginForm("", "api/EmployeeGoonPayment2Api/Post"))
 {
-<fieldset>
-    <legend>
-        <input class="a2 f2" type="button" onclick="CreatePost()" value="保存" />
-        <input class="a2 f2" type="button" onclick="BackList('/EmployeeGoonPayment2/Index')" value="返回列表" />
-    </legend>
-    <p>人员基本信息</p>
-    <table>
-        <tr>
-            <td>@Html.LabelFor(model => model.Name)</td>
-            <td>@Html.TextBoxFor(model => model.Name, new { disabled = "disabled" })</td>
-            <td>@Html.LabelFor(model => model.CertificateNumber)</td>
-            <td>@Html.TextBoxFor(model => model.CertificateNumber, new { disabled = "disabled" })</td>
-            <td>@Html.LabelFor(model => model.CompanyName)</td>
-            <td>@Html.TextBoxFor(model => model.CompanyName, new { disabled = "disabled" })</td>
-            <td>@Html.LabelFor(model => model.Station)</td>
-            <td>@Html.TextBoxFor(model => model.Station, new { disabled = "disabled" })</td>
-        </tr>
-    </table>
-    <p>社保信息</p>
-    <table>
-        <tr>
-            <td>@Html.LabelFor(model => model.City)</td>
-            <td>@Html.TextBoxFor(model => model.City, new { disabled = "disabled" })</td>
-            <td>@Html.TextBoxFor(model => model.CityID, new { @style="display:none"})</td>
-            <td>@Html.LabelFor(model => model.PoliceAccountNature)</td>
-            <td>@Html.TextBoxFor(model => model.PoliceAccountNature, new { disabled = "disabled" })</td>
+    <fieldset>
+        <legend>
+            <input class="a2 f2" type="button" onclick="CreatePost()" value="保存" />
+            <input class="a2 f2" type="button" onclick="BackList('/EmployeeGoonPayment2/Index')" value="返回列表" />
+        </legend>
+        <p>人员基本信息</p>
+        <table>
+            <tr>
+                <td>@Html.LabelFor(model => model.Name)</td>
+                <td>@Html.TextBoxFor(model => model.Name, new { disabled = "disabled" })</td>
+                <td>@Html.LabelFor(model => model.CertificateNumber)</td>
+                <td>@Html.TextBoxFor(model => model.CertificateNumber, new { disabled = "disabled" })</td>
+                <td>@Html.LabelFor(model => model.CompanyName)</td>
+                <td>@Html.TextBoxFor(model => model.CompanyName, new { disabled = "disabled" })</td>
+                <td>@Html.LabelFor(model => model.Station)</td>
+                <td>@Html.TextBoxFor(model => model.Station, new { disabled = "disabled" })</td>
+            </tr>
+        </table>
+        <p>社保信息</p>
+        <table>
+            <tr>
+                <td>@Html.LabelFor(model => model.City)</td>
+                <td>@Html.TextBoxFor(model => model.City, new { disabled = "disabled" })</td>
+                <td>@Html.TextBoxFor(model => model.CityID, new { @style = "display:none" })</td>
+                <td>@Html.LabelFor(model => model.PoliceAccountNature)</td>
+                <td>@Html.TextBoxFor(model => model.PoliceAccountNature, new { disabled = "disabled" })</td>
 
-        </tr>
-        @*<tr>
-                <td>报减时间</td>
-                <td><input id="YearMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" onchange="yearMonth_Change()" on></td>
-                <td>社保月</td>
-                <td><input id="InsuranceMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" /></td>
-            </tr>*@
-    </table>
-    <div id="div1"></div>
-</fieldset>
+            </tr>
+            @*<tr>
+                    <td>报减时间</td>
+                    <td><input id="YearMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" onchange="yearMonth_Change()" on></td>
+                    <td>社保月</td>
+                    <td><input id="InsuranceMonth" class="easyui-datetimespinner" value="@DateTime.Now" data-options="formatter:formatter2,parser:parser2,selections:[[0,4],[5,7]]" style="width:180px;" /></td>
+                </tr>*@
+        </table>
+        <div id="div1"></div>
+    </fieldset>
 }
 
 
@@ -79,14 +79,21 @@
 
                 var table = "<table id='tbInsurance'>";
                 table += "<tr>";
-                table += "<th style='width:50px'>险种</th><th  style='width:100px'>原社保工资</th><th  style='width:100px'>新社保工资</th><th style='display:none'>险种ID</th><th  style='display:none'>ID</th>";
+                table += "<th style='width:50px'>险种</th><th  style='width:100px'>原社保工资</th><th  style='width:100px'>报减状态</th><th  style='width:100px'>新社保工资</th><th style='display:none'>险种ID</th><th  style='display:none'>ID</th>";
                 table += "</tr>";
                 for (var i = 0; i < res.LastChangeWageInsuranceKindInfo.length; i++) {
                     table += "<tr align='center'>";
-                 
+
                     table += "<td>" + res.LastChangeWageInsuranceKindInfo[i].InsuranceKindName + "</td>";
                     table += "<td>" + res.LastChangeWageInsuranceKindInfo[i].Wage + "</td>";
-                    table += "<td><input type=\"text\"  onchange='shebaogongzi(this)' name='NewWage' id='" + res.LastChangeWageInsuranceKindInfo[i].InsuranceKindId + "InsuranceKind' /></td>";
+                    table += "<td>" + res.LastChangeWageInsuranceKindInfo[i].StopState + "</td>";
+                    if (res.LastChangeWageInsuranceKindInfo[i].StopState == null || res.LastChangeWageInsuranceKindInfo[i].StopState == '') {
+                        table += "<td><input type=\"text\"  onchange='shebaogongzi(this)' name='NewWage' id='" + res.LastChangeWageInsuranceKindInfo[i].InsuranceKindId + "InsuranceKind' /></td>";
+
+                    } else {
+                        table += "<td><input disabled='disabled' type=\"text\"  onchange='shebaogongzi(this)' name='NewWage' id='" + res.LastChangeWageInsuranceKindInfo[i].InsuranceKindId + "InsuranceKind' /></td>";
+
+                    }
                     table += "<td  style='display:none'><input type='text' name='LastChangeWageInsuranceKindInfo.InsuranceKindId' value='" + res.LastChangeWageInsuranceKindInfo[i].InsuranceKindId + "' /></td>";
                     table += "<td  style='display:none'><input type='text' name='LastChangeWageInsuranceKindInfo.InsuranceKindId' value='" + res.LastChangeWageInsuranceKindInfo[i].EmployeeAddId + "' /></td>";
                     table += "</tr>";
@@ -97,12 +104,12 @@
             }
         });
 
-     
+
     });
 
     function CreatePost() {
-        var yanglao_InsuranceKind1=yiliao_InsuranceKind1=gongshang_InsuranceKind1=shiye_InsuranceKind1=shengyu_InsuranceKind1='';
-        var employeeID='@ViewBag.Id';
+        var yanglao_InsuranceKind1 = yiliao_InsuranceKind1 = gongshang_InsuranceKind1 = shiye_InsuranceKind1 = shengyu_InsuranceKind1 = '';
+        var employeeID = '@ViewBag.Id';
         var cityID = $("#CityID").val();
         var yanglao = yiliao = gongshang = shiye = shengyu = gongjijin = '';//工资
         var yanglao_ID, yiliao_ID, gongshang_ID, shiye_ID, shengyu_ID, gongjijin_ID;
@@ -130,7 +137,7 @@
             else if ($(this).find("td:eq(0)").html() == "生育" && $(this).find("td:eq(2)").find("input[name='NewWage']").val() != '') {
                 shengyu = $(this).find("td:eq(2)").find("input[name='NewWage']").val();
                 shengyu_InsuranceKind1 = $(this).find("td:eq(3)").find("input[type='text']").val();
-                shengyu_ID  = $(this).find("td:eq(4)").find("input[type='text']").val();
+                shengyu_ID = $(this).find("td:eq(4)").find("input[type='text']").val();
             }
             else if ($(this).find("td:eq(0)").html() == "公积金" && $(this).find("td:eq(2)").find("input[name='NewWage']").val() != '') {
                 gongjijin = $(this).find("td:eq(2)").find("input[name='NewWage']").val();
@@ -138,7 +145,7 @@
             }
         });
 
-        if (yanglao==''&& yiliao==''&& gongshang=='' && shiye=='' && shengyu=='' && gongjijin=='') {
+        if (yanglao == '' && yiliao == '' && gongshang == '' && shiye == '' && shengyu == '' && gongjijin == '') {
             $.messager.alert('提示', "请至少调整一个险种", 'info');
             return false;
         }
@@ -160,9 +167,10 @@
                             type: "POST",
                             url: "/api/EmployeeGoonPayment2Api/Post?yanglaoID=" + yanglao_ID + "&yiliaoID=" + yiliao_ID + "&gongshangID=" + gongshang_ID + "&shiyeID=" + shiye_ID + "&shengyuID=" + shengyu_ID + "&gongjijinID=" + gongjijin_ID,
                             async: false,
-                            data: {CityID:cityID,
+                            data: {
+                                CityID: cityID,
                                 Pension_Wage: yanglao, Medical_Wage: yiliao,
-                                WorkInjury_Wage: gongshang,  Unemployment_Wage: shiye,
+                                WorkInjury_Wage: gongshang, Unemployment_Wage: shiye,
                                 HousingFund_Wage: gongjijin, Maternity_Wage: shengyu
                             },
                             success: function (msg) {

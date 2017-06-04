@@ -178,7 +178,7 @@
         var arr = $('#flexigridData').datagrid('getSelections');
 
         if (arr.length == 1) {
-            window.location.href = "../EmployeeGoonPayment/CustomerModify?id=" + arr[0].CompanyEmployeeRelationId;
+            window.location.href = "../EmployeeGoonPayment/CustomerModify?id=" + arr[0].CompanyEmployeeRelationId + "&YearMonth=" + arr[0].YearMonth;
 
         } else {
             $.messager.alert('操作提示', '请选择一条数据!', 'warning');

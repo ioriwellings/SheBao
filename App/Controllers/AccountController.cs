@@ -78,7 +78,7 @@ namespace Langben.App.Controllers
                     Database dbEntity = EnterpriseLibraryContainer.Current.GetInstance<Database>("connStr");
 
                     DbCommand cmd = dbEntity.GetStoredProcCommand("Pro_GetUserAuthority");
-                    dbEntity.AddInParameter(cmd, "@userID", DbType.Int32, "1");
+                    dbEntity.AddInParameter(cmd, "@userID", DbType.Int32, "1");//data.ID
                     cmd.CommandTimeout = 0;
                     dbEntity.ExecuteNonQuery(cmd);
                     DataSet ds = dbEntity.ExecuteDataSet(cmd);

@@ -203,6 +203,10 @@ namespace Langben.App.Controllers
         public EmployeeGoonPayment2View Get(int id)
         {
             EmployeeGoonPayment2View item = m_BLL.GetChangeWageEmployeeInfo(id);
+            if (item==null)
+            {
+                Redirect("");
+            }
             return item;
         }
 

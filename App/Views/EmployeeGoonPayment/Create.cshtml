@@ -132,7 +132,7 @@
             }
         });
         $("#Creat").click(function () {
-
+            debugger;
             var YANGLAO_Wage = $("#YANGLAO_Wage").val();
             var YANGLAO_EmployeeAddID = $("#YANGLAO_EmployeeAddID").val();
             var YANGLAO_StartTime = $("#YANGLAO_StartTime").val();
@@ -194,7 +194,7 @@
                     return false;
                 }
             }
-            document.getElementById("Modify").setAttribute("disabled", true);
+            //document.getElementById("Modify").setAttribute("disabled", true);
             $.ajax({
                 type: "POST",
                 url: "/api/EmployeeGoonPaymentApi/POSTEmployeeGoonPaymentCREATE",

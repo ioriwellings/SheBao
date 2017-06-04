@@ -191,6 +191,10 @@ namespace Langben.App.Controllers
                 ViewBag.PoliceAccountNatureId = CompanyEmployeeRelationlist.PoliceAccountNatureId;
                 ViewBag.Station = CompanyEmployeeRelationlist.Station;
                 ViewBag.CompanyEmployeeRelationid = id;
+                
+                object YearMonth = Request["YearMonth"];
+               
+                ViewBag.YearMonth = YearMonth;
             }
             List<City> Citylist = city_BLL.GetAll();
             ViewBag.Citylist = Citylist.ToList();

@@ -124,6 +124,10 @@ namespace Langben.DAL
         /// </summary>
         public string InsuranceKindName { get; set; }
         /// <summary>
+        /// 报减状态
+        /// </summary>
+        public string StopState { get; set; }
+        /// <summary>
         /// 社保政策ID
         /// </summary>
         public int PoliceInsuranceId { get; set; }

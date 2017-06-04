@@ -638,11 +638,13 @@ namespace Langben.DAL
                 Common.EmployeeStopPayment_State.社保专员已提取.ToString(),
             };
                 var query2 = from d in db.EmployeeAdd
-                             where d.CompanyEmployeeRelationId == companyEmployeeRelationId && d.State == "申报成功" &&
-                                  !stopingState.Contains(
-                                      d.EmployeeStopPayment.OrderByDescending(o => o.CreateTime).FirstOrDefault().State)
+                             where d.CompanyEmployeeRelationId == companyEmployeeRelationId && d.State == strState
+                             //&&
+                             //     !stopingState.Contains(
+                             //         d.EmployeeStopPayment.OrderByDescending(o => o.CreateTime).FirstOrDefault().State)
                              select new
                              {
+                                 Id = d.Id,
                                  CityID = d.PoliceInsurance.InsuranceKind.City1.Id,
                                  CityName = d.PoliceInsurance.InsuranceKind.City1.Name,
                                  PoliceAccountNatureName = d.PoliceAccountNature.Name,
@@ -654,11 +656,17 @@ namespace Langben.DAL
                                  CompanyEmployeeRelationId = d.CompanyEmployeeRelationId,
                              };
 
+
                 info.Name = query1.EmployeeName;
                 info.CertificateNumber = query1.CardId;
                 info.CompanyName = query1.CompanyName;
                 info.Station = query1.Station;
-                info.City = query2.First().CityName;
+                var ids = query2.Select(s => s.Id).ToList();
+                //刘腾飞修改201764
+                var employeeStopPayment = db.EmployeeStopPayment.Where(w => ids.Contains((int)w.EmployeeAddId));
+
+
+                info.City = query2.FirstOrDefault().CityName;
                 info.CityID = query2.First().CityID;
                 info.PoliceAccountNature = query2.First().PoliceAccountNatureName;
                 info.SB_Wage = 0;
@@ -674,11 +682,12 @@ namespace Langben.DAL
                     info.GJJ_Wage = gjj.Wage ?? 0;
                 }
                 List<ChangeWageInsuranceKindInfo> lstkindInfo = new List<ChangeWageInsuranceKindInfo>();
-
+                var dafsd = query2.ToList();
                 foreach (var q in query2)
                 {
                     ChangeWageInsuranceKindInfo kindInfo = new ChangeWageInsuranceKindInfo()
                     {
+                        StopState = (employeeStopPayment.Where(w => w.EmployeeAddId == q.Id).FirstOrDefault() == null) ? string.Empty : employeeStopPayment.Where(w => w.EmployeeAddId == q.Id).FirstOrDefault().State,
                         EmployeeAddId = q.EmployeeAddId,
                         InsuranceKindId = q.InsuranceKindId,
                         InsuranceKindName = q.InsuranceKindName,
@@ -999,7 +1008,7 @@ namespace Langben.DAL
         // 检查是否有险种正在调基处理中
         public string Verification(SysEntities db, AllInsuranceKind entity, int? yanglaoID, int? yiliaoID, int? gongshangID, int? shiyeID, int? shengyuID, int? gongjijinID)
         {
-            string[] arrayStatus = new string[] { 
+            string[] arrayStatus = new string[] {
                 Common.EmployeeGoonPayment2_STATUS.待责任客服确认.ToString(),
                 Common.EmployeeGoonPayment2_STATUS.待员工客服确认.ToString(),
                 Common.EmployeeGoonPayment2_STATUS.员工客服已确认.ToString(),
@@ -1120,7 +1129,7 @@ namespace Langben.DAL
                         if (queryDic.ContainsKey("InsuranceKinds") && !string.IsNullOrWhiteSpace(queryDic["InsuranceKinds"]))
                         {
                             string str = queryDic["InsuranceKinds"];
-                            int?[] Ids = Array.ConvertAll<string, int?>(str.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), delegate(string s) { return int.Parse(s); });
+                            int?[] Ids = Array.ConvertAll<string, int?>(str.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), delegate (string s) { return int.Parse(s); });
 
                             emppay = emppay.Where(a => Ids.Contains(a.InsuranceKindId));
                         }
@@ -1242,7 +1251,7 @@ namespace Langben.DAL
                         if (queryDic.ContainsKey("InsuranceKinds") && !string.IsNullOrWhiteSpace(queryDic["InsuranceKinds"]))
                         {
                             string str = queryDic["InsuranceKinds"];
-                            int?[] Ids = Array.ConvertAll<string, int?>(str.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), delegate(string s) { return int.Parse(s); });
+                            int?[] Ids = Array.ConvertAll<string, int?>(str.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), delegate (string s) { return int.Parse(s); });
 
                             emppay = emppay.Where(a => Ids.Contains(a.InsuranceKindId));
                         }
@@ -1639,7 +1648,7 @@ namespace Langben.DAL
                         if (queryDic.ContainsKey("InsuranceKinds") && !string.IsNullOrWhiteSpace(queryDic["InsuranceKinds"]))
                         {
                             string str = queryDic["InsuranceKinds"];
-                            int?[] Ids = Array.ConvertAll<string, int?>(str.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), delegate(string s) { return int.Parse(s); });
+                            int?[] Ids = Array.ConvertAll<string, int?>(str.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), delegate (string s) { return int.Parse(s); });
 
                             empAdd = empAdd.Where(a => Ids.Contains(a.InsuranceKindId));
                         }

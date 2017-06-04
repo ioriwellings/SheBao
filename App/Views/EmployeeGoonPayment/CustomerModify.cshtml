@@ -23,7 +23,7 @@
         var Cityid = $('#Citylist').val();
         $.ajax({
             type: "get",
-            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=1&Parameter=1",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=1&Parameter=1&YearMonth="+@ViewBag.YearMonth,
             async: false,
             data: "",
             success: function (data) {
@@ -37,7 +37,7 @@
         });
         $.ajax({
             type: "get",
-            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=2&Parameter=1",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=2&Parameter=1&YearMonth="+@ViewBag.YearMonth,
             async: false,
             data: "",
             success: function (data) {
@@ -51,7 +51,7 @@
         });
         $.ajax({
             type: "get",
-            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=3&Parameter=1",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=3&Parameter=1&YearMonth="+@ViewBag.YearMonth,
             async: false,
             data: "",
             success: function (data) {
@@ -65,7 +65,7 @@
         });
         $.ajax({
             type: "get",
-            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=4&Parameter=1",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=4&Parameter=1&YearMonth="+@ViewBag.YearMonth,
             async: false,
             data: "",
             success: function (data) {
@@ -79,7 +79,7 @@
         });
         $.ajax({
             type: "get",
-            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=6&Parameter=1",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=6&Parameter=1&YearMonth="+@ViewBag.YearMonth,
             async: false,
             data: "",
             success: function (data) {
@@ -93,7 +93,7 @@
         });
         $.ajax({
             type: "get",
-            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=5&Parameter=1",
+            url: "/api/EmployeeGoonPaymentApi/getEmployeeGoonPaymentList?CompanyEmployeeRelationId=" +@ViewBag.CompanyEmployeeRelationid +"&type=5&Parameter=1&YearMonth="+@ViewBag.YearMonth,
             async: false,
             data: "",
             success: function (data) {
@@ -109,7 +109,7 @@
 
             //养老
             var YANGLAObujiao_id = $("#YANGLAObujiao_id").val();
-            alert(YANGLAObujiao_id)
+            //alert(YANGLAObujiao_id)
             var YANGLAO_StartTime = $("#YANGLAO_StartTime").val();//养老补缴开始时间
             var YANGLAO_EndTime = $("#YANGLAO_EndTime").val();//养老补缴结束时间
             if (YANGLAObujiao_id != "") {
@@ -184,7 +184,7 @@
                 }
             }
 
-           
+
             $.ajax({
                 type: "POST",
                 url: "/api/EmployeeGoonPaymentApi/POSTEmployeeAddModify?YANGLAObujiao_id=" + YANGLAObujiao_id + "&YILIAObujiao_id=" + YILIAObujiao_id + "&GONGSHANGbujiao_id=" + GONGSHANGbujiao_id + "&SHIYEbujiao_id=" + SHIYEbujiao_id + "&GONGJIJINbujiao_id=" + GONGJIJINbujiao_id + "&SHENGYUbujiao_id=" + SHENGYUbujiao_id,
