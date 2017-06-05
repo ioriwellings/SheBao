@@ -3490,7 +3490,7 @@ namespace Langben.App.Controllers
                                             colNum1++;
                                             //（养老）工资
                                             cell = currentRow1.CreateCell(colNum1);
-                                            cell.SetCellValue(uu.Wage_2.ToString());
+                                            cell.SetCellValue(uu.Wage_1.ToString());
                                             colNum1++;
                                             //（养老）起缴时间
                                             cell = currentRow1.CreateCell(colNum1);

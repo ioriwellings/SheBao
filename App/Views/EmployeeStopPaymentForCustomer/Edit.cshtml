@@ -122,19 +122,21 @@
         </tr>
 
     </table>
+    <input type="hidden" value="" id="yanglao_id" />
+    <input type="hidden" value="" id="yiliao_id" />
+    <input type="hidden" value="" id="shengyu_id" />
+    <input type="hidden" value="" id="shiye_id" />
+
+    <input type="hidden" value="" id="gongshang_id" />
+    <input type="hidden" value="" id="gongjijin_id" />
+  
     <div id="div1"></div>
 </fieldset>
-
-
-
-
+ 
 <script type="text/javascript">
 
     $(function () {
-
-
-
-
+         
         // 获取待编辑内容并显示
         var id = '@ViewBag.Id';
         var state = '@ViewBag.state';
@@ -166,7 +168,7 @@
 
                             if (res[i].InsuranceKindName == '养老') {
                                 $("#YANGLAO_stoppaymenttype option").remove();
-                            
+
                                 $.ajax({
                                     url: "/api/EmployeeStopPaymentSingleApi/PostPoliceOperation?kindId=" + res[i].InsuranceKindId,
                                     type: "POST",
@@ -174,9 +176,9 @@
                                     success: function (res1) {
                                         $.each(res1.rows, function (j, item) {
 
-                                          
-                                                $("#YANGLAO_stoppaymenttype").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
-                                          
+
+                                            $("#YANGLAO_stoppaymenttype").append("<option value='" + item["ID"] + "'>" + item["Name"] + "</option>");
+
 
                                         });
                                     },
@@ -187,7 +189,7 @@
 
                                 $("#YANGLAO_stoppaymenttype").val(res[i].PoliceOperationId);
                                 $("#YANGLAO_endtime").val(res[i].InsuranceMonth.substr(0, 10));
-
+                                debugger
                                 $("#yanglao_id").val(res[i].ID);
                                 $("#YANGLAO_endtime").attr("disabled", false);
 
@@ -360,12 +362,7 @@
 
             }
         });
-
-
-
-
-
-
+     
     });
     function formatter2(date) {
         if (!date) { return ''; }
@@ -428,15 +425,16 @@
 
 
 
+        debugger
         //养老
         var yanglao_id = $("#yanglao_id").val();
         var YANGLAO = $("#YANGLAO_stoppaymenttype").val();//养老社保报减方式
-      
+
 
         //医疗
         var yiliao_id = $("#yiliao_id").val();
         var YILIAO = $("#YILIAO_stoppaymenttype").val();//医疗社保报减方式
-       
+
 
         //生育
         var shengyu_id = $("#shengyu_id").val();
@@ -445,18 +443,18 @@
         //失业
         var shiye_id = $("#shiye_id").val();
         var SHIYE = $("#SHIYE_stoppaymenttype").val();//失业社保报减方式
-     
+
 
         //工伤
         var gongshang_id = $("#gongshang_id").val();
         var GONGSHANG = $("#GONGSHANG_stoppaymenttype").val();//工伤社保报减方式
-       
+
         //公积金
         var gongjijin_id = $("#gongjijin_id").val();
         var GONGJIJIN = $("#GONGJIJIN_stoppaymenttype").val();//工伤社保报减方式
         $.ajax({
             type: 'POST',
-            url: "/api/EmployeeStopPaymentApi/FeedbackModify?yanglao_id=" + yanglao_id + "&yiliao_id=" + yiliao_id + "&gongshang_id=" + gongshang_id + "&shiye_id=" + shiye_id + "&gongjijin_id=" + gongjijin_id + "&shengyu_id=" + shengyu_id + "&yanglao=" + YANGLAO + "&yiliao=" + YILIAO + "&shiye=" + SHIYE + "&gongshang=" + GONGSHANG + "&gongjijin=" + GONGJIJIN+"&shengyu="+SHENGYU,
+            url: "/api/EmployeeStopPaymentApi/FeedbackModify?yanglao_id=" + yanglao_id + "&yiliao_id=" + yiliao_id + "&gongshang_id=" + gongshang_id + "&shiye_id=" + shiye_id + "&gongjijin_id=" + gongjijin_id + "&shengyu_id=" + shengyu_id + "&yanglao=" + YANGLAO + "&yiliao=" + YILIAO + "&shiye=" + SHIYE + "&gongshang=" + GONGSHANG + "&gongjijin=" + GONGJIJIN + "&shengyu=" + SHENGYU,
             // data: { "ids": ids, "message": msg },  //最正确的Ajax传参
             dataType: 'json',
             async: true, //异步

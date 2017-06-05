@@ -31,13 +31,13 @@
             return;
         }
         $.ajax({
-            url: "/api/SupplierStopExportApi/SetSuccess?stopIds=" + stopIds,
+            url: "/api/EmployeeStopPaymentFeedbackApi/SetSuccess?stopIds=" + stopIds,
             type: "POST",
             async: false,
             success: function (res) {
                 if (res.Code == 1) {
                     alert(res.Message);
-                    window.location.href = "/Suppliers/SupplierStopFeedBack/SupFeedbackSuccess";
+                    window.location.href = "/EmployeeStopPaymentFeedback";
                 }
             },
             error: function (a, b, c) {

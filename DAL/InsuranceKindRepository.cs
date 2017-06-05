@@ -130,7 +130,7 @@ namespace Langben.DAL
         {
                 return from m in db.InsuranceKind
                        from f in m.PoliceOperation
-                       where m.Id == id
+                       where m.InsuranceKindId == id//刘腾飞修改201765
                        select f;
 
         }

@@ -2481,7 +2481,7 @@ namespace Langben.DAL
         {
             string InsuranceKindStatus = Status.启用.ToString();
             string Style = PoliceOperation_Style.报减.ToString();
-            var w = db.InsuranceKind.FirstOrDefault(p => p.Id == id && p.State == InsuranceKindStatus);
+            var w = db.InsuranceKind.FirstOrDefault(p => p.InsuranceKindId == id && p.State == InsuranceKindStatus);
             if (w != null)
             {
                 return (from c in w.PoliceOperation
