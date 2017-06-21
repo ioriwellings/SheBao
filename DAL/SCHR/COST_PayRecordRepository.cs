@@ -296,7 +296,7 @@ namespace Langben.DAL
                               PersonCost = s.Sum(p => p.a.PersonCost)
                           };
             var q111 = costpay.ToList();
-            return costpay.Where(p => p.PersonPay != p.PersonCost || p.CompanyPay != p.CompanyCost).ToList();
+            return costpay.ToList();
             // }
         }
 
@@ -588,7 +588,7 @@ namespace Langben.DAL
                                CompanyCost = s.Sum(p => p.a.CompanyCost),
                                PersonCost = s.Sum(p => p.a.PersonCost)
                            }).ToList();
-            return costpay.Where(p => p.PersonPay != p.PersonCost || p.CompanyPay != p.CompanyCost).ToList();
+            return costpay.ToList();
             // }
         }
     }

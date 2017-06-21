@@ -353,7 +353,7 @@ namespace Langben.App.Controllers
                     #endregion
 
                     row.GetCell(2).SetCellValue(queryData[i].CertificateNumber);  // 身份证号
-                    row.GetCell(3).SetCellValue("河北搜才人力资源股份有限公司");  // 供应商
+                    row.GetCell(3).SetCellValue("");  // 供应商
                     string style = ((Common.EmployeeMiddle_PaymentStyle)queryData[i].PaymentStyle).ToString();
                     row.GetCell(4).SetCellValue(style);  // 缴费类型
                     row.GetCell(5).SetCellValue(queryData[i].CityName);  // 缴纳地

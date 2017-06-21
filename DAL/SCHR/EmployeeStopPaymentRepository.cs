@@ -802,12 +802,29 @@ namespace Langben.DAL
             {
                 employeeAdd = employeeAdd.Where(o => o.CompanyEmployeeRelation.CompanyId == companyId);
             }
-
+            var q = employeeAdd.ToList();
+            var qd = companyToBranch.ToList();
+            var qsd = companyToBranch.ToList();
+            var po= db.InsuranceKind.ToList();
+            var pod = db.CRM_Company.ToList();
+            var queryd = (from ea in employeeAdd
+                         join ctb in companyToBranch on ea.CompanyEmployeeRelation.CompanyId equals ctb.CRM_Company_ID
+                          join e in employee on ea.CompanyEmployeeRelation.EmployeeId equals e.Id
+                          join c in db.CRM_Company on ea.CompanyEmployeeRelation.CompanyId equals c.ID
+                          select new SingleStopPaymentView()
+                         {
+                             CompanyEmployeeRelationId = ea.CompanyEmployeeRelationId,
+                              CompanyID = c.ID,
+                              CompanyName = c.CompanyName,
+                              EmployeeID = e.Id,
+                              CertificateNumber = e.CertificateNumber,
+                              EmployeeName = e.Name
+                          }).Distinct().ToList();
             var query = (from ea in employeeAdd
                          join ctb in companyToBranch on ea.CompanyEmployeeRelation.CompanyId equals ctb.CRM_Company_ID
                          join e in employee on ea.CompanyEmployeeRelation.EmployeeId equals e.Id
                          join c in db.CRM_Company on ea.CompanyEmployeeRelation.CompanyId equals c.ID
-                         join ik in db.InsuranceKind on ea.InsuranceKindId.Value equals ik.Id
+                        // join ik in db.InsuranceKind on ea.InsuranceKindId.Value equals ik.Id
                          select new SingleStopPaymentView()
                          {
                              CompanyEmployeeRelationId = ea.CompanyEmployeeRelationId,
@@ -815,7 +832,7 @@ namespace Langben.DAL
                              CompanyName = c.CompanyName,
                              EmployeeID = e.Id,
                              CertificateNumber = e.CertificateNumber,
-                             EmployeeName = e.Name,
+                             EmployeeName = e.Name
                              //EmployeeAddId = ea.Id,
                          }).Distinct();
             total = 0;
